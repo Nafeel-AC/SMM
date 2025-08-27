@@ -1,0 +1,44 @@
+{
+    "sectionTitle": "our service",
+    "mainTitle": "What Service Do We Have For Your Business",
+    "description": "Welcome to SMM Matrix, where our mission is to empower businesses through a spectrum of digital services that enhance online presence, engage audiences, and drive results.",
+    "backgroundImage": "/src/assets/hero-image.jpg",
+    "services": [
+        {
+            "id": 1,
+            "icon": "rocket",
+            "title": "Social Marketing",
+            "description": "Our social media strategy begins with meticulous content planning. We curate content that aligns with your brand voice, resonates with your audience, and strategically communicates your message across various social platforms."
+        },
+        {
+            "id": 2,
+            "icon": "chart",
+            "title": "SEO Strategy",
+            "description": "Our SEO journey begins with comprehensive keyword research. We identify high-impact keywords relevant to your industry, ensuring that every piece of content is strategically crafted to resonate with both search engines and your target audience."
+        },
+        {
+            "id": 3,
+            "icon": "cart",
+            "title": "Product Branding",
+            "description": "We work closely with you to understand the essence of your product and your brand vision. From logo design to color palettes and typography, we craft a brand identity that reflects your unique story, ensuring a distinctive and memorable presence in the market."
+        },
+        {
+            "id": 4,
+            "icon": "email",
+            "title": "Email Marketing",
+            "description": "Our email marketing journey begins with strategic campaign planning. We work closely with you to understand your business goals, target audience, and unique value propositions. From there, we design email campaigns that guide subscribers through engaging and conversion-focused journeys."
+        },
+        {
+            "id": 5,
+            "icon": "display",
+            "title": "Digital Marketing",
+            "description": "We begin by understanding your business goals, target audience, and unique value propositions. Our team then crafts an integrated digital marketing strategy that combines various channels — from social media and email marketing to SEO and paid advertising — ensuring a cohesive and effective approach."
+        },
+        {
+            "id": 6,
+            "icon": "content",
+            "title": "Content Writing",
+            "description": "Our content writers specialize in the art of storytelling. Whether it's a blog post, article, or marketing copy, we infuse your brand's unique story into every piece of content, creating narratives that leave a lasting impression on your audience."
+        }
+    ]
+}
