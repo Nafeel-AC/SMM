@@ -1,0 +1,30 @@
+/* Animation classes to mimic wow.js animations */
+.wow {
+  visibility: hidden;
+}
+
+.fadeIn {
+  animation: fadeIn 1s forwards;
+  visibility: visible !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Additional animation classes */
+.feature-section .item {
+  animation-duration: 0.8s;
+  animation-fill-mode: both;
+}
+
+.feature-section .item.animated {
+  animation-name: fadeIn;
+}
+
+/* Use JavaScript to trigger these animations after component mount */

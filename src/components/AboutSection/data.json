@@ -1,0 +1,31 @@
+{
+    "sectionTitle": "About Us",
+    "mainTitle": "SMM Matrix Redefining Social Media Excellence",
+    "description": "At SMM Matrix, we're not just a social media marketing agency — we're your partners in digital success. Established with a passion for propelling businesses to new heights through strategic online presence, we bring a unique blend of creativity, innovation, and expertise to every project.",
+    "buttonText": "Contact Us",
+    "buttonUrl": "#contact",
+    "features": [
+        {
+            "id": 1,
+            "icon": "strategy",
+            "title": "Strategic Brilliance",
+            "description": "We don't just create content; we craft strategies. Our team of experts meticulously plans every campaign, ensuring that your brand's message resonates with your target audience."
+        },
+        {
+            "id": 2,
+            "icon": "time",
+            "title": "Time Efficiency",
+            "description": "In the fast-paced world of social media, timing is everything. Our streamlined processes and agile approach guarantee timely delivery without compromising on quality."
+        },
+        {
+            "id": 3,
+            "icon": "growth",
+            "title": "Measurable Growth",
+            "description": "We believe in data-driven results. Our analytics-focused approach ensures your social media presence translates into tangible business growth and ROI."
+        }
+    ],
+    "images": {
+        "main": "/src/assets/about-2.jpg",
+        "secondary": "/src/assets/about-1.jpg"
+    }
+}
