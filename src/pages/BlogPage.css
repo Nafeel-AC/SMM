@@ -1,0 +1,8 @@
+.blog-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.blog-page .blog-section {
+  padding-top: 120px; /* Account for fixed navbar */
+}

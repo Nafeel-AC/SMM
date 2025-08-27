@@ -1,0 +1,187 @@
+.featured-in-section {
+  padding: 60px 0;
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero-content {
+  text-align: center;
+  margin-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-heading {
+  font-size: 48px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 20px;
+  line-height: 1.2;
+  text-align: center;
+  width: 100%;
+}
+
+.number {
+  color: #000;
+}
+
+.hero-description {
+  font-size: 18px;
+  color: #000;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  font-weight: 400;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.cta-btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chat-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.chat-btn:hover {
+  background: #2563eb;
+}
+
+.growth-btn {
+  background: #10b981;
+  color: white;
+}
+
+.growth-btn:hover {
+  background: #059669;
+}
+
+.stats-text {
+  font-size: 16px;
+  color: #000;
+  margin: 0;
+  font-weight: 400;
+}
+
+.logos-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 60px 40px;
+  align-items: center;
+  justify-items: center;
+}
+
+.logo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  transition: all 0.3s ease;
+}
+
+.logo-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #9ca3af;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: 0.3px;
+  transition: color 0.3s ease;
+}
+
+.logo-item:hover .logo-text {
+  color: #6b7280;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .featured-in-section {
+    padding: 50px 0;
+  }
+  
+  .main-heading {
+    font-size: 40px;
+  }
+  
+  .hero-description {
+    font-size: 16px;
+  }
+  
+  .logos-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 40px 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .featured-in-section {
+    padding: 40px 0;
+  }
+  
+  .main-heading {
+    font-size: 32px;
+  }
+  
+  .hero-description {
+    font-size: 15px;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cta-btn {
+    width: 200px;
+  }
+  
+  .logos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 30px 25px;
+  }
+  
+  .logo-text {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .featured-in-section {
+    padding: 40px 0;
+  }
+  
+  .section-title {
+    font-size: 20px;
+  }
+  
+  .logos-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .logo-text {
+    font-size: 14px;
+  }
+}

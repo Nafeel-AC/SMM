@@ -16,12 +16,15 @@
 
 .navbar-brand {
   padding: 0;
+  flex-shrink: 0;
+  margin-right: 0;
 }
 
 .navbar-brand img {
   height: 40px;
-  max-width: 170px;
+  max-width: 200px;
   object-fit: contain;
+  width: auto;
 }
 
 .navbar-toggler {
@@ -54,6 +57,18 @@
   padding: 1.5rem;
 }
 
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin: 0;
+  padding: 0;
+  gap: 0.5rem;
+  margin-left: 0;
+  justify-content: center;
+  flex: 1;
+}
+
 .navbar-nav .nav-item {
   margin: 0 0.5rem;
 }
@@ -72,6 +87,7 @@
   transition: color 0.3s cubic-bezier(0.4,0,0.2,1);
   z-index: 1;
   overflow: visible;
+  white-space: nowrap;
 }
 
 .navbar-nav .nav-link::after {
@@ -143,6 +159,9 @@
 .nav-right {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+  gap: 1rem;
+  margin-left: auto;
 }
 
 .custom-nav {
@@ -151,6 +170,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  gap: 1rem;
 }
 
 .language-box {

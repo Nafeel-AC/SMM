@@ -43,6 +43,11 @@
   line-height: 1.6;
 }
 
+.hero-description + .hero-description {
+  margin-bottom: 35px;
+  margin-top: -25px;
+}
+
 .btn-area {
   display: flex;
   align-items: center;

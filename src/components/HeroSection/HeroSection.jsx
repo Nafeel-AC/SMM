@@ -30,7 +30,10 @@ const HeroSection = () => {
                   We Will Help You To Grow Your Business
                 </h1>
                 <p className="hero-description">
-                  Social Media Marketing (SMM) is a powerful tool for businesses and individuals to promote their products or services on various social media platforms.
+                  We've managed to create more than 23,000 Instagram accounts
+                </p>
+                <p className="hero-description">
+                  Our expertise spans across all major social media platforms including Facebook, Twitter, LinkedIn, and TikTok
                 </p>
 
                 <div className="btn-area">

@@ -1,0 +1,258 @@
+.why-choose-us {
+  padding: 100px 0;
+  background-color: #fff;
+  position: relative;
+}
+
+/* Image Section */
+.image-section {
+  position: relative;
+  height: 500px;
+}
+
+.main-image {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transform: rotate(-2deg);
+}
+
+.main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.secondary-image {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  height: 150px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  transform: rotate(3deg);
+}
+
+.secondary-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Content Section */
+.content-section {
+  padding-left: 30px;
+}
+
+.section-header {
+  margin-bottom: 30px;
+}
+
+.section-subtitle {
+  background-color: #9665fd;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #152235;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.section-description {
+  font-size: 18px;
+  color: #6c757d;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* Features Grid - More Compact and Square */
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 18px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  min-height: 110px;
+  max-height: 110px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.feature-item:hover {
+  background-color: #9665fd;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(150, 101, 253, 0.3);
+}
+
+.feature-item:hover .feature-icon {
+  background-color: #fff;
+  color: #9665fd;
+}
+
+.feature-item:hover .feature-title,
+.feature-item:hover .feature-description {
+  color: #fff;
+}
+
+.feature-icon {
+  width: 50px;
+  height: 50px;
+  background-color: #9665fd;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.feature-content {
+  flex: 1;
+}
+
+.feature-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #152235;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.feature-description {
+  font-size: 13px;
+  color: #6c757d;
+  line-height: 1.5;
+  margin-bottom: 0;
+  transition: all 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .why-choose-us {
+    padding: 80px 0;
+  }
+  
+  .content-section {
+    padding-left: 0;
+    margin-top: 40px;
+  }
+  
+  .section-title {
+    font-size: 36px;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .image-section {
+    height: 400px;
+  }
+  
+  .main-image {
+    height: 300px;
+  }
+  
+  .secondary-image {
+    width: 150px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .why-choose-us {
+    padding: 60px 0;
+  }
+  
+  .section-title {
+    font-size: 28px;
+  }
+  
+  .section-description {
+    font-size: 16px;
+  }
+  
+  .feature-item {
+    padding: 15px;
+    gap: 12px;
+    min-height: 100px;
+    max-height: 100px;
+  }
+  
+  .feature-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+  
+  .feature-title {
+    font-size: 15px;
+  }
+  
+  .feature-description {
+    font-size: 12px;
+  }
+  
+  .image-section {
+    height: 300px;
+  }
+  
+  .main-image {
+    height: 250px;
+  }
+  
+  .secondary-image {
+    width: 120px;
+    height: 90px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 24px;
+  }
+  
+  .features-grid {
+    gap: 12px;
+  }
+  
+  .feature-item {
+    padding: 12px;
+    gap: 10px;
+    min-height: 90px;
+    max-height: 90px;
+  }
+  
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}

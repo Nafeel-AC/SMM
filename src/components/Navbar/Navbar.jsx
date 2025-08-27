@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import logo from '../../assets/logo.png';
 
 const Navbar = () => {
   const [currency, setCurrency] = useState('USD');
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
   
   // Handle scroll effect
   useEffect(() => {
@@ -30,36 +32,94 @@ const Navbar = () => {
   return (
     <nav className={`navbar fixed-top navbar-expand-lg ${scrolled ? 'scrolled' : 'transparent'}`}>
       <div className="container">
-        <a className="navbar-brand logo" href="/">
+        <Link className="navbar-brand logo" to="/">
           <img src={logo} alt="Logo" />
-        </a>
+        </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
           <i className="fas fa-bars"></i>
         </button>
         <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbar">
           <div className="offcanvas-header">
-            <a className="navbar-brand" href="/">
+            <Link className="navbar-brand" to="/">
               <img className="logo" src={logo} alt="Logo" />
-            </a>
+            </Link>
             <button type="button" className="cmn-btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
               <i className="fas fa-arrow-right"></i>
             </button>
           </div>
           <div className="offcanvas-body align-items-center justify-content-between">
             <ul className="navbar-nav m-auto">
-              <li className="nav-item"><a className="nav-link text-uppercase active" href="/">Home</a></li>
-              <li className="nav-item"><a className="nav-link text-uppercase" href="/about">About</a></li>
-              <li className="nav-item"><a className="nav-link text-uppercase" href="/faq">Faq</a></li>
-              <li className="nav-item"><a className="nav-link text-uppercase" href="/blogs">Blogs</a></li>
-              <li className="nav-item"><a className="nav-link text-uppercase" href="/services">Services</a></li>
-              <li className="nav-item"><a className="nav-link text-uppercase" href="/contact">Contact</a></li>
+              <li className="nav-item">
+                <Link 
+                  className={`nav-link text-uppercase ${location.pathname === '/' ? 'active' : ''}`} 
+                  to="/"
+                >
+                  Home
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link 
+                  className={`nav-link text-uppercase ${location.pathname === '/about' ? 'active' : ''}`} 
+                  to="/about"
+                >
+                  About
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link 
+                  className={`nav-link text-uppercase ${location.pathname === '/faq' ? 'active' : ''}`} 
+                  to="/faq"
+                >
+                  Faq
+                </Link>
+              </li>
+                                   <li className="nav-item">
+                       <Link
+                         className={`nav-link text-uppercase ${location.pathname === '/contact' ? 'active' : ''}`}
+                         to="/contact"
+                       >
+                         Contact
+                       </Link>
+                     </li>
+                     <li className="nav-item">
+                       <Link
+                         className={`nav-link text-uppercase ${location.pathname === '/#pricing' ? 'active' : ''}`}
+                         to="/#pricing"
+                       >
+                         Pricing
+                       </Link>
+                     </li>
+              <li className="nav-item">
+                <Link 
+                  className={`nav-link text-uppercase ${location.pathname === '/blogs' ? 'active' : ''}`} 
+                  to="/blogs"
+                >
+                  Blogs
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link 
+                  className={`nav-link text-uppercase ${location.pathname === '/services' ? 'active' : ''}`} 
+                  to="/services"
+                >
+                  Services
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link 
+                  className={`nav-link text-uppercase ${location.pathname === '/contact' ? 'active' : ''}`} 
+                  to="/contact"
+                >
+                  Contact
+                </Link>
+              </li>
             </ul>
             <ul>
               <li className="nav-item">
-                <a className="nav-link login-btn" href="/login">
+                <Link className="nav-link login-btn" to="/login">
                   <i className="login-icon fas fa-sign-in-alt"></i>
                   <span className="d-md-none">Login</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -81,10 +141,10 @@ const Navbar = () => {
               </div>
             </li>
             <li className="nav-item">
-              <a className="nav-link login-btn" href="/login">
+              <Link className="nav-link login-btn" to="/login">
                 <i className="login-icon fas fa-sign-in-alt"></i>
                 <span className="d-none d-md-block">Login</span>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

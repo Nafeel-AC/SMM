@@ -1,0 +1,368 @@
+.footer {
+  background: #152235;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-background {
+  position: relative;
+  background: #152235;
+}
+
+.footer-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, #8b5cf6 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, #3b82f6 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, #f97316 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, #8b5cf6 0%, transparent 30%);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.footer-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, transparent 48%, rgba(139, 92, 246, 0.1) 50%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(59, 130, 246, 0.1) 50%, transparent 52%);
+  background-size: 60px 60px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.footer-content {
+  position: relative;
+  z-index: 2;
+  padding: 120px 0 80px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 40px;
+}
+
+/* Brand Section */
+.brand-section {
+  max-width: 300px;
+  padding: 20px 0;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+  position: relative;
+}
+
+.cube-icon {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6, #f97316);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+.cube-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+}
+
+.cube-icon::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  border-radius: 6px;
+}
+
+.brand-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #8b5cf6;
+  margin: 0;
+}
+
+.brand-description {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: #e5e7eb;
+}
+
+.social-media {
+  display: flex;
+  gap: 12px;
+}
+
+.social-btn {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.social-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.5s ease;
+}
+
+.social-btn:hover::before {
+  left: 100%;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, #ffffff, #f1f5f9);
+}
+
+.social-btn i {
+  font-size: 16px;
+}
+
+/* Footer Sections */
+.footer-section {
+  margin-bottom: 30px;
+  padding: 15px 0;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  position: relative;
+  color: #e5e7eb;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: #f97316;
+  border-radius: 2px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.footer-links li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  background: #f97316;
+  border-radius: 1px;
+}
+
+.footer-links a {
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #f97316;
+}
+
+/* Newsletter Section */
+.newsletter-text {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #e5e7eb;
+}
+
+.newsletter-form {
+  display: flex;
+  align-items: stretch;
+  background: white;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  width: 320px;
+  height: 48px;
+}
+
+.email-input {
+  flex: 1;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  background: white;
+  color: #475569;
+  outline: none;
+  min-width: 0;
+  height: 100%;
+}
+
+.email-input::placeholder {
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.submit-btn {
+  width: 48px;
+  height: 100%;
+  background: #8b5cf6;
+  border: none;
+  border-radius: 0 30px 30px 0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  min-width: 48px;
+}
+
+.submit-btn:hover {
+  background: #8b5cf6;
+  transform: scale(1.05);
+}
+
+.submit-btn i {
+  font-size: 15px;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  background: rgba(0,0,0,0.2);
+  padding: 30px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+.location {
+  font-size: 14px;
+  color: #e5e7eb;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+  
+  .brand-section {
+    max-width: none;
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    padding: 60px 0 40px;
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .bottom-content {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .social-media {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-content {
+    padding: 40px 0 30px;
+  }
+  
+  .brand-name {
+    font-size: 20px;
+  }
+  
+  .section-title {
+    font-size: 16px;
+  }
+  
+  .social-btn {
+    width: 35px;
+    height: 35px;
+  }
+}
