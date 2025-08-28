@@ -1,0 +1,175 @@
+{
+    "socialMedia": [
+        {
+            "id": 1,
+            "name": "Instagram",
+            "icon": "instagram-icon.webp",
+            "color": "#C13584",
+            "gradient": "linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D)",
+            "categories": [
+                "Followers",
+                "Likes",
+                "Views",
+                "Comments",
+                "IGTV",
+                "Reels",
+                "Threads"
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Facebook",
+            "icon": "facebook-icon.webp",
+            "color": "#1877F2",
+            "gradient": "linear-gradient(45deg, #1877F2, #3b5998)",
+            "categories": [
+                "Page Likes",
+                "Followers",
+                "Post Likes",
+                "Video Views",
+                "Comments",
+                "Shares"
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Youtube",
+            "icon": "youtube-icon.webp",
+            "color": "#FF0000",
+            "gradient": "linear-gradient(45deg, #FF0000, #FF5733)",
+            "categories": [
+                "Subscribers",
+                "Views",
+                "Likes",
+                "Comments",
+                "Shares",
+                "Watch Time"
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Spotify",
+            "icon": "spotify-icon.webp",
+            "color": "#1ED760",
+            "gradient": "linear-gradient(45deg, #1DB954, #1ED760)",
+            "categories": [
+                "Plays",
+                "Followers",
+                "Monthly Listeners",
+                "Playlist Adds"
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Tiktok",
+            "icon": "tiktok-icon.webp",
+            "color": "#000000",
+            "gradient": "linear-gradient(45deg, #25F4EE, #FE2C55)",
+            "categories": [
+                "Followers",
+                "Likes",
+                "Views",
+                "Shares",
+                "Comments"
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Google",
+            "icon": "google-icon.webp",
+            "color": "#4285F4",
+            "gradient": "linear-gradient(45deg, #4285F4, #DB4437, #F4B400, #0F9D58)",
+            "categories": [
+                "Reviews",
+                "Maps Reviews",
+                "Business Reviews",
+                "SEO Services"
+            ]
+        },
+        {
+            "id": 7,
+            "name": "Telegram",
+            "icon": "telegram-icon.webp",
+            "color": "#0088CC",
+            "gradient": "linear-gradient(45deg, #0088CC, #26A5E4)",
+            "categories": [
+                "Channel Members",
+                "Group Members",
+                "Post Views",
+                "Reactions"
+            ]
+        },
+        {
+            "id": 8,
+            "name": "Others",
+            "icon": "others-icon.webp",
+            "color": "#6c757d",
+            "gradient": "linear-gradient(45deg, #6c757d, #495057)",
+            "categories": [
+                "Twitter",
+                "LinkedIn",
+                "Pinterest",
+                "Discord",
+                "Twitch",
+                "SoundCloud",
+                "Snapchat"
+            ]
+        }
+    ],
+    "categories": [
+        "♛ SWP TRENDING: (Cheap to Cheap)🔥",
+        "Whatsapp ( All Services )",
+        "Instagram Threads Followers",
+        "Instagram Threads Likes / Views / Comments / Shares",
+        "Instagram Likes [ Real HQ ]",
+        "𝐍𝐞𝐰 𝐒𝐞𝐫𝐯𝐢𝐜𝐞𝐬 - Promotion offer",
+        "Shopee » Live Stream Viewers ᴺᴱᵂ",
+        "IG » Followers [ Non Drop ] ᴺᴱᵂ",
+        "Instagram 🇺🇸 AI Growth Package",
+        "Instagram THREADS Likes",
+        "Instagram THREADS Shares / Comments",
+        "Instagram TOP Services [JAP EXCLUSIVE]"
+    ],
+    "services": [
+        {
+            "id": 51,
+            "name": "Instagram Followers - [ Speed: 20K/Day ] [ Refill: 365 Days ] [ Old Accounts ] 0-10 Min🔥",
+            "category": "♛ Instagram Emergency Followers (Working After Update)",
+            "price": 3.04,
+            "min": 10,
+            "max": 50000,
+            "description": "✅ Guaranteed Delivery\n✅ Old Accounts with Profile Pictures\n✅ 365 Days Refill\n✅ Fast Delivery\n✅ Working after all updates",
+            "avgTime": "1-3 hours"
+        },
+        {
+            "id": 52,
+            "name": "Instagram Followers - [ Speed: 25K/Day ] [ Refill: 30 Days ] [ 100% Old Account, 20+ Posts ]🔥",
+            "category": "♛ Instagram Emergency Followers (Working After Update)",
+            "price": 2.07,
+            "min": 20,
+            "max": 100000,
+            "description": "✅ 30 Days Refill\n✅ 100% Old Accounts\n✅ Real-looking profiles with 20+ posts\n✅ Fast Delivery",
+            "avgTime": "1-4 hours"
+        },
+        {
+            "id": 60,
+            "name": "Instagram Followers - [ Max - 5M | Speed: 10K-30K/Day ] [ Stable ] [ Refill: 30 Days Button ] Start: 0-15 Min",
+            "category": "♛ SWP TRENDING: (Cheap to Cheap)🔥",
+            "price": 2.16,
+            "min": 20,
+            "max": 5000000,
+            "description": "✅ Max order: 5M\n✅ Very stable service\n✅ 30 Days Refill with button\n✅ Fast start time",
+            "avgTime": "15-60 minutes"
+        },
+        {
+            "id": 62,
+            "name": "TikTok Views - [ Speed: 1M/Day | Superfastest | Lifetime ] Instant🔥",
+            "category": "♛ SWP TRENDING: (Cheap to Cheap)🔥",
+            "price": 0.00,
+            "min": 100,
+            "max": 2100000000,
+            "description": "✅ Super Fast Delivery\n✅ Lifetime Guarantee\n✅ Instant Start\n✅ No Drop",
+            "avgTime": "Instant"
+        }
+    ]
+}

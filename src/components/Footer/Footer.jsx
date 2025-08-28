@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Footer.css';
 
 const Footer = () => {
@@ -44,11 +45,12 @@ const Footer = () => {
                 <div className="footer-section">
                   <h4 className="section-title">Quick Links</h4>
                   <ul className="footer-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/faq">Faq</a></li>
-                    <li><a href="/blogs">Blogs</a></li>
-                    <li><a href="/contact">Contact</a></li>
+                    <li><Link to="/">Home</Link></li>
+                    <li><Link to="/about">About</Link></li>
+                    <li><Link to="/faq">Faq</Link></li>
+                    <li><Link to="/blog">Blogs</Link></li>
+                    <li><Link to="/services">Services</Link></li>
+                    <li><Link to="/contact">Contact</Link></li>
                   </ul>
                 </div>
               </div>
@@ -58,11 +60,11 @@ const Footer = () => {
                 <div className="footer-section">
                   <h4 className="section-title">Company Policy</h4>
                   <ul className="footer-links">
-                    <li><a href="/api-docs">Api Docs</a></li>
-                    <li><a href="/privacy">Privacy & Policy</a></li>
-                    <li><a href="/terms">Terms and Conditions</a></li>
-                    <li><a href="/refund">Refund Policy</a></li>
-                    <li><a href="/cookies">Cookie Policy</a></li>
+                    <li><Link to="/api-docs">Api Docs</Link></li>
+                    <li><Link to="/privacy">Privacy & Policy</Link></li>
+                    <li><Link to="/terms">Terms and Conditions</Link></li>
+                    <li><Link to="/refund">Refund Policy</Link></li>
+                    <li><Link to="/cookies">Cookie Policy</Link></li>
                   </ul>
                 </div>
               </div>
