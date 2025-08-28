@@ -1,0 +1,97 @@
+/* Services Page Styles */
+.banner-section {
+  position: relative;
+  padding: 100px 0;
+  color: white;
+  overflow: hidden;
+}
+
+.bg-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  z-index: -1;
+}
+
+.bg-img-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(21, 34, 53, 0.95) 0%, rgba(21, 34, 53, 0.8) 50%, rgba(21, 34, 53, 0.6) 100%);
+}
+
+.banner-section-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.breadcrumb-area h3 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.breadcrumb {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  background: transparent;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.breadcrumb-item a {
+  color: #9665fd;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-item a:hover {
+  color: #fff;
+}
+
+.breadcrumb-item a i {
+  margin-right: 8px;
+}
+
+.breadcrumb-item + .breadcrumb-item {
+  padding-left: 10px;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: '/';
+  padding-right: 10px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.breadcrumb-item.active {
+  color: #fff;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .banner-section {
+    padding: 70px 0;
+  }
+  
+  .breadcrumb-area h3 {
+    font-size: 28px;
+  }
+  
+  .breadcrumb-item {
+    font-size: 14px;
+  }
+}
