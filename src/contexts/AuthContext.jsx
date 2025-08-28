@@ -43,6 +43,9 @@ export function AuthProvider({ children }) {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        // Always ensure loading is set to false when auth state changes
+        setLoading(false);
+        
         if (session?.user) {
           setUser(session.user);
           
@@ -57,7 +60,6 @@ export function AuthProvider({ children }) {
         } else {
           setUser(null);
         }
-        setLoading(false);
       }
     );
 

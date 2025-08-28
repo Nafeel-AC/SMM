@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './LoginPage.css';
@@ -9,13 +9,20 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { signInWithEmail, signInWithOAuth, loading: authLoading } = useAuth();
+  const { signInWithEmail, signInWithOAuth, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // If user is already logged in, redirect to dashboard
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   // Background image
   const bgImage = '/src/assets/hero-image.jpg'; // Update this path to your actual image
@@ -39,9 +46,8 @@ const LoginPage = () => {
       return;
     }
     
-    // User is logged in successfully, redirect to dashboard
-    navigate('/dashboard');
-    setLoading(false);
+    // User is logged in successfully, the redirect will be handled by AuthContext
+    // We don't set loading to false here because we're navigating away
   };
 
   // Handle Google authentication
@@ -56,7 +62,7 @@ const LoginPage = () => {
       setLoading(false);
     }
     
-    // The redirect happens automatically through Supabase
+    // The OAuth redirect happens automatically, no need to manage loading state further
   };
 
   // Toggle password visibility
@@ -150,9 +156,9 @@ const LoginPage = () => {
               <button 
                 type="submit" 
                 className="login-button"
-                disabled={loading || authLoading}
+                disabled={loading}
               >
-                {(loading || authLoading) ? (
+                {loading ? (
                   <>
                     <span className="loading-spinner"></span>
                     <span>Logging in...</span>
