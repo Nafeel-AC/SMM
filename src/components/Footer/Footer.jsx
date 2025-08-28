@@ -80,7 +80,7 @@ const Footer = () => {
                       placeholder="Your Email Address" 
                       className="email-input"
                     />
-                    <button className="submit-btn">
+                    <button className="newsletter-submit-btn">
                       <i className="fas fa-paper-plane"></i>
                     </button>
                   </div>

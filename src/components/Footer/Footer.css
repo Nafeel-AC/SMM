@@ -265,7 +265,7 @@
   font-weight: 400;
 }
 
-.submit-btn {
+.newsletter-submit-btn {
   width: 48px;
   height: 100%;
   background: #8b5cf6;
@@ -281,12 +281,12 @@
   min-width: 48px;
 }
 
-.submit-btn:hover {
+.newsletter-submit-btn:hover {
   background: #8b5cf6;
   transform: scale(1.05);
 }
 
-.submit-btn i {
+.newsletter-submit-btn i {
   font-size: 15px;
 }
 
