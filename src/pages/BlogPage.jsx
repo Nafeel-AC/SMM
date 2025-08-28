@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import BlogSection from '../components/BlogSection';
+import { BlogProvider } from '../contexts/BlogContext';
 import './BlogPage.css';
 
 const BlogPage = () => {
@@ -8,7 +9,9 @@ const BlogPage = () => {
     <>
       <Navbar />
       <div className="blog-page">
-        <BlogSection />
+        <BlogProvider>
+          <BlogSection />
+        </BlogProvider>
       </div>
     </>
   );

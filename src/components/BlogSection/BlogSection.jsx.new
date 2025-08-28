@@ -1,0 +1,63 @@
+import React, { useState, useEffect } from 'react';
+import './BlogSection.css';
+import { useBlog } from '../../contexts/BlogContext';
+import BlogFilter from './BlogFilter';
+import BlogList from './BlogList';
+
+const BlogSection = () => {
+  const { blogs, categories, loading, error } = useBlog();
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filter blogs by category and search term
+  useEffect(() => {
+    if (!blogs) return;
+    
+    let filtered = blogs;
+    
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(blog => blog.category === selectedCategory);
+    }
+    
+    if (searchTerm) {
+      filtered = filtered.filter(blog => 
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        blog.author.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    setFilteredBlogs(filtered);
+  }, [selectedCategory, searchTerm, blogs]);
+
+  return (
+    <section className="blog-section" id="blogs">
+      <div className="container">
+        <div className="section-heading text-center">
+          <h6 className="section-subtitle">OUR BLOG</h6>
+          <h2 className="section-title">Latest Articles & News</h2>
+          <p className="section-description">
+            Stay up-to-date with the latest trends, strategies, and insights in social media marketing
+          </p>
+        </div>
+
+        <BlogFilter 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
+
+        <BlogList 
+          blogs={filteredBlogs}
+          loading={loading}
+          error={error}
+        />
+      </div>
+    </section>
+  );
+};
+
+export default BlogSection;

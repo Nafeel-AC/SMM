@@ -91,8 +91,8 @@ const Navbar = () => {
                      </li>
               <li className="nav-item">
                 <Link 
-                  className={`nav-link text-uppercase ${location.pathname === '/blogs' ? 'active' : ''}`} 
-                  to="/blogs"
+                  className={`nav-link text-uppercase ${location.pathname === '/blog' ? 'active' : ''}`} 
+                  to="/blog"
                 >
                   Blogs
                 </Link>

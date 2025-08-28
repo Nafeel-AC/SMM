@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import './BlogSection.css';
-import blogData from './data.json';
-import BlogCard from './BlogCard';
+import { useBlog } from '../../contexts/BlogContext';
+import BlogFilter from './BlogFilter';
+import BlogList from './BlogList';
+import Footer from '../Footer/Footer';
 
 const BlogSection = () => {
-  const [blogs, setBlogs] = useState([]);
+  const { blogs, categories, loading, error } = useBlog();
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    setBlogs(blogData.blogs);
-    setFilteredBlogs(blogData.blogs);
-  }, []);
-
-  // Get unique categories
-  const categories = ['All', ...new Set(blogs.map(blog => blog.category))];
-
   // Filter blogs by category and search term
   useEffect(() => {
+    if (!blogs) return;
+    
     let filtered = blogs;
     
     if (selectedCategory !== 'All') {
@@ -36,73 +32,63 @@ const BlogSection = () => {
     setFilteredBlogs(filtered);
   }, [selectedCategory, searchTerm, blogs]);
 
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
   return (
-    <section className="blog-section" id="blogs">
-      <div className="container">
-        <div className="section-heading text-center">
-          <h6 className="section-subtitle">{blogData.sectionTitle}</h6>
-          <h2 className="section-title">{blogData.mainTitle}</h2>
-          <p className="section-description">{blogData.description}</p>
-        </div>
-
-        {/* Search and Filter Controls */}
-        <div className="blog-controls">
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Search blogs..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
-            <i className="fas fa-search search-icon"></i>
+    <>
+      <section className="blog-section" id="blogs">
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <div className="section-header text-center mb-50">
+                <span className="section-subtitle">OUR BLOGS</span>
+                <h3 className="section-title mx-auto">our news &amp; blogs</h3>
+                <p className="cmn-para-text mx-auto mt-20">
+                  Welcome to our dynamic world of insights and information! Our Blogs section is your gateway 
+                  to staying informed, discovering industry trends, and gaining valuable knowledge to propel 
+                  your business forward.
+                </p>
+              </div>
+            </div>
           </div>
+
+          <BlogFilter 
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
+
+          <BlogList 
+            blogs={filteredBlogs}
+            loading={loading}
+            error={error}
+          />
           
-          <div className="category-filters">
-            {categories.map((category, index) => (
-              <button
-                key={index}
-                className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
-                onClick={() => handleCategoryChange(category)}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Blog Grid */}
-        <div className="blog-grid">
-          {filteredBlogs.length > 0 ? (
-            filteredBlogs.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
-            ))
-          ) : (
-            <div className="no-results">
-              <h3>No blogs found</h3>
-              <p>Try adjusting your search or filter criteria.</p>
+          {filteredBlogs.length > 6 && (
+            <div className="pagination-section">
+              <nav>
+                <ul className="pagination">
+                  <li className="page-item">
+                    <a className="page-link" href="#" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li className="page-item active"><a className="page-link" href="#">1</a></li>
+                  <li className="page-item"><a className="page-link" href="#">2</a></li>
+                  <li className="page-item"><a className="page-link" href="#">3</a></li>
+                  <li className="page-item">
+                    <a className="page-link" href="#" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           )}
         </div>
-
-        {/* Load More Button */}
-        {filteredBlogs.length > 0 && (
-          <div className="text-center mt-5">
-            <button className="load-more-btn">
-              Load More Blogs
-            </button>
-          </div>
-        )}
-      </div>
-    </section>
+      </section>
+      <Footer />
+    </>
   );
 };
 
