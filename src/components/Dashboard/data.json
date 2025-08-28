@@ -1,0 +1,265 @@
+{
+    "balance": {
+        "amount": 201659.48,
+        "currency": "USD"
+    },
+    "deposits": {
+        "weekly": 10,
+        "total": 203653.77,
+        "currency": "USD"
+    },
+    "orders": {
+        "processing": 264,
+        "confirmed": 0,
+        "canceled": 7
+    },
+    "supportTickets": {
+        "pending": 2,
+        "answered": 0,
+        "closed": 6
+    },
+    "depositStats": [
+        {
+            "month": "Jan",
+            "amount": 20
+        },
+        {
+            "month": "Feb",
+            "amount": 201140.3
+        },
+        {
+            "month": "Mar",
+            "amount": 1160
+        },
+        {
+            "month": "Apr",
+            "amount": 10.1
+        },
+        {
+            "month": "May",
+            "amount": 10.1
+        },
+        {
+            "month": "Jun",
+            "amount": 1033.07
+        },
+        {
+            "month": "Jul",
+            "amount": 240.3
+        },
+        {
+            "month": "Aug",
+            "amount": 40
+        },
+        {
+            "month": "Sep",
+            "amount": 0
+        },
+        {
+            "month": "Oct",
+            "amount": 0
+        },
+        {
+            "month": "Nov",
+            "amount": 0
+        },
+        {
+            "month": "Dec",
+            "amount": 0
+        }
+    ],
+    "transactionStats": {
+        "deposits": [
+            {
+                "month": "Jan",
+                "amount": 77.3
+            },
+            {
+                "month": "Feb",
+                "amount": 201465.09
+            },
+            {
+                "month": "Mar",
+                "amount": 3818.91
+            },
+            {
+                "month": "Apr",
+                "amount": 2960.62
+            },
+            {
+                "month": "May",
+                "amount": 234.05
+            },
+            {
+                "month": "Jun",
+                "amount": 682.69
+            },
+            {
+                "month": "Jul",
+                "amount": 474.04
+            },
+            {
+                "month": "Aug",
+                "amount": 113.94
+            },
+            {
+                "month": "Sep",
+                "amount": 0
+            },
+            {
+                "month": "Oct",
+                "amount": 0
+            },
+            {
+                "month": "Nov",
+                "amount": 0
+            },
+            {
+                "month": "Dec",
+                "amount": 0
+            }
+        ],
+        "transactions": [
+            {
+                "month": "Jan",
+                "amount": 67.3
+            },
+            {
+                "month": "Feb",
+                "amount": 345.09
+            },
+            {
+                "month": "Mar",
+                "amount": 3788.91
+            },
+            {
+                "month": "Apr",
+                "amount": 2950.62
+            },
+            {
+                "month": "May",
+                "amount": 224.05
+            },
+            {
+                "month": "Jun",
+                "amount": 682.69
+            },
+            {
+                "month": "Jul",
+                "amount": 364.04
+            },
+            {
+                "month": "Aug",
+                "amount": 113.94
+            },
+            {
+                "month": "Sep",
+                "amount": 0
+            },
+            {
+                "month": "Oct",
+                "amount": 0
+            },
+            {
+                "month": "Nov",
+                "amount": 0
+            },
+            {
+                "month": "Dec",
+                "amount": 0
+            }
+        ],
+        "received": [
+            {
+                "month": "Jan",
+                "amount": 10
+            },
+            {
+                "month": "Feb",
+                "amount": 201120
+            },
+            {
+                "month": "Mar",
+                "amount": 30
+            },
+            {
+                "month": "Apr",
+                "amount": 10
+            },
+            {
+                "month": "May",
+                "amount": 10
+            },
+            {
+                "month": "Jun",
+                "amount": 0
+            },
+            {
+                "month": "Jul",
+                "amount": 110
+            },
+            {
+                "month": "Aug",
+                "amount": 0
+            },
+            {
+                "month": "Sep",
+                "amount": 0
+            },
+            {
+                "month": "Oct",
+                "amount": 0
+            },
+            {
+                "month": "Nov",
+                "amount": 0
+            },
+            {
+                "month": "Dec",
+                "amount": 0
+            }
+        ]
+    },
+    "latestTransactions": [
+        {
+            "id": "D55919899419",
+            "amount": 10,
+            "currency": "USD",
+            "type": "deposit",
+            "remarks": "Deposit Via Stripe",
+            "date": "2025/01/05"
+        },
+        {
+            "id": "T55919899420",
+            "amount": -1.29,
+            "currency": "USD",
+            "type": "order",
+            "remarks": "Place order",
+            "date": "2025/01/05"
+        },
+        {
+            "id": "T55919899421",
+            "amount": -10.2,
+            "currency": "USD",
+            "type": "order",
+            "remarks": "Place order",
+            "date": "2025/01/05"
+        },
+        {
+            "id": "T55919899422",
+            "amount": -2.16,
+            "currency": "USD",
+            "type": "order",
+            "remarks": "Place order",
+            "date": "2025/01/05"
+        },
+        {
+            "id": "T55919899423",
+            "amount": -2.9,
+            "currency": "USD",
+            "type": "order",
+            "remarks": "Place order",
+            "date": "2025/01/06"
+        }
+    ]
+}

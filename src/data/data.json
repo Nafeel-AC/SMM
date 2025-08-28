@@ -1,0 +1,140 @@
+{
+    "balance": {
+        "amount": 1250.75,
+        "lastUpdated": "Today, 12:30 PM"
+    },
+    "deposit": {
+        "total": 7890.50,
+        "thisWeek": 450.25
+    },
+    "orders": {
+        "total": 145,
+        "processing": 12,
+        "confirmed": 128,
+        "cancelled": 5
+    },
+    "supportTickets": {
+        "total": 24,
+        "pending": 8,
+        "answered": 12,
+        "closed": 4
+    },
+    "monthlyDeposits": [
+        {
+            "month": "Jan",
+            "amount": 1200
+        },
+        {
+            "month": "Feb",
+            "amount": 1900
+        },
+        {
+            "month": "Mar",
+            "amount": 1500
+        },
+        {
+            "month": "Apr",
+            "amount": 2100
+        },
+        {
+            "month": "May",
+            "amount": 1800
+        },
+        {
+            "month": "Jun",
+            "amount": 2400
+        },
+        {
+            "month": "Jul",
+            "amount": 2200
+        },
+        {
+            "month": "Aug",
+            "amount": 2600
+        },
+        {
+            "month": "Sep",
+            "amount": 2300
+        },
+        {
+            "month": "Oct",
+            "amount": 2700
+        },
+        {
+            "month": "Nov",
+            "amount": 2500
+        },
+        {
+            "month": "Dec",
+            "amount": 3000
+        }
+    ],
+    "transactionStats": [
+        {
+            "type": "Deposit",
+            "count": 245
+        },
+        {
+            "type": "Withdrawal",
+            "count": 132
+        },
+        {
+            "type": "Purchase",
+            "count": 310
+        },
+        {
+            "type": "Refund",
+            "count": 45
+        }
+    ],
+    "latestTransactions": [
+        {
+            "id": "TRX-1234",
+            "date": "2023-09-10",
+            "description": "Deposit via PayPal",
+            "amount": 250.00,
+            "type": "deposit",
+            "status": "completed"
+        },
+        {
+            "id": "TRX-1235",
+            "date": "2023-09-09",
+            "description": "Purchase of Instagram Followers",
+            "amount": 49.99,
+            "type": "purchase",
+            "status": "completed"
+        },
+        {
+            "id": "TRX-1236",
+            "date": "2023-09-08",
+            "description": "Withdrawal to Bank Account",
+            "amount": 150.00,
+            "type": "withdrawal",
+            "status": "pending"
+        },
+        {
+            "id": "TRX-1237",
+            "date": "2023-09-07",
+            "description": "Purchase of Facebook Likes",
+            "amount": 29.99,
+            "type": "purchase",
+            "status": "completed"
+        },
+        {
+            "id": "TRX-1238",
+            "date": "2023-09-06",
+            "description": "Deposit via Credit Card",
+            "amount": 100.00,
+            "type": "deposit",
+            "status": "completed"
+        },
+        {
+            "id": "TRX-1239",
+            "date": "2023-09-05",
+            "description": "Purchase of Twitter Retweets",
+            "amount": 19.99,
+            "type": "purchase",
+            "status": "failed"
+        }
+    ]
+}
