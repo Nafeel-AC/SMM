@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import './RegisterPage.css';
+import '../LoginPage/LoginPage.css';
 import heroImage from '../../assets/hero-image.jpg';
 
 const RegisterPage = () => {
