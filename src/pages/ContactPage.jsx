@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ContactPage.css';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -168,12 +168,13 @@ const ContactPage = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };
 
 export default ContactPage;
+
+
 
 
 

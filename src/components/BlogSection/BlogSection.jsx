@@ -3,7 +3,7 @@ import './BlogSection.css';
 import { useBlog } from '../../contexts/BlogContext';
 import BlogFilter from './BlogFilter';
 import BlogList from './BlogList';
-import Footer from '../Footer/Footer';
+
 
 const BlogSection = () => {
   const { blogs, categories, loading, error } = useBlog();
@@ -87,7 +87,6 @@ const BlogSection = () => {
           )}
         </div>
       </section>
-      <Footer />
     </>
   );
 };

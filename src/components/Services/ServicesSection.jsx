@@ -69,8 +69,15 @@ const ServicesSection = () => {
             </div>
           </div>
           <div className="row g-4">
-            {data.services.map(service => (
-              <div className="col-lg-4 col-md-6 cmn-box-item" key={service.id}>
+            {data.services.map((service, index) => (
+              <div 
+                className="col-lg-4 cmn-box-item" 
+                key={service.id}
+                style={{ 
+                  animationDelay: `${index * 0.1}s`,
+                  animation: 'fadeInUp 0.6s ease-out forwards'
+                }}
+              >
                 <div className="cmn-box">
                   <div className="icon-area">
                     {React.createElement(IconComponents[service.icon] || IconComponents.rocket)}
