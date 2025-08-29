@@ -69,10 +69,24 @@
 
 .feature-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 15px;
 }
 
+/* Ensure any icon (check or arrow) aligns perfectly */
+.feature-item i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+/* Keep checkmark specific style compatible */
 .checkmark-icon {
   width: 24px;
   height: 24px;
@@ -82,7 +96,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .checkmark-icon i {
