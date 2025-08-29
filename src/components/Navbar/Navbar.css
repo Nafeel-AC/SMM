@@ -276,3 +276,10 @@
     display: none;
   }
 }
+
+/* Slightly raise the desktop login button for better alignment */
+@media (min-width: 992px) {
+  .nav-right .login-btn {
+    transform: translateY(-8px);
+  }
+}
