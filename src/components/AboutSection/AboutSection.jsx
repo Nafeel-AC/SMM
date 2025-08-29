@@ -1,6 +1,8 @@
 import React from 'react';
 import './AboutSection.css';
 import data from './data.json';
+import about1Image from '../../assets/about-1.jpg';
+import about2Image from '../../assets/about-2.jpg';
 
 // SVG icons for the feature items
 const IconComponents = {
@@ -37,14 +39,14 @@ const AboutSection = () => {
           <div className="row g-5 align-items-center">
             <div className="col-lg-6 order-2 order-lg-1">
               <div className="about-content">
-                <span className="section-subtitle">{data.sectionTitle}</span>
-                <h2 className="section-title">{data.mainTitle}</h2>
+                <span className="section-subtitle">{data.title}</span>
+                <h2 className="section-title">{data.subtitle}</h2>
                 <p>{data.description}</p>
                 <ul className="item-list-container">
-                  {data.features.map(feature => (
-                    <li className="cmn-box4" key={feature.id}>
+                  {data.features.map((feature, index) => (
+                    <li className="cmn-box4" key={index}>
                       <div className="icon-box">
-                        {IconComponents[feature.icon] ? React.createElement(IconComponents[feature.icon]) : <i className="fa-regular fa-chart-line-up"></i>}
+                        <i className={feature.icon}></i>
                       </div>
                       <div className="item-content">
                         <h5>{feature.title}</h5>
@@ -63,10 +65,10 @@ const AboutSection = () => {
             <div className="col-lg-6 order-1 order-lg-2">
               <div className="about-image-area rotate-group-images">
                 <figure className="img1">
-                  <img src={data.images.main} alt="About Our Company" />
+                  <img src={about2Image} alt="About Our Company" />
                 </figure>
                 <figure className="img2">
-                  <img src={data.images.secondary} alt="Our Team" />
+                  <img src={about1Image} alt="Our Team" />
                 </figure>
               </div>
             </div>

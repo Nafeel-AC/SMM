@@ -1,181 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './LoginPage.css';
-
-// Import icons
-import { FcGoogle } from 'react-icons/fc';
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import heroImage from '../../assets/hero-image.jpg';
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-  const { signInWithEmail, signInWithOAuth, user } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  // If user is already logged in, redirect to dashboard
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  // Background image
-  const bgImage = '/src/assets/hero-image.jpg'; // Update this path to your actual image
-
-  // Handle form submission for email/password login
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    
-    if (!email || !password) {
-      setError('Please enter both email and password');
-      return;
-    }
-    
     setLoading(true);
-    const { error } = await signInWithEmail(email, password);
-    
-    if (error) {
-      setError(error.message || 'Failed to login. Please try again.');
-      setLoading(false);
-      return;
-    }
-    
-    // User is logged in successfully, the redirect will be handled by AuthContext
-    // We don't set loading to false here because we're navigating away
-  };
+    setError('');
 
-  // Handle Google authentication
-  const handleGoogleLogin = async () => {
-    setError(null);
-    setLoading(true);
-    
-    const { error } = await signInWithOAuth('google');
-    
-    if (error) {
-      setError('Failed to login with Google. Please try again.');
+    try {
+      await login(formData.email, formData.password);
+      navigate('/dashboard');
+    } catch (error) {
+      setError('Failed to login. Please check your credentials.');
+    } finally {
       setLoading(false);
     }
-    
-    // The OAuth redirect happens automatically, no need to manage loading state further
-  };
-
-  // Toggle password visibility
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
-    <section className="login-page" style={{ backgroundImage: `url(${bgImage})` }}>
-      <div className="container">
-        <div className="login-form-container">
-          <div className="login-form">
-            <div className="section-header">
-              <h3>WELCOME BACK!</h3>
-              <div className="description">
-                Enter your details to sign in to your account
-              </div>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-form-section">
+          <div className="form-container">
+            <div className="form-header">
+              <h1>Welcome Back</h1>
+              <p>Sign in to your account to continue</p>
             </div>
-            
-            {/* Social login options */}
-            <div className="social-login-buttons">
-              <button 
-                className="social-btn" 
-                onClick={handleGoogleLogin}
-                disabled={loading}
-              >
-                <FcGoogle size={20} />
-                Google
-              </button>
-            </div>
-            
-            <div className="divider">OR CONTINUE WITH EMAIL</div>
-            
-            {/* Error message */}
+
             {error && <div className="error-message">{error}</div>}
-            
-            {/* Login form */}
-            <form onSubmit={handleSubmit}>
+
+            <form onSubmit={handleSubmit} className="login-form">
               <div className="form-group">
-                <label htmlFor="email" className="form-label">Email</label>
+                <label htmlFor="email">Email Address</label>
                 <input
                   type="email"
                   id="email"
-                  className="form-control"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   required
+                  placeholder="Enter your email"
                 />
               </div>
-              
+
               <div className="form-group">
-                <label htmlFor="password" className="form-label">Password</label>
-                <div className="password-field">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    className="form-control"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <button 
-                    type="button"
-                    className="password-toggle" 
-                    onClick={togglePasswordVisibility}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-                  </button>
-                </div>
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter your password"
+                />
               </div>
-              
-              <div className="form-check">
-                <div className="remember-me">
-                  <input
-                    type="checkbox"
-                    id="remember-me"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                  />
-                  <label htmlFor="remember-me">Remember me</label>
-                </div>
-                
-                <Link to="/forgot-password" className="forgot-password">
-                  Forgot password?
-                </Link>
-              </div>
-              
-              <button 
-                type="submit" 
-                className="login-button"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span className="loading-spinner"></span>
-                    <span>Logging in...</span>
-                  </>
-                ) : (
-                  'Log In'
-                )}
+
+              <button type="submit" className="login-btn" disabled={loading}>
+                {loading ? 'Signing In...' : 'Sign In'}
               </button>
-              
-              <div className="signup-link">
-                Don't have an account? <Link to="/register">Create an account</Link>
-              </div>
             </form>
+
+            <div className="form-footer">
+              <p>
+                Don't have an account? <Link to="/register">Sign up here</Link>
+              </p>
+              <p>
+                <Link to="/forgot-password">Forgot your password?</Link>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="login-image-section" style={{ backgroundImage: `url(${heroImage})` }}>
+          <div className="image-overlay">
+            <div className="overlay-content">
+              <h2>SMM Matrix</h2>
+              <p>Empowering businesses through strategic social media marketing</p>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
