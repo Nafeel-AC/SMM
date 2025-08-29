@@ -159,7 +159,7 @@
 
 .faq-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 30px;
   max-width: 1200px;
   margin: 0 auto;
@@ -172,6 +172,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
   border: 1px solid #f1f5f9;
   transition: all 0.3s ease;
+  text-align: center !important;
 }
 
 .faq-item:hover {
@@ -322,6 +323,7 @@
   
   .faq-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
   
   .testimonials-grid {
@@ -367,6 +369,15 @@
   
   .faq-item {
     padding: 25px 20px;
+    text-align: center !important;
+  }
+  
+  .faq-question {
+    text-align: center !important;
+  }
+  
+  .faq-answer {
+    text-align: center !important;
   }
   
   .testimonial-card {
