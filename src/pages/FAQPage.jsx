@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './FAQPage.css';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 
 const FAQPage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -82,7 +82,6 @@ const FAQPage = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };

@@ -10,7 +10,7 @@ import WhyChooseUs from '../components/WhyChooseUs';
 import PricingSection from '../components/PricingSection';
 import FeaturedInSection from '../components/FeaturedInSection';
 import ClientReviews from '../components/ClientReviews';
-import Footer from '../components/Footer';
+
 
 const HomePage = () => {
   const { user, loading } = useAuth();
@@ -35,7 +35,6 @@ const HomePage = () => {
       <PricingSection />
       <FeaturedInSection />
       <ClientReviews />
-      <Footer />
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import './AboutPage.css';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 
 const AboutPage = () => {
   return (
@@ -226,7 +226,6 @@ const AboutPage = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 };
