@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import FeatureSection from '../components/FeatureSection';
 import AboutSection from '../components/AboutSection';
-import ServicesSection from '../components/Services';
+import WorkSection from '../components/Work';
 import WhyChooseUs from '../components/WhyChooseUs';
 import PricingSection from '../components/PricingSection';
 import FeaturedInSection from '../components/FeaturedInSection';
@@ -30,7 +30,7 @@ const HomePage = () => {
       <HeroSection />
       <FeatureSection />
       <AboutSection />
-      <ServicesSection />
+      <WorkSection />
       <WhyChooseUs />
       <PricingSection />
       <FeaturedInSection />
