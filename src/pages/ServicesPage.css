@@ -1,97 +1,571 @@
 /* Services Page Styles */
-.banner-section {
+.services-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Hero Section */
+.hero-section {
   position: relative;
-  padding: 100px 0;
+  padding: 120px 0 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   overflow: hidden;
 }
 
-.bg-img-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  z-index: -1;
-}
-
-.bg-img-overlay::before {
+.hero-section::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(21, 34, 53, 0.95) 0%, rgba(21, 34, 53, 0.8) 50%, rgba(21, 34, 53, 0.6) 100%);
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>') no-repeat;
+  background-size: cover;
+  opacity: 0.3;
 }
 
-.banner-section-inner {
+.hero-content {
+  text-align: center;
   position: relative;
-  z-index: 1;
-}
-
-.breadcrumb-area h3 {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: white;
+  z-index: 2;
 }
 
 .breadcrumb {
   display: flex;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  background: transparent;
-}
-
-.breadcrumb-item {
-  display: flex;
   align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
   font-size: 16px;
 }
 
-.breadcrumb-item a {
-  color: #9665fd;
+.breadcrumb-link {
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
+  transition: color 0.3s ease;
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
-.breadcrumb-item a:hover {
-  color: #fff;
+.breadcrumb-link:hover {
+  color: white;
 }
 
-.breadcrumb-item a i {
-  margin-right: 8px;
-}
-
-.breadcrumb-item + .breadcrumb-item {
-  padding-left: 10px;
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-  content: '/';
-  padding-right: 10px;
+.breadcrumb-separator {
+  margin: 0 15px;
   color: rgba(255, 255, 255, 0.5);
 }
 
-.breadcrumb-item.active {
-  color: #fff;
+.breadcrumb-current {
+  color: white;
+  font-weight: 600;
 }
 
-/* Responsive styles */
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  background: linear-gradient(45deg, #fff, #f0f0f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Service Tabs Section */
+.service-tabs-section {
+  background: white;
+  padding: 40px 0;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 30px;
+  border: 2px solid #e1e5e9;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  text-align: center;
+}
+
+.tab-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.tab-button.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+}
+
+.tab-icon {
+  font-size: 2rem;
+}
+
+.tab-text {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Service Content Section */
+.service-content-section {
+  background: #f8f9fa;
+  padding: 80px 0;
+  min-height: 600px;
+}
+
+.service-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.service-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.service-description {
+  font-size: 1.25rem;
+  color: #718096;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Search and Filter */
+.search-filter-container {
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-box {
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0aec0;
+  font-size: 18px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 18px 20px 18px 50px;
+  border: 2px solid #e2e8f0;
+  border-radius: 25px;
+  font-size: 16px;
+  background: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Services Grid - FIXED LAYOUT */
+.services-grid {
+  display: grid;
+  /* FIXED: Changed from minmax(350px, 1fr) to minmax(280px, 1fr) for better responsive layout */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 80px;
+  /* DEBUG: Add border to see grid container */
+  border: 2px dashed #ff6b6b;
+  padding: 20px;
+}
+
+/* DEBUG: Show grid lines and card boundaries */
+.service-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  position: relative;
+  border: 2px solid transparent;
+  /* DEBUG: Add border to see card boundaries */
+  border: 2px solid #4ecdc4;
+  /* DEBUG: Add min-height to ensure consistent card heights */
+  min-height: 400px;
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
+}
+
+.service-card.popular {
+  border-color: #667eea;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -15px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.service-card-header {
+  margin-bottom: 25px;
+}
+
+.service-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 12px;
+}
+
+.service-description-text {
+  color: #718096;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.service-features {
+  margin-bottom: 30px;
+}
+
+.service-features h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 15px;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: #4a5568;
+}
+
+.feature-icon {
+  color: #48bb78;
+  font-size: 14px;
+}
+
+.service-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  /* DEBUG: Position footer at bottom of card */
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  right: 30px;
+}
+
+.service-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.get-started-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.get-started-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Call to Action Section */
+.cta-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 60px 40px;
+  text-align: center;
+  color: white;
+  margin-top: 60px;
+}
+
+.cta-content h3 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.cta-content p {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 40px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-primary-btn {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cta-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.cta-secondary-btn {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 16px 32px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cta-secondary-btn:hover {
+  background: white;
+  color: #667eea;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .services-grid {
+    /* DEBUG: Show 3 columns on large screens */
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .services-grid {
+    /* DEBUG: Show 2 columns on medium screens */
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
-  .banner-section {
-    padding: 70px 0;
+  .hero-title {
+    font-size: 2.5rem;
   }
   
-  .breadcrumb-area h3 {
-    font-size: 28px;
+  .hero-subtitle {
+    font-size: 1.1rem;
   }
   
-  .breadcrumb-item {
-    font-size: 14px;
+  .tabs-container {
+    gap: 15px;
   }
+  
+  .tab-button {
+    min-width: 120px;
+    padding: 15px 20px;
+  }
+  
+  .service-title {
+    font-size: 2rem;
+  }
+  
+  .services-grid {
+    /* DEBUG: Show 1 column on small screens */
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .service-card {
+    padding: 25px;
+  }
+  
+  .cta-section {
+    padding: 40px 20px;
+  }
+  
+  .cta-content h3 {
+    font-size: 2rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cta-primary-btn,
+  .cta-secondary-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 80px 0 60px;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .tab-button {
+    min-width: 100px;
+    padding: 12px 15px;
+  }
+  
+  .tab-icon {
+    font-size: 1.5rem;
+  }
+  
+  .tab-text {
+    font-size: 12px;
+  }
+  
+  .service-content-section {
+    padding: 60px 0;
+  }
+  
+  .search-input {
+    padding: 15px 20px 15px 45px;
+  }
+  
+  .service-card {
+    padding: 20px;
+  }
+}
+
+/* Animation Classes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.service-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.service-card:nth-child(1) { animation-delay: 0.1s; }
+.service-card:nth-child(2) { animation-delay: 0.2s; }
+.service-card:nth-child(3) { animation-delay: 0.3s; }
+.service-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Hover Effects */
+.tab-button:hover .tab-icon {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.search-input:focus + .search-icon {
+  color: #667eea;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* DEBUG: Add console log styles */
+.services-grid::before {
+  content: 'Grid Container - Debug Mode Active';
+  display: block;
+  background: #ff6b6b;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.service-card::before {
+  content: 'Card Debug';
+  display: block;
+  background: #4ecdc4;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 3px;
+  margin-bottom: 15px;
 }

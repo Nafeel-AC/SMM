@@ -1,31 +1,43 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import ServiceSection from '../components/ServiceSection';
-import './ServicesPage.css';
 
 const ServicesPage = () => {
+  // BASIC TEST - This should definitely work
+  console.log('🚀 BASIC TEST - SERVICES PAGE LOADED');
+  
+  // Test alert to see if component is working at all
+  alert('Services Page is loading! Check console for logs.');
+  
   return (
-    <div className="services-page">
-      <div className="banner-section">
-        <div className="bg-img-overlay" style={{backgroundImage: 'url(https://smm-matrix.bugfinder.app/assets/upload/pagesImage/z6fQyUFhp8DfDHIpPuGFIIWMX9HMCL.avif)', backgroundPosition: 'center right', backgroundRepeat: 'no-repeat'}}></div>
-        <div className="banner-section-inner">
-            <div className="container">
-                <div className="row">
-                    <div className="col">
-                        <div className="breadcrumb-area">
-                            <h3>Services</h3>
-                            <ul className="breadcrumb">
-                                <li className="breadcrumb-item"><Link to="/"><i className="fas fa-home"></i> Home</Link></li>
-                                <li className="breadcrumb-item active" aria-current="page">Services</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-      </div>
+    <div style={{ padding: '50px', textAlign: 'center' }}>
+      <h1 style={{ color: 'red', fontSize: '48px' }}>🧪 TEST PAGE</h1>
+      <p style={{ fontSize: '24px', margin: '20px 0' }}>
+        If you see this, the component is working!
+      </p>
+      <button 
+        onClick={() => {
+          console.log('🔍 BUTTON CLICKED');
+          alert('Button clicked! Check console.');
+        }}
+        style={{
+          padding: '20px 40px',
+          fontSize: '20px',
+          background: 'blue',
+          color: 'white',
+          border: 'none',
+          borderRadius: '10px',
+          cursor: 'pointer'
+        }}
+      >
+        🔍 Test Button
+      </button>
       
-      <ServiceSection />
+      <div style={{ marginTop: '50px', padding: '20px', background: '#f0f0f0', borderRadius: '10px' }}>
+        <h3>Debug Information:</h3>
+        <p>Component rendered at: {new Date().toLocaleTimeString()}</p>
+        <p>User Agent: {navigator.userAgent}</p>
+        <p>Window Width: {window.innerWidth}px</p>
+        <p>Window Height: {window.innerHeight}px</p>
+      </div>
     </div>
   );
 };

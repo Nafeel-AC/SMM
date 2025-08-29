@@ -1,5 +1,5 @@
-import React from 'react';
-import './ServicesSection.css';
+import React, { useEffect } from 'react';
+import './WorkSection.css';
 import data from './data.json';
 import heroImage from '../../assets/hero-image.jpg';
 
@@ -33,34 +33,56 @@ const IconComponents = {
   ),
   email: () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21.2 8.4c.5.38.8.96.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"></path>
-      <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"></path>
+      <path d="M22 2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"></path>
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
     </svg>
   ),
   display: () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-      <line x1="8" x2="16" y1="21" y2="21"></line>
-      <line x1="12" x2="12" y1="17" y2="21"></line>
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+      <line x1="8" y1="21" x2="16" y2="21"></line>
+      <line x1="12" y1="17" x2="12" y2="21"></line>
     </svg>
   ),
-  content: () => (
+  file: () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-      <polyline points="17 21 17 13 7 13 7 21"></polyline>
-      <polyline points="7 3 7 8 15 8"></polyline>
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
     </svg>
   )
 };
 
-const ServicesSection = () => {
+const WorkSection = () => {
+  // DEBUG: Log when component mounts
+  useEffect(() => {
+    console.log('🚀 WORK SECTION MOUNTED');
+    console.log('Number of work items:', data.workItems.length);
+    console.log('Window width:', window.innerWidth);
+    
+    // Test grid layout after component mounts
+    setTimeout(() => {
+      const gridItems = document.querySelectorAll('.col-lg-4');
+      console.log('Grid items found:', gridItems.length);
+      
+      if (gridItems.length > 0) {
+        const firstItem = gridItems[0];
+        const computedStyle = window.getComputedStyle(firstItem);
+        console.log('First grid item styles:');
+        console.log('- Flex basis:', computedStyle.flexBasis);
+        console.log('- Max width:', computedStyle.maxWidth);
+        console.log('- Width:', firstItem.offsetWidth);
+        console.log('- Container width:', firstItem.parentElement.offsetWidth);
+      }
+    }, 100);
+  }, []);
+
   return (
-    <section className="services-section" id="services">
+    <section className="work-section" id="work">
       <div 
         className="bg-img-overlay" 
         style={{ backgroundImage: `url(${heroImage})` }}
       ></div>
-      <div className="services-section-inner">
+      <div className="work-section-inner">
         <div className="container">
           <div className="row">
             <div className="section-header">
@@ -70,10 +92,10 @@ const ServicesSection = () => {
             </div>
           </div>
           <div className="row g-4">
-            {data.services.map((service, index) => (
+            {data.workItems.map((workItem, index) => (
               <div 
                 className="col-lg-4 cmn-box-item" 
-                key={service.id}
+                key={workItem.id}
                 style={{ 
                   animationDelay: `${index * 0.1}s`,
                   animation: 'fadeInUp 0.6s ease-out forwards'
@@ -81,11 +103,11 @@ const ServicesSection = () => {
               >
                 <div className="cmn-box">
                   <div className="icon-area">
-                    {React.createElement(IconComponents[service.icon] || IconComponents.rocket)}
+                    {React.createElement(IconComponents[workItem.icon] || IconComponents.rocket)}
                   </div>
                   <div className="content-area">
-                    <h4 className="title">{service.title}</h4>
-                    <p>{service.description}</p>
+                    <h4 className="title">{workItem.title}</h4>
+                    <p>{workItem.description}</p>
                   </div>
                 </div>
               </div>
@@ -97,4 +119,4 @@ const ServicesSection = () => {
   );
 };
 
-export default ServicesSection;
+export default WorkSection;
