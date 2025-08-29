@@ -96,10 +96,9 @@
   background-color: #f8f9fa;
   border-radius: 12px;
   transition: all 0.3s ease;
-  min-height: 110px;
-  max-height: 110px;
+  min-height: auto;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .feature-item:hover {
@@ -202,8 +201,8 @@
   .feature-item {
     padding: 15px;
     gap: 12px;
-    min-height: 100px;
-    max-height: 100px;
+    min-height: auto;
+    max-height: none;
   }
   
   .feature-icon {
@@ -246,8 +245,8 @@
   .feature-item {
     padding: 12px;
     gap: 10px;
-    min-height: 90px;
-    max-height: 90px;
+    min-height: auto;
+    max-height: none;
   }
   
   .feature-icon {
