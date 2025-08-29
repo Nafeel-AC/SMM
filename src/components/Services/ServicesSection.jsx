@@ -1,6 +1,7 @@
 import React from 'react';
 import './ServicesSection.css';
 import data from './data.json';
+import heroImage from '../../assets/hero-image.jpg';
 
 // SVG icons for the service items
 const IconComponents = {
@@ -57,7 +58,7 @@ const ServicesSection = () => {
     <section className="services-section" id="services">
       <div 
         className="bg-img-overlay" 
-        style={{ backgroundImage: `url(${data.backgroundImage})` }}
+        style={{ backgroundImage: `url(${heroImage})` }}
       ></div>
       <div className="services-section-inner">
         <div className="container">

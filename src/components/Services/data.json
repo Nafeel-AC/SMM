@@ -2,7 +2,6 @@
     "sectionTitle": "our service",
     "mainTitle": "What Service Do We Have For Your Business",
     "description": "Welcome to SMM Matrix, where our mission is to empower businesses through a spectrum of digital services that enhance online presence, engage audiences, and drive results.",
-    "backgroundImage": "/src/assets/hero-image.jpg",
     "services": [
         {
             "id": 1,
