@@ -25,26 +25,17 @@ const HeroSection = () => {
           <div className="row g-xl-4 g-5 justify-content-between align-items-center">
             <div className="col-lg-6 order-2 order-lg-1">
               <div className="hero-content">
-                <span className="section-subtitle">We Are SMM Matrix</span>
+                {/* <span className="section-subtitle">We Are SMM Matrix</span> */}
                 <h1 className="hero-title">
-                  We Will Help You To Grow Your Business
+                  Glowup Agency helps YOUR brand shine & grow on Instagram
                 </h1>
-                <p className="hero-description">
+                {/* <p className="hero-description">
                   Our expertise spans across all major social media platforms including Facebook, Twitter, LinkedIn, and TikTok
-                </p>
+                </p> */}
 
                 <div className="btn-area">
                   <a href="/" className="cmn-btn">Get Started</a>
-                  <div className="video-area">
-                    <a 
-                      data-fancybox 
-                      href="https://www.youtube.com/watch?v=XWZ4GUuunVE" 
-                      className="video-play-btn"
-                    >
-                      <i className="fas fa-play"></i>
-                    </a>
-                    <span className="watch-text">WATCH VIDEO</span>
-                  </div>
+                  <a href="/" className="chat-btn">Chat with us</a>
                 </div>
               </div>
             </div>

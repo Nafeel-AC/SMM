@@ -51,7 +51,7 @@ const Navbar = () => {
             <ul className="navbar-nav m-auto">
               <li className="nav-item">
                 <Link 
-                  className={`nav-link text-uppercase ${location.pathname === '/' ? 'active' : ''}`} 
+                  className={`nav-link text-uppercase ${location.pathname === '/' && !location.hash ? 'active' : ''}`} 
                   to="/"
                 >
                   Home
@@ -73,22 +73,22 @@ const Navbar = () => {
                   Faq
                 </Link>
               </li>
-                                   <li className="nav-item">
-                       <Link
-                         className={`nav-link text-uppercase ${location.pathname === '/contact' ? 'active' : ''}`}
-                         to="/contact"
-                       >
-                         Contact
-                       </Link>
-                     </li>
-                     <li className="nav-item">
-                       <Link
-                         className={`nav-link text-uppercase ${location.pathname === '/#pricing' ? 'active' : ''}`}
-                         to="/#pricing"
-                       >
-                         Pricing
-                       </Link>
-                     </li>
+              <li className="nav-item">
+                <Link
+                  className={`nav-link text-uppercase ${location.pathname === '/contact' ? 'active' : ''}`}
+                  to="/contact"
+                >
+                  Contact
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link
+                  className={`nav-link text-uppercase ${location.hash === '#pricing' ? 'active' : ''}`}
+                  to="/#pricing"
+                >
+                  Pricing
+                </Link>
+              </li>
               <li className="nav-item">
                 <Link 
                   className={`nav-link text-uppercase ${location.pathname === '/blog' ? 'active' : ''}`} 
@@ -97,22 +97,22 @@ const Navbar = () => {
                   Blogs
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link 
                   className={`nav-link text-uppercase ${location.pathname === '/services' ? 'active' : ''}`} 
                   to="/services"
                 >
                   Services
                 </Link>
-              </li>
-              <li className="nav-item">
+              </li> */}
+              {/* <li className="nav-item">
                 <Link 
                   className={`nav-link text-uppercase ${location.pathname === '/contact' ? 'active' : ''}`} 
                   to="/contact"
                 >
                   Contact
                 </Link>
-              </li>
+              </li> */}
             </ul>
             <ul>
               <li className="nav-item">
