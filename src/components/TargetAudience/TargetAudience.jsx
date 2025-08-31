@@ -59,61 +59,67 @@ const TargetAudience = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [animationTriggered]);
 
-  // Tab data with modern design
-  const tabs = [
+    
+    // Tab data with modern design (updated)
+    const tabs = [
     {
-      id: 'creators',
-      title: 'Content Creators',
-      icon: <FaUsers className="tab-icon" />,
-      image: targetAudienceImages.contentCreators.path,
-      imageAlt: targetAudienceImages.contentCreators.alt,
-      description: 'Amplify your influence and stand out in a saturated market. Grow with authentic followers who truly engage with your content, land brand collaborations, and build a monetizable personal brand.',
-      benefits: [
-        { icon: <FaEye />, text: 'Boost Visibility' },
-        { icon: <FaBullseye />, text: 'Reach the Right Audience' },
-        { icon: <FaClock />, text: 'Save Time Creating Content' }
-      ]
+        id: 'creators',
+        title: 'Creators & Influencers',
+        icon: <FaUsers className="tab-icon" />,
+        image: targetAudienceImages.contentCreators.path,
+        imageAlt: targetAudienceImages.contentCreators.alt,
+        description:
+        'Expand your reach and make your mark in a competitive landscape. GlowUp Agency helps you gain real followers who engage with your content. Secure partnerships, monetize your talent, and craft a personal brand that stands out.',
+        benefits: [
+        { icon: <FaEye />, text: 'Gain Real & Engaged Followers' },
+        { icon: <FaBullseye />, text: 'Land Brand Partnerships' },
+        { icon: <FaChartLine />, text: 'Monetize Your Influence' }
+        ]
     },
     {
-      id: 'businesses',
-      title: 'Small Businesses',
-      icon: <FaRegLightbulb className="tab-icon" />,
-      image: targetAudienceImages.smallBusiness.path,
-      imageAlt: targetAudienceImages.smallBusiness.alt,
-      description: 'Develop focused growth strategies that attract customers who already need what you offer. Boost local sales and convert followers into loyal customers on autopilot.',
-      benefits: [
-        { icon: <FaUsers />, text: 'Connect with Local Buyers' },
-        { icon: <FaThumbsUp />, text: 'Build Brand Trust' },
-        { icon: <FaChartLine />, text: 'Increase Conversion Rates' }
-      ]
+        id: 'businesses',
+        title: 'Local Businesses',
+        icon: <FaRegLightbulb className="tab-icon" />,
+        image: targetAudienceImages.smallBusiness.path,
+        imageAlt: targetAudienceImages.smallBusiness.alt,
+        description:
+        'Implement a targeted growth plan that attracts customers already interested in your products or services. Boost revenue, convert followers into loyal fans, and let your business thrive effortlessly.',
+        benefits: [
+        { icon: <FaUsers />, text: 'Connect With Ready-to-Buy Customers' },
+        { icon: <FaThumbsUp />, text: 'Turn Followers Into Loyal Fans' },
+        { icon: <FaChartLine />, text: 'Increase Sales & Local Growth' }
+        ]
     },
     {
-      id: 'freelancers',
-      title: 'Freelancers',
-      icon: <FaBullseye className="tab-icon" />,
-      image: targetAudienceImages.freelancers.path,
-      imageAlt: targetAudienceImages.freelancers.alt,
-      description: 'Transform your social presence into a client magnet. Connect with high-value prospects in your niche, book premium projects, and position yourself for higher rates.',
-      benefits: [
-        { icon: <FaChartLine />, text: 'Attract Premium Clients' },
-        { icon: <FaThumbsUp />, text: 'Showcase Your Expertise' },
-        { icon: <FaClock />, text: 'Passive Lead Generation' }
-      ]
+        id: 'freelancers',
+        title: 'Independent Professionals',
+        icon: <FaBullseye className="tab-icon" />,
+        image: targetAudienceImages.freelancers.path,
+        imageAlt: targetAudienceImages.freelancers.alt,
+        description:
+        'Turn Instagram into a client-attracting tool. Connect with serious prospects, land high-value projects, and set premium rates that reflect your expertise.',
+        benefits: [
+        { icon: <FaChartLine />, text: 'Attract High-Value Clients' },
+        { icon: <FaThumbsUp />, text: 'Showcase Your Professional Expertise' },
+        { icon: <FaClock />, text: 'Generate Consistent Leads' }
+        ]
     },
     {
-      id: 'agencies',
-      title: 'Marketing Agencies',
-      icon: <FaChartLine className="tab-icon" />,
-      image: targetAudienceImages.marketingAgencies.path,
-      imageAlt: targetAudienceImages.marketingAgencies.alt,
-      description: 'Deliver exceptional results for clients with data-driven strategies. Drive measurable ROI and position your agency as the go-to expert for social media success.',
-      benefits: [
-        { icon: <FaChartLine />, text: 'Scale Client Growth' },
-        { icon: <FaEye />, text: 'Demonstrate Clear ROI' },
-        { icon: <FaThumbsUp />, text: 'Retain More Clients' }
-      ]
+        id: 'agencies',
+        title: 'Digital Marketing Agencies',
+        icon: <FaChartLine className="tab-icon" />,
+        image: targetAudienceImages.marketingAgencies.path,
+        imageAlt: targetAudienceImages.marketingAgencies.alt,
+        description:
+        'Deliver outstanding results for clients using clear, measurable strategies. Maximize ROI, position your agency as the go-to Instagram authority, and save hours of manual work.',
+        benefits: [
+        { icon: <FaChartLine />, text: 'Drive Measurable ROI' },
+        { icon: <FaEye />, text: 'Strengthen Your Agency’s Authority' },
+        { icon: <FaThumbsUp />, text: 'Improve Client Retention' }
+        ]
     }
-  ];
+    ];
+
 
   // Find active tab data
   const activeTabData = tabs.find(tab => tab.id === activeTab);
