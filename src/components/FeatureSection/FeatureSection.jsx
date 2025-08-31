@@ -29,27 +29,27 @@ const FeatureSection = () => {
   }, []);
   const features = [
     {
-      icon: "ion-ios-monitor",
-      title: "Interface Design",
-      description: "Creating intuitive and visually appealing user interfaces that enhance user experience and drive engagement across all digital platforms.",
+      icon: "src/assets/feature-1.png",
+      title: "REAL GROWTH ",
+      description: "Reach genuine Instagram followers effortlessly. Our strategies focus on authentic audience expansion 24/7, helping your profile grow with real people who care.",
       active: false
     },
     {
-      icon: "ion-ios-bolt-outline",
-      title: "Creative Always",
-      description: "Delivering innovative and imaginative solutions that push creative boundaries and set new standards in digital design and development.",
+      icon: "src/assets/feature-2.png",
+      title: "HIGH ENGAGEMENT ",
+      description: "Turn followers into loyal fans. Boost likes, comments, and shares through smart, automated actions that maintain authenticity and keep your audience actively involved. ",
       active: true
     },
     {
-      icon: "ion-cube",
-      title: "Real-time Editing",
-      description: "Providing instant collaboration tools and live editing capabilities that enable seamless teamwork and rapid project iteration.",
+      icon: "src/assets/feature-3.png",
+      title: "TOTAL SECURITY ",
+      description: "Your safety is our priority. We use encrypted, proxy-based systems to ensure your account is fully protected while growing confidently. ",
       active: false
     },
     {
-      icon: "ion-ios-color-wand",
-      title: "Art Concept",
-      description: "Transforming creative visions into stunning visual concepts that capture brand essence and communicate powerful messages.",
+      icon: "src/assets/feature-4.png",
+      title: "INSIGHTFUL ANALYTICS ",
+      description: "Know what works and refine your strategy. Our comprehensive analytics help you track performance, measure growth, and optimize engagement for maximum results.",
       active: false
     }
   ];
@@ -64,9 +64,12 @@ const FeatureSection = () => {
         <div className="feature-section-inner">
           {features.map((feature, index) => (
             <div className={`item ${feature.active ? 'active' : ''} wow`} key={index}>
-              <div className="icon-area">
-                <span className={`icon ${feature.icon}`}></span>
-              </div>
+              {/* <div className="icon-area"> */}
+                {/* <span className={`icon ${feature.icon}`}></span> */}
+                <div className='image-area'>
+                  <img src={feature.icon} alt="" />
+                </div>
+              {/* </div> */}
               <div className="content-area">
                 <h5>{feature.title}</h5>
                 <p>{feature.description}</p>
