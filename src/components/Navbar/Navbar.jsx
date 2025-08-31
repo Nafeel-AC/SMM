@@ -83,8 +83,15 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <Link
-                  className={`nav-link text-uppercase ${location.hash === '#pricing' ? 'active' : ''}`}
+                  className={`nav-link text-uppercase ${location.hash === '#pricing' || location.pathname + location.hash === '/#pricing' ? 'active' : ''}`}
                   to="/#pricing"
+                  onClick={(e) => {
+                    // If already on the homepage, just scroll to the section
+                    if (location.pathname === '/') {
+                      e.preventDefault();
+                      document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                 >
                   Pricing
                 </Link>
