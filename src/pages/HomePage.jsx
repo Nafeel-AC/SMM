@@ -32,11 +32,11 @@ const HomePage = () => {
       <FeatureSection />
       <AboutSection />
       <TargetAudience />
-      {/* <WorkSection /> */}
-      <WhyChooseUs />
-      <PricingSection />
-      <FeaturedInSection />
       <ClientReviews />
+      <PricingSection />
+      {/* <WorkSection /> */}
+      {/* <WhyChooseUs /> */}
+      {/* <FeaturedInSection /> */}
     </>
   );
 };
