@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import './FeatureSection.css';
 import './ionicons.css'; // Import Ionicons
 import './animations.css'; // Import animations
+import featureImages from '../../data/featureImages';
 
 const FeatureSection = () => {
   // Add animation effect similar to wow.js
@@ -29,25 +30,29 @@ const FeatureSection = () => {
   }, []);
   const features = [
     {
-      icon: "./src/assets/feature-1.png",
+      icon: featureImages.realGrowth.path,
+      iconAlt: featureImages.realGrowth.alt,
       title: "REAL GROWTH ",
       description: "Reach genuine Instagram followers effortlessly. Our strategies focus on authentic audience expansion 24/7, helping your profile grow with real people who care.",
       active: false
     },
     {
-      icon: "./src/assets/feature-2.png",
+      icon: featureImages.highEngagement.path,
+      iconAlt: featureImages.highEngagement.alt,
       title: "HIGH ENGAGEMENT ",
       description: "Turn followers into loyal fans. Boost likes, comments, and shares through smart, automated actions that maintain authenticity and keep your audience actively involved. ",
       active: true
     },
     {
-      icon: "./src/assets/feature-3.png",
+      icon: featureImages.totalSecurity.path,
+      iconAlt: featureImages.totalSecurity.alt,
       title: "TOTAL SECURITY ",
       description: "Your safety is our priority. We use encrypted, proxy-based systems to ensure your account is fully protected while growing confidently. ",
       active: false
     },
     {
-      icon: "./src/assets/feature-4.png",
+      icon: featureImages.insightfulAnalytics.path,
+      iconAlt: featureImages.insightfulAnalytics.alt,
       title: "INSIGHTFUL ANALYTICS ",
       description: "Know what works and refine your strategy. Our comprehensive analytics help you track performance, measure growth, and optimize engagement for maximum results.",
       active: false
@@ -67,7 +72,7 @@ const FeatureSection = () => {
               {/* <div className="icon-area"> */}
                 {/* <span className={`icon ${feature.icon}`}></span> */}
                 <div className='image-area'>
-                  <img src={feature.icon} alt="" />
+                  <img src={feature.icon} alt={feature.iconAlt} />
                 </div>
               {/* </div> */}
               <div className="content-area">
