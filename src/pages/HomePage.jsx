@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import FeatureSection from '../components/FeatureSection';
+import TargetAudience from '../components/TargetAudience';
 import AboutSection from '../components/AboutSection';
 import WorkSection from '../components/Work';
 import WhyChooseUs from '../components/WhyChooseUs';
@@ -30,7 +31,8 @@ const HomePage = () => {
       <HeroSection />
       <FeatureSection />
       <AboutSection />
-      <WorkSection />
+      <TargetAudience />
+      {/* <WorkSection /> */}
       <WhyChooseUs />
       <PricingSection />
       <FeaturedInSection />
