@@ -41,13 +41,13 @@ const AboutSection = () => {
               <div className="about-content">
                 <span className="section-subtitle">{data.title}</span>
                 <h2 className="section-title">{data.subtitle}</h2>
-                <p>{data.description}</p>
+                {/* <p>{data.description}</p> */}
                 <ul className="item-list-container">
                   {data.features.map((feature, index) => (
                     <li className="cmn-box4" key={index}>
-                      <div className="icon-box">
+                      {/* <div className="icon-box">
                         <i className={feature.icon}></i>
-                      </div>
+                      </div> */}
                       <div className="item-content">
                         <h5>{feature.title}</h5>
                         <span><p>{feature.description}</p></span>
@@ -55,11 +55,11 @@ const AboutSection = () => {
                     </li>
                   ))}
                 </ul>
-                <div className="btn-area mt-30">
+                {/* <div className="btn-area mt-30">
                   <a href={data.buttonUrl} className="cmn-btn">
                     <span>{data.buttonText}</span>
                   </a>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="col-lg-6 order-1 order-lg-2">
