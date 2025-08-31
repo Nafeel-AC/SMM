@@ -77,6 +77,27 @@
   box-shadow: 0 8px 20px rgba(110, 59, 218, 0.4);
 }
 
+.chat-btn {
+  background-color: #ff6b6b;
+  color: #fff;
+  padding: 14px 32px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+.chat-btn:hover {
+  background-color: #ff5252;
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+}
+
 .video-area {
   display: flex;
   align-items: center;
