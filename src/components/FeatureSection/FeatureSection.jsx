@@ -29,25 +29,25 @@ const FeatureSection = () => {
   }, []);
   const features = [
     {
-      icon: "src/assets/feature-1.png",
+      icon: "/assets/feature-1.png",
       title: "REAL GROWTH ",
       description: "Reach genuine Instagram followers effortlessly. Our strategies focus on authentic audience expansion 24/7, helping your profile grow with real people who care.",
       active: false
     },
     {
-      icon: "src/assets/feature-2.png",
+      icon: "/assets/feature-2.png",
       title: "HIGH ENGAGEMENT ",
       description: "Turn followers into loyal fans. Boost likes, comments, and shares through smart, automated actions that maintain authenticity and keep your audience actively involved. ",
       active: true
     },
     {
-      icon: "src/assets/feature-3.png",
+      icon: "/assets/feature-3.png",
       title: "TOTAL SECURITY ",
       description: "Your safety is our priority. We use encrypted, proxy-based systems to ensure your account is fully protected while growing confidently. ",
       active: false
     },
     {
-      icon: "src/assets/feature-4.png",
+      icon: "/assets/feature-4.png",
       title: "INSIGHTFUL ANALYTICS ",
       description: "Know what works and refine your strategy. Our comprehensive analytics help you track performance, measure growth, and optimize engagement for maximum results.",
       active: false
