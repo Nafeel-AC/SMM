@@ -1,32 +1,22 @@
 {
-  "title": "About Us",
-  "subtitle": "SMM Matrix Redefining Social Media Excellence",
-  "description": "At SMM Matrix, we're not just a social media marketing agency — we're your partners in digital success. Established with a passion for propelling businesses to new heights through strategic online presence, we bring a unique blend of creativity, innovation, and expertise to every project.",
-  "features": [
-    {
-      "icon": "fas fa-lightbulb",
-      "title": "Strategic Brilliance",
-      "description": "We don't just create content; we craft strategies. Our team of experts meticulously plans every campaign, ensuring that your brand's message resonates with your target audience."
-    },
-    {
-      "icon": "fas fa-clock",
-      "title": "Time Efficiency",
-      "description": "In the fast-paced world of social media, timing is everything. Our streamlined processes and agile approach guarantee timely delivery without compromising on quality."
-    },
-    {
-      "icon": "fas fa-tasks",
-      "title": "Save Your Time",
-      "description": "Organize your to-do list with ease. Create, edit, and prioritize tasks to ensure nothing falls through the cracks."
-    },
-    {
-      "icon": "fas fa-chess",
-      "title": "Best Strategy",
-      "description": "Craft your success with the best strategy tailored to your goals."
-    },
-    {
-      "icon": "fas fa-dollar-sign",
-      "title": "Affordable Price For You",
-      "description": "Get the best value with affordable prices tailored just for you."
-    }
-  ]
+    "title": "About Us",
+    "subtitle": "Glowup Agency: Redefining Social Media Excellence",
+    "description": "At SMM Matrix, we're not just a social media marketing agency — we're your partners in digital success. Established with a passion for propelling businesses to new heights through strategic online presence, we bring a unique blend of creativity, innovation, and expertise to every project.",
+    "features": [
+        {
+            "icon": "fas fa-lightbulb",
+            "title": "Strategic Brilliance",
+            "description": "Whether you’re a small business owner, an aspiring influencer, or a brand looking to make a lasting impact, we create tailored strategies that increase visibility, boost engagement, and turn casual visitors into loyal fans."
+        },
+        {
+            "icon": "fas fa-clock",
+            "title": "Time Efficiency",
+            "description": "We believe every account has a story to tell — and we make sure it’s heard. With data-driven techniques, personalized campaigns, and a focus on genuine connections, Glowup Agency ensures your profile stands out, attracts attention, and builds trust in your audience."
+        },
+        {
+            "icon": "fas fa-tasks",
+            "title": "Save Your Time",
+            "description": "Don’t settle for empty numbers. Choose Glowup Agency to grow your influence, strengthen your presence, and achieve results that matter. It’s time to shine, connect, and grow — authentically."
+        }
+    ]
 }
