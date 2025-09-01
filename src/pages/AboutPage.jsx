@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './AboutPage.css';
 import Navbar from '../components/Navbar';
 
 
 const AboutPage = () => {
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const toggleFaq = (index) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
   return (
     <div className="about-page">
       <Navbar />
@@ -94,53 +100,95 @@ const AboutPage = () => {
           </div>
 
           <div className="faq-grid">
-            <div className="faq-item">
-              <h3 className="faq-question">What services does your SMM website offer?</h3>
-              <p className="faq-answer">
-                We provide a comprehensive range of social media marketing services, including strategy development, 
-                content creation, platform management, advertising campaigns, and analytics. Explore our Services Page for a detailed overview.
-              </p>
+            <div className={`faq-item ${openFaq === 0 ? 'active' : ''}`} onClick={() => toggleFaq(0)}>
+              <div className="faq-item-header">
+                <h3 className="faq-question">What services does your SMM website offer?</h3>
+                <div className="faq-toggle">
+                  <i className={`fas fa-${openFaq === 0 ? 'minus' : 'plus'}`}></i>
+                </div>
+              </div>
+              <div className={`faq-answer ${openFaq === 0 ? 'show' : ''}`}>
+                <p>
+                  We provide a comprehensive range of social media marketing services, including strategy development, 
+                  content creation, platform management, advertising campaigns, and analytics. Explore our Services Page for a detailed overview.
+                </p>
+              </div>
             </div>
 
-            <div className="faq-item">
-              <h3 className="faq-question">How can I get started with your SMM services?</h3>
-              <p className="faq-answer">
-                Getting started is simple! Visit our Get Started page, fill out the form, and our team will reach out to you 
-                promptly to discuss your goals and tailor a strategy to meet your specific needs.
-              </p>
+            <div className={`faq-item ${openFaq === 1 ? 'active' : ''}`} onClick={() => toggleFaq(1)}>
+              <div className="faq-item-header">
+                <h3 className="faq-question">How can I get started with your SMM services?</h3>
+                <div className="faq-toggle">
+                  <i className={`fas fa-${openFaq === 1 ? 'minus' : 'plus'}`}></i>
+                </div>
+              </div>
+              <div className={`faq-answer ${openFaq === 1 ? 'show' : ''}`}>
+                <p>
+                  Getting started is simple! Visit our Get Started page, fill out the form, and our team will reach out to you 
+                  promptly to discuss your goals and tailor a strategy to meet your specific needs.
+                </p>
+              </div>
             </div>
 
-            <div className="faq-item">
-              <h3 className="faq-question">What social media platforms do you specialize in?</h3>
-              <p className="faq-answer">
-                Our expertise spans across major social media platforms, including but not limited to Facebook, Instagram, 
-                Twitter, LinkedIn, and Pinterest. We tailor our strategies to align with the unique dynamics of each platform.
-              </p>
+            <div className={`faq-item ${openFaq === 2 ? 'active' : ''}`} onClick={() => toggleFaq(2)}>
+              <div className="faq-item-header">
+                <h3 className="faq-question">What social media platforms do you specialize in?</h3>
+                <div className="faq-toggle">
+                  <i className={`fas fa-${openFaq === 2 ? 'minus' : 'plus'}`}></i>
+                </div>
+              </div>
+              <div className={`faq-answer ${openFaq === 2 ? 'show' : ''}`}>
+                <p>
+                  Our expertise spans across major social media platforms, including but not limited to Facebook, Instagram, 
+                  Twitter, LinkedIn, and Pinterest. We tailor our strategies to align with the unique dynamics of each platform.
+                </p>
+              </div>
             </div>
 
-            <div className="faq-item">
-              <h3 className="faq-question">How do you create content for social media?</h3>
-              <p className="faq-answer">
-                Our content creation process involves understanding your brand, target audience, and goals. We craft engaging 
-                and shareable content, including images, videos, and captions, to enhance your brand presence and engagement.
-              </p>
+            <div className={`faq-item ${openFaq === 3 ? 'active' : ''}`} onClick={() => toggleFaq(3)}>
+              <div className="faq-item-header">
+                <h3 className="faq-question">How do you create content for social media?</h3>
+                <div className="faq-toggle">
+                  <i className={`fas fa-${openFaq === 3 ? 'minus' : 'plus'}`}></i>
+                </div>
+              </div>
+              <div className={`faq-answer ${openFaq === 3 ? 'show' : ''}`}>
+                <p>
+                  Our content creation process involves understanding your brand, target audience, and goals. We craft engaging 
+                  and shareable content, including images, videos, and captions, to enhance your brand presence and engagement.
+                </p>
+              </div>
             </div>
 
-            <div className="faq-item">
-              <h3 className="faq-question">Can I track the performance of my social media campaigns?</h3>
-              <p className="faq-answer">
-                Absolutely. We provide detailed analytics reports that track the performance of your social media campaigns. 
-                These reports include metrics such as reach, engagement, conversion rates, and more, giving you valuable 
-                insights into the effectiveness of your strategies.
-              </p>
+            <div className={`faq-item ${openFaq === 4 ? 'active' : ''}`} onClick={() => toggleFaq(4)}>
+              <div className="faq-item-header">
+                <h3 className="faq-question">Can I track the performance of my social media campaigns?</h3>
+                <div className="faq-toggle">
+                  <i className={`fas fa-${openFaq === 4 ? 'minus' : 'plus'}`}></i>
+                </div>
+              </div>
+              <div className={`faq-answer ${openFaq === 4 ? 'show' : ''}`}>
+                <p>
+                  Absolutely. We provide detailed analytics reports that track the performance of your social media campaigns. 
+                  These reports include metrics such as reach, engagement, conversion rates, and more, giving you valuable 
+                  insights into the effectiveness of your strategies.
+                </p>
+              </div>
             </div>
 
-            <div className="faq-item">
-              <h3 className="faq-question">Is my information secure when using your services?</h3>
-              <p className="faq-answer">
-                Yes, we prioritize the security and confidentiality of your information. Our website and services incorporate 
-                industry-standard security measures to protect your data.
-              </p>
+            <div className={`faq-item ${openFaq === 5 ? 'active' : ''}`} onClick={() => toggleFaq(5)}>
+              <div className="faq-item-header">
+                <h3 className="faq-question">Is my information secure when using your services?</h3>
+                <div className="faq-toggle">
+                  <i className={`fas fa-${openFaq === 5 ? 'minus' : 'plus'}`}></i>
+                </div>
+              </div>
+              <div className={`faq-answer ${openFaq === 5 ? 'show' : ''}`}>
+                <p>
+                  Yes, we prioritize the security and confidentiality of your information. Our website and services incorporate 
+                  industry-standard security measures to protect your data.
+                </p>
+              </div>
             </div>
           </div>
         </div>
