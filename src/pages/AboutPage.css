@@ -20,6 +20,10 @@
   font-weight: 800;
   color: #0f172a !important;
   margin-bottom: 20px;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
 }
 
 .about-hero .hero-subtitle {
