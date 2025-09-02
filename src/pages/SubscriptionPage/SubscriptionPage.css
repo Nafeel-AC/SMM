@@ -1,0 +1,66 @@
+.subscription-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 5rem 0 2rem 0; /* Add top padding to account for navbar (60px + extra space) */
+}
+
+.subscription-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.subscription-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subscription-header p {
+  font-size: 1rem;
+  opacity: 0.9;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.subscription-pricing {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.subscription-footer {
+  text-align: center;
+  color: white;
+  opacity: 0.8;
+}
+
+.subscription-footer p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .subscription-page {
+    padding: 4rem 0 1rem 0; /* Reduce top padding on mobile */
+  }
+  
+  .subscription-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .subscription-header p {
+    font-size: 0.9rem;
+    max-width: 400px;
+  }
+  
+  .subscription-pricing {
+    padding: 1rem;
+    border-radius: 15px;
+    margin: 0 1rem 1rem 1rem;
+  }
+}

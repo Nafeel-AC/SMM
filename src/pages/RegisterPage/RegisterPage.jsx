@@ -36,7 +36,7 @@ const RegisterPage = () => {
     setError('');
 
     try {
-      await signUpWithEmail(formData.email, formData.password);
+      await signUpWithEmail(formData.email, formData.password, formData.name);
       navigate('/login');
     } catch (err) {
       setError('Failed to create account. Please try again.');
