@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import './LoginPage.css';
+import '../AuthForms/AuthForms.css';
 import heroImage from '../../assets/hero-image.jpg';
 
 const LoginPage = () => {
@@ -39,64 +39,42 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <div className="login-container">
-        <div className="login-form-section">
-          <div className="form-container">
-            <div className="form-header">
-              <h1>Welcome Back</h1>
-              <p>Sign in to your account to continue</p>
+      <div className="signup-wrapper">
+        <div className="signup-card">
+          <div className="signup-left" style={{ backgroundImage: `url(${heroImage})` }} aria-hidden>
+            <div className="left-overlay">
+              <h2>Welcome back</h2>
+              <p>Sign in to access your dashboard and campaign insights.</p>
+            </div>
+          </div>
+
+          <div className="signup-right">
+            <div className="brand">
+              <h1>Sign in</h1>
+              <p className="muted">Enter your credentials to continue</p>
             </div>
 
             {error && <div className="error-message">{error}</div>}
 
             <form onSubmit={handleSubmit} className="login-form">
-              <div className="form-group">
-                <label htmlFor="email">Email Address</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Enter your email"
-                />
+              <div className="input-grid">
+                <div className="input-group" style={{ gridColumn: '1 / -1' }}>
+                  <label htmlFor="email">Email</label>
+                  <input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required placeholder="you@company.com" />
+                </div>
+
+                <div className="input-group" style={{ gridColumn: '1 / -1' }}>
+                  <label htmlFor="password">Password</label>
+                  <input id="password" name="password" type="password" value={formData.password} onChange={handleInputChange} required placeholder="Your password" />
+                </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Enter your password"
-                />
-              </div>
-
-              <button type="submit" className="login-btn" disabled={loading}>
-                {loading ? 'Signing In...' : 'Sign In'}
-              </button>
+              <button type="submit" className="primary-btn" disabled={loading}>{loading ? 'Signing in...' : 'Sign In'}</button>
             </form>
 
-            <div className="form-footer">
-              <p>
-                Don't have an account? <Link to="/register">Sign up here</Link>
-              </p>
-              <p>
-                <Link to="/forgot-password">Forgot your password?</Link>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="login-image-section" style={{ backgroundImage: `url(${heroImage})` }}>
-          <div className="image-overlay">
-            <div className="overlay-content">
-              <h2>SMM Matrix</h2>
-              <p>Empowering businesses through strategic social media marketing</p>
+            <div className="alt-actions">
+              <p>Don't have an account? <Link to="/register">Create account</Link></p>
+              <p><Link to="/forgot-password">Forgot password?</Link></p>
             </div>
           </div>
         </div>
