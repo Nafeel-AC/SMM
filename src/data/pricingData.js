@@ -3,11 +3,11 @@
  */
 
 const pricingData = {
-    // Basic plan information
+    // Starter plan information
     plans: [
         {
-            id: 'basic',
-            name: 'Basic',
+            id: 'starter',
+            name: 'Starter',
             description: 'Perfect for personal accounts seeking steady, organic growth and targeted global followers that align with your interests.',
             features: [
                 'Real Followers Guaranteed',
@@ -34,12 +34,12 @@ const pricingData = {
             popular: true
         },
         {
-            id: 'turbocharged',
-            name: 'Turbocharged',
+            id: 'ultimate',
+            name: 'Ultimate',
             description: 'Designed for people building their brand with tailored engagement and advanced targeting to reach a specific audience with guidance from our top performers.',
             features: [
                 'Everything in Premium',
-                'Turbocharged growth',
+                'Ultimate growth',
                 'Monthly Content Coaching',
                 'Senior Campaign Manager',
                 'Cancel Anytime'
@@ -51,14 +51,14 @@ const pricingData = {
     // Pricing by billing cycle
     pricing: {
         monthly: {
-            basic: 69,
-            premium: 99,
-            turbocharged: 249
+            starter: 59,
+            premium: 89,
+            ultimate: 189
         },
         yearly: {
-            basic: 579,
+            starter: 579,
             premium: 829,
-            turbocharged: 2089
+            ultimate: 1789
         }
     },
 
@@ -67,29 +67,36 @@ const pricingData = {
         {
             name: 'Features',
             items: [
-                { name: 'Follow / Unfollow', basic: true, premium: true, turbocharged: true },
-                { name: 'Interest Targeting', basic: true, premium: true, turbocharged: true },
-                { name: 'Competitor Targeting', basic: true, premium: true, turbocharged: true },
-                { name: 'Targeting Optimization', basic: false, premium: true, turbocharged: true },
-                { name: 'Geotargeting', basic: false, premium: true, turbocharged: true },
-                { name: 'Gender Targeting', basic: false, premium: true, turbocharged: true },
-                { name: 'Likes Sequences', basic: false, premium: false, turbocharged: true }
+                { name: 'Real Instagram Followers', starter: true, premium: true, ultimate: true },
+                { name: 'Monthly growth Analytics', starter: true, premium: true, ultimate: true },
+                { name: 'Competitor Targeting', starter: true, premium: true, ultimate: true },
+                { name: 'Cancel Anytime', starter: false, premium: true, ultimate: true },
+                { name: 'Target by Hashtag', starter: false, premium: true, ultimate: true },
+                { name: 'Target by Influencer and competitor', starter: false, premium: true, ultimate: true },
+                { name: 'Gender', starter: false, premium: false, ultimate: true },
+                { name: 'Comments', starter: false, premium: false, ultimate: true },
+                { name: 'Like Posts', starter: false, premium: false, ultimate: true },
+                { name: 'Vpn Login', starter: false, premium: false, ultimate: true },
+                { name: 'Like After Flow', starter: false, premium: false, ultimate: true },
+                { name: 'Tiktok Service', starter: false, premium: false, ultimate: true },
+                { name: 'Welcome DM', starter: false, premium: false, ultimate: true },
+
             ]
         },
         {
             name: 'Reporting',
             items: [
-                { name: 'Monthly Growth Reports', basic: true, premium: true, turbocharged: true },
-                { name: 'Advanced Targeting Optimization', basic: false, premium: false, turbocharged: true }
+                { name: 'Instagram Audit', starter: true, premium: true, ultimate: true },
+                { name: 'Advanced Targeting Optimization', starter: false, premium: false, ultimate: true }
             ]
         },
         {
             name: 'Support',
             items: [
-                { name: '24/7 Live Chat', basic: true, premium: true, turbocharged: true },
-                { name: 'Welcome Call', basic: false, premium: true, turbocharged: true },
-                { name: 'Account Management', basic: false, premium: true, turbocharged: true },
-                { name: 'Monthly Performance Review', basic: false, premium: true, turbocharged: true }
+                { name: '24/7 Live Chat', starter: true, premium: true, ultimate: true },
+                { name: 'Welcome Call', starter: false, premium: true, ultimate: true },
+                { name: 'Account Management', starter: false, premium: true, ultimate: true },
+                { name: 'Monthly Performance Review', starter: false, premium: true, ultimate: true }
             ]
         }
     ]
