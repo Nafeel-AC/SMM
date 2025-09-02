@@ -13,15 +13,15 @@ const PaymentPage = () => {
   const location = useLocation();
   
   // Get plan details from navigation state
-  const selectedPlan = location.state?.plan || 'Basic';
+  const selectedPlan = location.state?.plan || 'Starter';
   const billingCycle = location.state?.billingCycle || 'monthly';
 
   // Helper function to get plan price
   const getPlanPrice = (plan, cycle) => {
     const prices = {
-      'Basic': { monthly: 99, yearly: 990 },
+      'Starter': { monthly: 99, yearly: 990 },
       'Premium': { monthly: 199, yearly: 1990 },
-      'Turbocharged': { monthly: 299, yearly: 2990 }
+      'Ultimate': { monthly: 299, yearly: 2990 }
     };
     return prices[plan]?.[cycle] || 99;
   };
@@ -29,7 +29,7 @@ const PaymentPage = () => {
   // Helper function to get plan features
   const getPlanFeatures = (plan) => {
     const features = {
-      'Basic': [
+      'Starter': [
         'Instagram Growth Management',
         'Target Audience Analysis',
         'Content Strategy',
@@ -43,7 +43,7 @@ const PaymentPage = () => {
         'Priority Support',
         'Custom Campaigns'
       ],
-      'Turbocharged': [
+      'Ultimate': [
         'Everything in Premium',
         'Dedicated Account Manager',
         'Real-time Analytics',
@@ -51,7 +51,7 @@ const PaymentPage = () => {
         'Custom Growth Strategies'
       ]
     };
-    return features[plan] || features['Basic'];
+    return features[plan] || features['Starter'];
   };
 
   const handlePayment = async (amount = 99) => {
