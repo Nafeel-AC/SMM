@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './PricingSection-modern.css';
 import pricingData from '../../data/pricingData';
 
-const PricingSection = () => {
+const PricingSection = ({ onPlanSelect }) => {
   const [billingCycle, setBillingCycle] = useState('monthly');
 
   const { plans, pricing, comparisonCategories } = pricingData;
@@ -10,7 +10,9 @@ const PricingSection = () => {
   const handleGetStarted = (planName) => {
     // Handle plan selection - can be connected to payment gateway
     console.log(`Selected plan: ${planName}`);
-    // You can add payment integration here
+    if (onPlanSelect) {
+      onPlanSelect(planName);
+    }
   };
 
   // Helper function to render checkmark or minus
