@@ -72,7 +72,7 @@ const PricingSection = ({ onPlanSelect }) => {
                   <div className="popular-badge">Most popular</div>
                 )}
                 
-                <div className="card-header" style={{ backgroundColor: plan.id === 'basic' ? '#4b5563' : plan.id === 'premium' ? '#1c64f2' : '#f59e0b' }}>
+                <div className="card-header" style={{ backgroundColor: plan.id === 'starter' ? '#4b5563' : plan.id === 'premium' ? '#1c64f2' : '#f59e0b' }}>
                   <h3 className="plan-name">{plan.name}</h3>
                 </div>
                 
@@ -133,9 +133,9 @@ const PricingSection = ({ onPlanSelect }) => {
               <thead>
                 <tr>
                   <th scope="col">Plans</th>
-                  <th scope="col">Basic</th>
+                  <th scope="col">Starter</th>
                   <th scope="col">Premium</th>
-                  <th scope="col">Turbocharged</th>
+                  <th scope="col">Ultimate</th>
                 </tr>
               </thead>
               <tbody>
@@ -145,7 +145,7 @@ const PricingSection = ({ onPlanSelect }) => {
                 <td className="price-cell">
                   <p className="price-amount">
                     <span className="price-currency">$</span>
-                    {pricing[billingCycle].basic}
+                    {pricing[billingCycle].starter}
                   </p>
                   <span className="price-period">/mo</span>
                   <p className="price-description">
@@ -165,7 +165,7 @@ const PricingSection = ({ onPlanSelect }) => {
                 <td className="price-cell">
                   <p className="price-amount">
                     <span className="price-currency">$</span>
-                    {pricing[billingCycle].turbocharged}
+                    {pricing[billingCycle].ultimate}
                   </p>
                   <span className="price-period">/mo</span>
                   <p className="price-description">
@@ -185,22 +185,22 @@ const PricingSection = ({ onPlanSelect }) => {
                   {category.items.map((item, itemIndex) => (
                     <tr key={itemIndex}>
                       <th scope="row">{item.name}</th>
-                      <td>{renderCheckOrMinus(item.basic)}</td>
+                      <td>{renderCheckOrMinus(item.starter)}</td>
                       <td>{renderCheckOrMinus(item.premium)}</td>
-                      <td>{renderCheckOrMinus(item.turbocharged)}</td>
+                      <td>{renderCheckOrMinus(item.ultimate)}</td>
                     </tr>
                   ))}
                 </React.Fragment>
               ))}
             </tbody>
-            <tfoot>
+            <tfoot colSpan={3}>
               <tr>
-                <th scope="row" className="sr-only">Choose your plan</th>
+                {/* <th scope="row" className="sr-only">Choose your plan</th> */}
 
                 {/* <td>
                   <button 
                     className="table-cta" 
-                    onClick={() => handleGetStarted('Basic')}
+                    onClick={() => handleGetStarted('Starter')}
                   >
                     Get Started
                   </button>
@@ -217,7 +217,7 @@ const PricingSection = ({ onPlanSelect }) => {
                 <td>
                   <button 
                     className="table-cta"
-                    onClick={() => handleGetStarted('Turbocharged')}
+                    onClick={() => handleGetStarted('Ultimate')}
                   >
                     Get Started
                   </button>

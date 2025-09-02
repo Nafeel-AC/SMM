@@ -54,7 +54,7 @@ const RegisterPage = () => {
         <div className="signup-card">
           <div className="signup-left" style={{ backgroundImage: `url(${heroImage})` }} aria-hidden>
             <div className="left-overlay">
-              <h2>SMM Matrix</h2>
+              <h2>Glowup Agency</h2>
               <p>Grow smarter. Faster. Together.</p>
             </div>
           </div>

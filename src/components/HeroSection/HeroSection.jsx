@@ -25,7 +25,7 @@ const HeroSection = () => {
           <div className="row g-xl-4 g-5 justify-content-between align-items-center">
             <div className="col-lg-6 order-2 order-lg-1">
               <div className="hero-content">
-                {/* <span className="section-subtitle">We Are SMM Matrix</span> */}
+                {/* <span className="section-subtitle">We Are Glowup Agency</span> */}
                 <h1 className="hero-title">
                   Glowup Agency helps YOUR brand shine & grow on Instagram
                 </h1>

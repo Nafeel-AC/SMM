@@ -11,17 +11,17 @@ const Footer = () => {
         <div className="footer-content">
           <div className="container">
             <div className="footer-grid">
-              {/* Left Column: SMM Matrix Branding and Social Media */}
+              {/* Left Column: Glowup Agency Branding and Social Media */}
               <div className="footer-column">
                 <div className="brand-section">
                   <div className="logo-container">
                     <div className="logo-icon">
                       <div className="cube-icon"></div>
                     </div>
-                    <h3 className="brand-name">SMM Matrix</h3>
+                    <h3 className="brand-name">Glowup Agency</h3>
                   </div>
                   <p className="brand-description">
-                    Experience the SMM Matrix Advantage - Empowering Social Success with Data-Driven Solutions.
+                    Experience the Glowup Agency Advantage - Empowering Social Success with Data-Driven Solutions.
                   </p>
                   <div className="social-media">
                     <a href="#" className="social-btn">

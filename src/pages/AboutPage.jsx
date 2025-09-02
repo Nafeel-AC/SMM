@@ -19,9 +19,9 @@ const AboutPage = () => {
         <div className="container">
           <div className="hero-content">
             <h1 className="hero-title">About Us</h1>
-            <h2 className="hero-subtitle">SMM Matrix Redefining Social Media Excellence</h2>
+            <h2 className="hero-subtitle">Glowup Agency Redefining Social Media Excellence</h2>
             <p className="hero-description">
-              At SMM Matrix, we're not just a social media marketing agency — we're your partners in digital success. 
+              At Glowup Agency, we're not just a social media marketing agency — we're your partners in digital success. 
               Established with a passion for propelling businesses to new heights through strategic online presence, 
               we bring a unique blend of creativity, innovation, and expertise to every project.
             </p>

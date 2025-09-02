@@ -14,19 +14,19 @@ const WhyChooseUs = () => {
       id: 2,
       icon: "fas fa-briefcase",
       title: "Experience",
-      description: "Our legacy is built on a foundation of experience. With a proven track record and a portfolio of successful projects, SMM Matrix stands as a testament to our commitment to excellence."
+      description: "Our legacy is built on a foundation of experience. With a proven track record and a portfolio of successful projects, Glowup Agency stands as a testament to our commitment to excellence."
     },
     {
       id: 3,
       icon: "fas fa-trophy",
       title: "Success Guaranteed",
-      description: "Success is not just a goal; it's a commitment we make to every client. At SMM Matrix, we stand by our promise to deliver measurable and impactful results."
+      description: "Success is not just a goal; it's a commitment we make to every client. At Glowup Agency, we stand by our promise to deliver measurable and impactful results."
     },
     {
       id: 4,
       icon: "fas fa-chart-line",
       title: "Data-Driven Approach",
-      description: "In a digital age, decisions without data are mere guesses. At SMM Matrix, we pride ourselves on our data-driven approach. Every strategy is backed by comprehensive analytics and insights."
+      description: "In a digital age, decisions without data are mere guesses. At Glowup Agency, we pride ourselves on our data-driven approach. Every strategy is backed by comprehensive analytics and insights."
     }
   ];
 
@@ -55,7 +55,7 @@ const WhyChooseUs = () => {
                   Elevating Your Experience, Amplifying Your Success
                 </h2>
                 <p className="section-description">
-                  At SMM Matrix, we recognize that selecting a partner for your business needs is a significant decision. Here's why choosing us is not just a choice but an investment in a dynamic and impactful collaboration.
+                  At Glowup Agency, we recognize that selecting a partner for your business needs is a significant decision. Here's why choosing us is not just a choice but an investment in a dynamic and impactful collaboration.
                 </p>
               </div>
 
