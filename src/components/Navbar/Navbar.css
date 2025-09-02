@@ -267,10 +267,10 @@
     border: none;
   }
   
-  .offcanvas-header,
+  /* .offcanvas-header,
   .offcanvas-body ul li:last-child {
     display: none;
-  }
+  } */
   
   .navbar-toggler {
     display: none;

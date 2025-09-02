@@ -5,7 +5,7 @@ import BlogFilter from './BlogFilter';
 import BlogList from './BlogList';
 
 
-const BlogSection = () => {
+const BlogSection = ({ hideHeader = false }) => {
   const { blogs, categories, loading, error } = useBlog();
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -37,17 +37,19 @@ const BlogSection = () => {
       <section className="blog-section" id="blogs">
         <div className="container">
           <div className="row">
-            <div className="col-12">
-              <div className="section-header text-center mb-50">
-                <span className="section-subtitle">OUR BLOGS</span>
-                <h3 className="section-title mx-auto">our news &amp; blogs</h3>
-                <p className="cmn-para-text mx-auto mt-20">
-                  Welcome to our dynamic world of insights and information! Our Blogs section is your gateway 
-                  to staying informed, discovering industry trends, and gaining valuable knowledge to propel 
-                  your business forward.
-                </p>
+            {!hideHeader && (
+              <div className="col-12">
+                <div className="section-header text-center mb-50">
+                  <span className="section-subtitle">OUR BLOGS</span>
+                  <h3 className="section-title mx-auto">our news &amp; blogs</h3>
+                  <p className="cmn-para-text mx-auto mt-20">
+                    Welcome to our dynamic world of insights and information! Our Blogs section is your gateway 
+                    to staying informed, discovering industry trends, and gaining valuable knowledge to propel 
+                    your business forward.
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <BlogFilter 

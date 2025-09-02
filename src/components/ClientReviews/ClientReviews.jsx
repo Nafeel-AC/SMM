@@ -47,7 +47,7 @@ const ClientReviews = () => {
   };
 
   return (
-    <section className="client-reviews">
+    <section className="client-reviews" id="reviews">
       <div className="container">
         <div className="reviews-grid">
           {/* Left Column: Introduction and Features */}

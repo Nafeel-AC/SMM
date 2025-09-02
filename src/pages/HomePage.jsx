@@ -11,6 +11,7 @@ import WhyChooseUs from '../components/WhyChooseUs';
 import PricingSection from '../components/PricingSection';
 import FeaturedInSection from '../components/FeaturedInSection';
 import ClientReviews from '../components/ClientReviews';
+import FAQSection from '../components/FAQSection';
 
 
 const HomePage = () => {
@@ -34,6 +35,7 @@ const HomePage = () => {
       <TargetAudience />
       <ClientReviews />
       <PricingSection />
+      <FAQSection />
       {/* <WorkSection /> */}
       {/* <WhyChooseUs /> */}
       {/* <FeaturedInSection /> */}
