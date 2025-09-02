@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import Navbar from '../../components/Navbar';
 import '../LoginPage/LoginPage.css'; // We're reusing the login page styles
 
 const ForgotPasswordPage = () => {
@@ -38,7 +39,9 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <section className="login-page" style={{ backgroundImage: `url(${bgImage})` }}>
+    <>
+      <Navbar />
+      <section className="login-page" style={{ backgroundImage: `url(${bgImage})` }}>
       <div className="container">
         <div className="login-form-container">
           <div className="login-form">
@@ -93,6 +96,7 @@ const ForgotPasswordPage = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
 
