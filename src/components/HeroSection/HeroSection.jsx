@@ -19,7 +19,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="hero-section">
+    <section className="hero-section" id="home">
       <div className="container">
         <div className="hero-section-inner">
           <div className="row g-xl-4 g-5 justify-content-between align-items-center">
@@ -54,7 +54,7 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -125,7 +125,7 @@ const TargetAudience = () => {
   const activeTabData = tabs.find(tab => tab.id === activeTab);
 
   return (
-    <section className="target-audience-section">
+    <section className="target-audience-section" id="target-audience">
       <div className="container">
         <div className="section-header audience-animate">
           <span className="section-subtitle">Tailored Growth Strategies</span>

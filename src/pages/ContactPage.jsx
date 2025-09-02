@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ContactPage.css';
 import Navbar from '../components/Navbar';
 
@@ -11,6 +11,13 @@ const ContactPage = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
+  // Set page title for SEO
+  useEffect(() => {
+    document.title = 'Contact Us - Get In Touch | Glowup Agency';
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -23,20 +30,35 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError('');
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Form submitted:', formData);
-    setIsSubmitting(false);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    });
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      console.log('Form submitted:', formData);
+      
+      // Success state
+      setIsSubmitted(true);
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 5000);
+      
+    } catch (error) {
+      setSubmitError('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -50,6 +72,13 @@ const ContactPage = () => {
         </div>
         <div className="container">
           <div className="hero-content">
+            {/* Breadcrumb */}
+            <nav className="breadcrumb-nav">
+              <span className="breadcrumb-item">Home</span>
+              <span className="breadcrumb-separator">/</span>
+              <span className="breadcrumb-item active">Contact</span>
+            </nav>
+            
             <div className="hero-badge">
               <span>📧</span>
               <span>Get In Touch</span>
@@ -173,6 +202,28 @@ const ContactPage = () => {
               </div>
               
               <form className="contact-form" onSubmit={handleSubmit}>
+                {/* Success Message */}
+                {isSubmitted && (
+                  <div className="alert alert-success">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="20,6 9,17 4,12"/>
+                    </svg>
+                    <span>Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.</span>
+                  </div>
+                )}
+                
+                {/* Error Message */}
+                {submitError && (
+                  <div className="alert alert-error">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="15" y1="9" x2="9" y2="15"/>
+                      <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <span>{submitError}</span>
+                  </div>
+                )}
+                
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="name" className="form-label">Full Name</label>
@@ -256,6 +307,34 @@ const ContactPage = () => {
                   )}
                 </button>
               </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick FAQ Section */}
+      <section className="contact-faq-section">
+        <div className="container">
+          <div className="faq-header">
+            <h3>Quick Questions? We Have Answers</h3>
+            <p>Find instant answers to common questions before reaching out</p>
+          </div>
+          <div className="faq-grid">
+            <div className="faq-item">
+              <h4>🚀 How quickly can we start?</h4>
+              <p>We can begin your project within 24-48 hours of our initial consultation. Our team is ready to dive in immediately.</p>
+            </div>
+            <div className="faq-item">
+              <h4>💰 What are your pricing options?</h4>
+              <p>We offer flexible packages starting from $299/month. Custom enterprise solutions available for larger businesses.</p>
+            </div>
+            <div className="faq-item">
+              <h4>📈 Do you guarantee results?</h4>
+              <p>Yes! We guarantee measurable improvements in engagement and reach within the first 90 days or your money back.</p>
+            </div>
+            <div className="faq-item">
+              <h4>🎯 Which platforms do you cover?</h4>
+              <p>Instagram, Facebook, TikTok, LinkedIn, YouTube, Twitter, and Pinterest. We tailor strategies for each platform.</p>
             </div>
           </div>
         </div>

@@ -1,0 +1,23 @@
+/* Disable CSS smooth scrolling to use JavaScript implementation */
+html {
+  scroll-behavior: auto !important;
+}
+
+body {
+  scroll-behavior: auto !important;
+}
+
+/* Remove any conflicting scroll behaviors */
+* {
+  scroll-behavior: auto !important;
+}
+
+/* Offset for fixed navbar when scrolling to sections */
+section[id] {
+  scroll-margin-top: 80px; /* Adjust based on your navbar height */
+}
+
+/* Ensure no other elements interfere with scrolling */
+html, body {
+  overflow-x: hidden;
+}

@@ -1,29 +1,164 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import logo from '../../assets/logo.png';
 
 const Navbar = () => {
   const [currency, setCurrency] = useState('USD');
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
   const location = useLocation();
+  const navigate = useNavigate();
   
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      if (offset > 50) {
-        setScrolled(true);
+  // Enhanced smooth scroll function with better animation
+  const smoothScrollTo = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      console.warn(`Element with id "${elementId}" not found`);
+      return;
+    }
+
+    // Temporarily disable any CSS scroll behavior
+    document.documentElement.style.scrollBehavior = 'auto';
+    document.body.style.scrollBehavior = 'auto';
+
+    const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - 80;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 1200; // 1.2 seconds for even smoother animation
+    let start = null;
+
+    // Improved easing function for very smooth animation
+    const easeInOutCubic = (t) => {
+      return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    };
+
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const ease = easeInOutCubic(progress);
+      
+      const currentPosition = startPosition + (distance * ease);
+      window.scrollTo(0, currentPosition);
+      
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
       } else {
-        setScrolled(false);
+        // Animation complete
+        setActiveSection(elementId);
+        // Re-enable CSS scroll behavior
+        document.documentElement.style.scrollBehavior = '';
+        document.body.style.scrollBehavior = '';
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.requestAnimationFrame(step);
+  };
+
+  // Handle navigation with smooth scroll
+  const handleNavigation = (e, sectionId) => {
+    e.preventDefault();
+    
+    if (location.pathname === '/') {
+      // If already on homepage, just scroll to section
+      smoothScrollTo(sectionId);
+      // Update URL hash
+      window.history.replaceState(null, null, `/#${sectionId}`);
+    } else {
+      // If on different page, navigate to homepage then scroll
+      navigate('/');
+      // Store the target section to scroll to after navigation
+      sessionStorage.setItem('scrollToSection', sectionId);
+      setTimeout(() => {
+        smoothScrollTo(sectionId);
+        window.history.replaceState(null, null, `/#${sectionId}`);
+      }, 100);
+    }
+  };
+
+  // Handle scroll to section on page load (for direct links)
+  useEffect(() => {
+    const scrollToSection = sessionStorage.getItem('scrollToSection');
+    if (scrollToSection && location.pathname === '/') {
+      setTimeout(() => {
+        smoothScrollTo(scrollToSection);
+        sessionStorage.removeItem('scrollToSection');
+      }, 300);
+    } else if (location.hash && location.pathname === '/') {
+      const sectionId = location.hash.replace('#', '');
+      setTimeout(() => {
+        smoothScrollTo(sectionId);
+      }, 300);
+    }
+  }, [location.pathname]);
+  
+  // Handle scroll effect and active section detection
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const offset = window.scrollY;
+          
+          // Handle navbar background change
+          if (offset > 50) {
+            setScrolled(true);
+          } else {
+            setScrolled(false);
+          }
+
+          // Only track active sections on homepage
+          if (location.pathname === '/') {
+            const sections = ['home', 'about', 'pricing', 'faq'];
+            let currentSection = 'home';
+
+            // Check which section is most visible in the viewport
+            sections.forEach(sectionId => {
+              const element = document.getElementById(sectionId);
+              if (element) {
+                const rect = element.getBoundingClientRect();
+                const elementTop = rect.top;
+                const elementBottom = rect.bottom;
+                const windowHeight = window.innerHeight;
+                
+                // Section is considered active if its top is within the upper 50% of viewport
+                // or if we're near the bottom of the page and this is the last section
+                if (elementTop <= windowHeight * 0.3 && elementBottom > windowHeight * 0.1) {
+                  currentSection = sectionId;
+                }
+                
+                // Special case for FAQ section if we're near bottom of page
+                if (sectionId === 'faq' && (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                  currentSection = 'faq';
+                }
+              }
+            });
+
+            setActiveSection(currentSection);
+          }
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Set initial active section based on URL hash
+    if (location.hash) {
+      const hash = location.hash.replace('#', '');
+      setActiveSection(hash);
+    }
+
+    // Initial scroll check
+    handleScroll();
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [location]);
 
   const handleCurrencyChange = (e) => {
     setCurrency(e.target.value);
@@ -50,27 +185,64 @@ const Navbar = () => {
           <div className="offcanvas-body align-items-center justify-content-between">
             <ul className="navbar-nav m-auto">
               <li className="nav-item">
-                <Link 
-                  className={`nav-link text-uppercase ${location.pathname === '/' && !location.hash ? 'active' : ''}`} 
-                  to="/"
+                <a
+                  href="/#home"
+                  className={`nav-link text-uppercase ${
+                    location.pathname === '/' && activeSection === 'home' ? 'active' : ''
+                  }`}
+                  onClick={(e) => handleNavigation(e, 'home')}
                 >
                   Home
-                </Link>
+                </a>
               </li>
               <li className="nav-item">
-                <Link 
-                  className={`nav-link text-uppercase ${location.pathname === '/about' ? 'active' : ''}`} 
-                  to="/about"
+                <a
+                  href="/#about"
+                  className={`nav-link text-uppercase ${
+                    location.pathname === '/' && activeSection === 'about' ? 'active' : ''
+                  }`}
+                  onClick={(e) => handleNavigation(e, 'about')}
                 >
                   About
-                </Link>
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  href="/#pricing"
+                  className={`nav-link text-uppercase ${
+                    location.pathname === '/' && activeSection === 'pricing' ? 'active' : ''
+                  }`}
+                  onClick={(e) => handleNavigation(e, 'pricing')}
+                >
+                  Pricing
+                </a>
+              </li>
+              <li className="nav-item">
+                {location.pathname === '/' ? (
+                  <a
+                    href="/#faq"
+                    className={`nav-link text-uppercase ${
+                      activeSection === 'faq' ? 'active' : ''
+                    }`}
+                    onClick={(e) => handleNavigation(e, 'faq')}
+                  >
+                    FAQ
+                  </a>
+                ) : (
+                  <Link
+                    className={`nav-link text-uppercase ${location.pathname === '/faq' ? 'active' : ''}`}
+                    to="/faq"
+                  >
+                    FAQ
+                  </Link>
+                )}
               </li>
               <li className="nav-item">
                 <Link 
-                  className={`nav-link text-uppercase ${location.pathname === '/faq' ? 'active' : ''}`} 
-                  to="/faq"
+                  className={`nav-link text-uppercase ${location.pathname === '/blog' ? 'active' : ''}`} 
+                  to="/blog"
                 >
-                  Faq
+                  Blog
                 </Link>
               </li>
               <li className="nav-item">
@@ -79,29 +251,6 @@ const Navbar = () => {
                   to="/contact"
                 >
                   Contact
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className={`nav-link text-uppercase ${location.hash === '#pricing' || location.pathname + location.hash === '/#pricing' ? 'active' : ''}`}
-                  to="/#pricing"
-                  onClick={(e) => {
-                    // If already on the homepage, just scroll to the section
-                    if (location.pathname === '/') {
-                      e.preventDefault();
-                      document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                >
-                  Pricing
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link 
-                  className={`nav-link text-uppercase ${location.pathname === '/blog' ? 'active' : ''}`} 
-                  to="/blog"
-                >
-                  Blogs
                 </Link>
               </li>
               {/* <li className="nav-item">
@@ -121,14 +270,14 @@ const Navbar = () => {
                 </Link>
               </li> */}
             </ul>
-            <ul>
+            {/* <ul>
               <li className="nav-item">
                 <Link className="nav-link login-btn" to="/login">
                   <i className="login-icon fas fa-sign-in-alt"></i>
                   <span className="d-md-none">Login</span>
                 </Link>
               </li>
-            </ul>
+            </ul> */}
           </div>
         </div>
 
