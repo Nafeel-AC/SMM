@@ -1,3 +1,7 @@
+.container {
+  overflow: hidden;
+}
+
 /* Target Audience Section */
 .target-audience-section {
   padding: 8rem 0;
