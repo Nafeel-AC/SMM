@@ -14,15 +14,16 @@ import ClientReviews from '../components/ClientReviews';
 
 
 const HomePage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, getNextUserFlowStep } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect to dashboard if user is already logged in
+  // Redirect to appropriate step if user is already logged in
   useEffect(() => {
     if (user && !loading) {
-      navigate('/dashboard');
+      const nextStep = getNextUserFlowStep();
+      navigate(nextStep);
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, getNextUserFlowStep]);
 
   // If still loading or user is not logged in, show the homepage
   return (

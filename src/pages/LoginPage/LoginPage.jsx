@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import '../AuthForms/AuthForms.css';
@@ -10,9 +10,22 @@ const LoginPage = () => {
     password: ''
   });
   const [loading, setLoading] = useState(false);
+  
+  // Debug loading state changes
+  useEffect(() => {
+    console.log('🔄 LoginPage: Loading state changed to:', loading);
+  }, [loading]);
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const { signInWithEmail, user } = useAuth();
   const navigate = useNavigate();
+  
+  // Redirect if user is already signed in
+  useEffect(() => {
+    if (user) {
+      console.log('👤 User already signed in, redirecting to subscription page');
+      navigate('/subscription');
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,18 +37,35 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🔐 Login form submitted');
     setLoading(true);
     setError('');
 
     try {
-      await login(formData.email, formData.password);
-      navigate('/dashboard');
+      console.log('📧 Attempting to sign in with email:', formData.email);
+      const { data, error } = await signInWithEmail(formData.email, formData.password);
+      
+      console.log('🔍 Sign in response:', { data, error });
+      
+      if (error) {
+        console.error('❌ Sign in error:', error);
+        setError(error.message || 'Failed to login. Please check your credentials.');
+        setLoading(false);
+      } else {
+        console.log('✅ Sign in successful, data:', data);
+        // Success - navigate to subscription page
+        console.log('🚀 Navigating to subscription page');
+        navigate('/subscription');
+        setLoading(false);
+      }
     } catch (error) {
+      console.error('💥 Sign in exception:', error);
       setError('Failed to login. Please check your credentials.');
-    } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div className="login-page">
@@ -44,7 +74,7 @@ const LoginPage = () => {
           <div className="signup-left" style={{ backgroundImage: `url(${heroImage})` }} aria-hidden>
             <div className="left-overlay">
               <h2>Welcome back</h2>
-              <p>Sign in to access your dashboard and campaign insights.</p>
+              <p>Sign in to access your account and campaign insights.</p>
             </div>
           </div>
 
@@ -71,6 +101,8 @@ const LoginPage = () => {
 
               <button type="submit" className="primary-btn" disabled={loading}>{loading ? 'Signing in...' : 'Sign In'}</button>
             </form>
+
+
 
             <div className="alt-actions">
               <p>Don't have an account? <Link to="/register">Create account</Link></p>
