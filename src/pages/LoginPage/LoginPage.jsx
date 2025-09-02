@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import Navbar from '../../components/Navbar';
 import '../AuthForms/AuthForms.css';
 import heroImage from '../../assets/hero-image.jpg';
 
@@ -68,7 +69,9 @@ const LoginPage = () => {
 
 
   return (
-    <div className="login-page">
+    <>
+      <Navbar />
+      <div className="login-page">
       <div className="signup-wrapper">
         <div className="signup-card">
           <div className="signup-left" style={{ backgroundImage: `url(${heroImage})` }} aria-hidden>
@@ -112,6 +115,7 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
