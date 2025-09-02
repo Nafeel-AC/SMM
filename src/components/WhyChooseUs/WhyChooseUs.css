@@ -92,7 +92,7 @@
   display: flex;
   align-items: flex-start;
   gap: 15px;
-  padding: 18px;
+  padding: 5px;
   background-color: #f8f9fa;
   border-radius: 12px;
   transition: all 0.3s ease;
