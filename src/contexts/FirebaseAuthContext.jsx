@@ -19,6 +19,7 @@ import {
   getDocs 
 } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
+import { useNavigate } from 'react-router-dom';
 
 // Create the authentication context
 export const FirebaseAuthContext = createContext(null);
@@ -40,63 +41,74 @@ export function FirebaseAuthProvider({ children }) {
         user: !!firebaseUser, 
         email: firebaseUser?.email 
       });
-      
       setLoading(false);
-      
       if (firebaseUser) {
         console.log('👤 Firebase user found:', firebaseUser.email);
         setUser(firebaseUser);
-        // Fetch user profile
         await fetchUserProfile(firebaseUser.uid);
-        
-        // Redirect based on user progress on login/signup events
-        // Wait a bit for profile to be fetched, then redirect
-        setTimeout(() => {
-          const nextStep = getNextUserFlowStep();
-          const currentPath = window.location.pathname;
-          
-          console.log('🚀 Current path:', currentPath);
-          console.log('🚀 Next step should be:', nextStep);
-          
-          // Don't redirect if we're already on a role-specific dashboard or diagnostic page
-          if (currentPath === '/admin-dashboard' || currentPath === '/staff-dashboard' || currentPath === '/diagnostic') {
-            console.log('✅ Already on role-specific dashboard or diagnostic page:', currentPath);
-            return;
-          }
-          
-          // Only redirect if we're not already on the correct page
-          if (currentPath !== nextStep) {
-            console.log('🚀 Redirecting from', currentPath, 'to', nextStep);
-            window.location.href = nextStep;
-          } else {
-            console.log('✅ Already on correct page:', currentPath);
-          }
-        }, 100);
       } else {
         console.log('🚫 No Firebase user');
         setUser(null);
         setProfile(null);
       }
     });
-
     // Clean up subscription when component unmounts
     return () => unsubscribe();
   }, []);
+
+  // Child component for redirect logic
+  function AuthRedirector() {
+    const navigate = useNavigate();
+    useEffect(() => {
+      if (!user || loading) return;
+      if (!profile) {
+        console.log('[User Type] Role not found in profile:', profile);
+        return;
+      }
+      console.log(`[User Type] Logged in as: ${profile.role}`);
+      const nextStep = getNextUserFlowStep();
+      const currentPath = window.location.pathname;
+      console.log('🚀 Current path:', currentPath);
+      console.log('🚀 Next step should be:', nextStep);
+      // Don't redirect if we're already on a role-specific dashboard or diagnostic page
+      if (currentPath === '/admin-dashboard' || currentPath === '/staff-dashboard' || currentPath === '/diagnostic') {
+        console.log('✅ Already on role-specific dashboard or diagnostic page:', currentPath);
+        return;
+      }
+      // Only redirect if we're not already on the correct page
+      if (currentPath !== nextStep) {
+        console.log('🚀 Redirecting from', currentPath, 'to', nextStep);
+        navigate(nextStep, { replace: true });
+      } else {
+        console.log('✅ Already on correct page:', currentPath);
+      }
+    }, [profile, user, loading, navigate]);
+    return null;
+  }
 
   // Fetch user profile from Firestore
   const fetchUserProfile = async (userId) => {
     try {
       const profileRef = doc(db, 'profiles', userId);
       const profileSnap = await getDoc(profileRef);
-
+      console.log('[fetchUserProfile] Firestore doc exists:', profileSnap.exists());
       if (profileSnap.exists()) {
-        setProfile(profileSnap.data());
+        const data = profileSnap.data();
+        console.log('[fetchUserProfile] Profile data from Firestore:', data);
+        if (data && typeof data === 'object') {
+          setProfile(data);
+        } else {
+          console.warn('[fetchUserProfile] Profile data is undefined or not an object:', data);
+          setProfile(null);
+        }
       } else {
         // If profile doesn't exist, create one
+        console.warn('[fetchUserProfile] Profile does not exist, creating new profile for user:', userId);
         await createUserProfile(userId);
       }
     } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
+      console.error('[fetchUserProfile] Error:', error);
+      setProfile(null);
     }
   };
 
@@ -211,66 +223,22 @@ export function FirebaseAuthProvider({ children }) {
   // Determine the next step in user flow based on profile progress
   const getNextUserFlowStep = () => {
     if (!profile) return '/subscription';
-    
     // Don't redirect if we're on the diagnostic page
     if (window.location.pathname === '/diagnostic') {
       console.log('🔧 On diagnostic page, not redirecting');
       return '/diagnostic';
     }
-    
-    // Check for admin/staff roles first - they should go to their respective dashboards
+    // If user is admin, skip all onboarding checks and go directly to admin dashboard
     if (profile.role === 'admin') {
-      console.log('👑 Admin user detected, redirecting to admin dashboard');
+      console.log('👑 Admin user detected, redirecting to admin dashboard (no onboarding checks)');
       return '/admin-dashboard';
     }
-    
+    // Staff role check
     if (profile.role === 'staff') {
-      console.log('👥 Staff user detected, redirecting to staff dashboard');
+      console.log('� Staff user detected, redirecting to staff dashboard');
       return '/staff-dashboard';
     }
-    
-    // Handle missing fields gracefully (treat undefined as false)
-    const paymentCompleted = profile.payment_completed === true;
-    const instagramConnected = profile.instagram_connected === true;
-    const requirementsCompleted = profile.requirements_completed === true;
-    
-    console.log('🔍 Checking user progress:', {
-      payment_completed: paymentCompleted,
-      instagram_connected: instagramConnected,
-      requirements_completed: requirementsCompleted,
-      raw_values: {
-        payment_completed: profile.payment_completed,
-        instagram_connected: profile.instagram_connected,
-        requirements_completed: profile.requirements_completed
-      }
-    });
-    
-    // If everything is completed, redirect to dashboard
-    if (hasCompletedOnboarding()) {
-      console.log('✅ User has completed all steps, redirecting to dashboard');
-      return '/dashboard';
-    }
-    
-    // Check payment completion first
-    if (!paymentCompleted) {
-      console.log('💳 Payment not completed, redirecting to subscription');
-      return '/subscription';
-    }
-    
-    // Check Instagram connection
-    if (!instagramConnected) {
-      console.log('📱 Instagram not connected, redirecting to Instagram connect');
-      return '/instagram-connect';
-    }
-    
-    // Check requirements completion
-    if (!requirementsCompleted) {
-      console.log('📋 Requirements not completed, redirecting to requirements form');
-      return '/requirements-form';
-    }
-    
-    // Fallback to dashboard
-    return '/dashboard';
+    // ...existing code...
   };
 
   // Sign in with email and password
@@ -371,5 +339,10 @@ export function FirebaseAuthProvider({ children }) {
     updateUserRole
   };
 
-  return <FirebaseAuthContext.Provider value={value}>{children}</FirebaseAuthContext.Provider>;
+  return (
+    <FirebaseAuthContext.Provider value={value}>
+      <AuthRedirector />
+      {children}
+    </FirebaseAuthContext.Provider>
+  );
 }
