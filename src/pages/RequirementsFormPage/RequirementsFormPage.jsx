@@ -1,356 +1,245 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import './RequirementsFormPage.css';
 
 const RequirementsFormPage = () => {
-  const [formData, setFormData] = useState({
-    niche: '',
-    location: '',
-    comments: '',
-    dms: '',
-    max_following: '',
-    hashtags: '',
-    account_targets: ''
-  });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    business_type: '',
+    target_audience: '',
+    content_goals: [],
+    posting_frequency: '',
+    budget_range: '',
+    special_requirements: '',
+    preferred_hashtags: '',
+    competitor_accounts: ''
+  });
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Removed artificial per-call timeouts to allow long-running requests during debugging
+  const businessTypes = [
+    'E-commerce Store',
+    'Local Business',
+    'Personal Brand',
+    'Service Provider',
+    'Restaurant/Food',
+    'Fashion/Beauty',
+    'Fitness/Health',
+    'Technology',
+    'Education',
+    'Other'
+  ];
 
-  useEffect(() => {
-    // Guard: don't query until we have a user
-    if (!user?.id) return;
-    checkExistingRequirements();
-    
-    // Cleanup function to clear any pending timeouts
-    return () => {
-      // This will be called when component unmounts
-    };
-  }, [user?.id]);
+  const contentGoals = [
+    'Increase Followers',
+    'Boost Engagement',
+    'Drive Website Traffic',
+    'Generate Sales',
+    'Build Brand Awareness',
+    'Community Building',
+    'Lead Generation',
+    'Product Showcase'
+  ];
 
-  const checkExistingRequirements = async () => {
-    try {
-      console.log('🔍 Checking for existing requirements on page load...');
-      console.log('👤 User ID for check:', user?.id);
-      if (!user?.id) {
-        console.warn('⚠️ No user found, skipping requirements check');
-        return;
-      }
-      
-      const { data, error } = await supabase
-        .from('user_requirements')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+  const postingFrequencies = [
+    'Daily',
+    '5-6 times per week',
+    '3-4 times per week',
+    '2-3 times per week',
+    'Weekly',
+    'As needed'
+  ];
 
-      console.log('🔍 Existing requirements check result:', { data, error });
+  const budgetRanges = [
+    'Under $500/month',
+    '$500 - $1,000/month',
+    '$1,000 - $2,500/month',
+    '$2,500 - $5,000/month',
+    '$5,000+/month'
+  ];
 
-      if (data && !error) {
-        console.log('📝 Loading existing requirements into form');
-        setFormData({
-          niche: data.niche || '',
-          location: data.location || '',
-          comments: data.comments || '',
-          dms: data.dms || '',
-          max_following: data.max_following || '',
-          hashtags: data.hashtags || '',
-          account_targets: data.account_targets || ''
-        });
-      } else {
-        console.log('📝 No existing requirements found, using empty form');
-      }
-    } catch (error) {
-      console.warn('❌ Error checking existing requirements:', error);
-      // Continue with empty form - don't block the user
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [field]: value
+    }));
+  };
+
+  const handleCheckboxChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].includes(value)
+        ? prev[field].filter(item => item !== value)
+        : [...prev[field], value]
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('📝 Requirements form submitted');
-    console.log('📝 Form data:', formData);
-    console.log('👤 User ID:', user?.id);
-    console.log('🌐 Online status:', navigator.onLine ? 'online' : 'offline');
-    console.time('⏱️ handleSubmit total');
-    
-    if (!user?.id) {
-      setError('You must be logged in to submit requirements. Please log in and try again.');
-      return;
-    }
-    
     setLoading(true);
-    setError('');
-    
-    // Removed overall submission timeout for debugging
-    const timeoutId = null;
-
-    // Build and log payload BEFORE any DB call so we always see it
-    const requirementsPayload = {
-      niche: formData.niche || null,
-      location: formData.location || null,
-      comments: formData.comments !== '' && formData.comments !== null ? String(formData.comments) : null,
-      dms: formData.dms !== '' && formData.dms !== null ? String(formData.dms) : null,
-      max_following: formData.max_following !== '' && formData.max_following !== null ? parseInt(formData.max_following, 10) : null,
-      hashtags: formData.hashtags || null,
-      account_targets: formData.account_targets || null
-    };
-    console.log('🧾 Normalized payload (pre-DB):', requirementsPayload);
-    console.log('🔎 Payload types (pre-DB):', {
-      niche: typeof requirementsPayload.niche,
-      location: typeof requirementsPayload.location,
-      comments: typeof requirementsPayload.comments,
-      dms: typeof requirementsPayload.dms,
-      max_following: typeof requirementsPayload.max_following,
-      hashtags: typeof requirementsPayload.hashtags,
-      account_targets: typeof requirementsPayload.account_targets
-    });
 
     try {
-      // Skip profile lookup and pre-check; go straight to upsert
-      console.log('⏭️ Skipping profile lookup and pre-check; proceeding to upsert');
-
-      // Use a single upsert to avoid branch/policy/query-shape issues
-      console.log('✅ About to upsert requirements for user:', user.id, requirementsPayload);
-      console.log('📝 Saving requirements via upsert (no select)...');
-      console.time('⏱️ user_requirements.upsert');
-      
-      // Add timeout to detect hanging calls
-      const upsertPromise = supabase
+      // Save requirements to database
+      const { data, error } = await supabase
         .from('user_requirements')
-        .upsert(
-          [
-            {
-              user_id: user.id,
-              ...requirementsPayload,
-              last_updated: new Date().toISOString()
-            }
-          ],
-          { onConflict: 'user_id' }
-        );
-      
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Upsert timeout after 10s')), 10000)
-      );
-      
-      const { data: upsertData, error: upsertError } = await Promise.race([upsertPromise, timeoutPromise]);
-      console.timeEnd('⏱️ user_requirements.upsert');
-      console.log('📦 user_requirements.upsert result (no select):', { upsertData, upsertError });
-      if (upsertError && upsertError.message) {
-        console.error('🧰 Upsert error details:', {
-          message: upsertError.message,
-          details: upsertError.details,
-          hint: upsertError.hint,
-          code: upsertError.code
-        });
+        .insert({
+          user_id: user.id,
+          business_type: formData.business_type,
+          target_audience: formData.target_audience,
+          content_goals: formData.content_goals,
+          posting_frequency: formData.posting_frequency,
+          budget_range: formData.budget_range,
+          special_requirements: formData.special_requirements,
+          preferred_hashtags: formData.preferred_hashtags,
+          competitor_accounts: formData.competitor_accounts,
+          status: 'submitted',
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving requirements:', error);
+        throw error;
       }
 
-      console.log('📡 Upsert finished:', upsertError ? upsertError : 'success');
-      if (upsertError) {
-        console.error('❌ Requirements save error:', upsertError);
-        throw upsertError;
-      }
-      console.log('✅ Requirements saved successfully');
-
-      // Try to update user profile (do not block success if this fails)
-      try {
-        console.log('👤 Updating user profile...');
-        console.time('⏱️ profiles.update');
-        const profileResult = await supabase
-          .from('profiles')
-          .update({ requirements_completed: true })
-          .eq('id', user.id);
-        console.timeEnd('⏱️ profiles.update');
-        console.log('👤 Profile update result:', profileResult);
-      } catch (profileError) {
-        console.warn('❌ Profile update error (non-blocking):', profileError);
-      }
-
-      console.log('✅ Setting success state');
-      if (timeoutId) clearTimeout(timeoutId);
-      setSuccess(true);
-      console.timeEnd('⏱️ handleSubmit total');
+      console.log('✅ Requirements saved successfully:', data);
       
-      // Redirect to dashboard after 1 second
-      setTimeout(() => {
-        console.log('🚀 Redirecting to dashboard');
-        navigate('/dashboard');
-      }, 1000);
-
+      // Navigate to dashboard
+      navigate('/dashboard');
+      
     } catch (error) {
-      console.error('💥 Form submission error:', error);
-      if (error && error.stack) {
-        console.error('💥 Error stack:', error.stack);
-      }
-      if (timeoutId) clearTimeout(timeoutId);
-      
-      // Provide more specific error messages
-      if (error.message?.includes('foreign key')) {
-        setError('User profile not found. Please try logging out and back in.');
-      } else if (error.message?.includes('permission')) {
-        setError('Permission denied. Please check your account status.');
-      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
-        setError('Network error. Please check your connection and try again.');
-      } else {
-        setError(`Failed to save requirements: ${error.message || 'Unknown error'}. Please try again.`);
-      }
-      
+      console.error('Error submitting requirements:', error);
+      alert('Failed to save requirements. Please try again.');
     } finally {
-      // Always reset loading state
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <div className="requirements-form-page">
-        <div className="form-container">
-          <div className="success-message">
-            <div className="success-icon">✓</div>
-            <h2>Requirements Submitted Successfully!</h2>
-            <p>Thank you for providing your requirements. Our team will review them and get started on your SMM campaign.</p>
-            <p>Redirecting to your dashboard...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="requirements-form-page">
       <div className="form-container">
         <div className="form-header">
-          <h1>Tell Us About Your Goals</h1>
-          <p>Help us understand your Instagram growth objectives so we can create a personalized strategy for you.</p>
+          <h1>Tell Us About Your Business</h1>
+          <p>Help us understand your Instagram goals so we can create the perfect growth strategy for you.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="requirements-form">
-          <div className="form-grid">
+          <div className="form-section">
+            <h3>Business Information</h3>
+            
             <div className="form-group">
-              <label htmlFor="niche">Niche (Target Audience)</label>
-              <input
-                type="text"
-                id="niche"
-                name="niche"
-                value={formData.niche}
-                onChange={handleInputChange}
-                placeholder="e.g., Fitness, Fashion, Food, Travel"
+              <label>What type of business do you have? *</label>
+              <select
+                value={formData.business_type}
+                onChange={(e) => handleInputChange('business_type', e.target.value)}
                 required
-              />
-              <small>What industry or topic does your content focus on?</small>
+              >
+                <option value="">Select your business type</option>
+                {businessTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
-              <label htmlFor="location">Location</label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                placeholder="e.g., New York, USA or Global"
-                required
-              />
-              <small>Where are your target followers located?</small>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="comments">Comments (per day)</label>
-              <input
-                type="number"
-                id="comments"
-                name="comments"
-                value={formData.comments}
-                onChange={handleInputChange}
-                placeholder="e.g., 50"
-                min="0"
-              />
-              <small>How many comments would you like us to post daily?</small>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="dms">DMs (per day)</label>
-              <input
-                type="number"
-                id="dms"
-                name="dms"
-                value={formData.dms}
-                onChange={handleInputChange}
-                placeholder="e.g., 20"
-                min="0"
-              />
-              <small>How many direct messages should we send daily?</small>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="max_following">Max Following</label>
-              <input
-                type="number"
-                id="max_following"
-                name="max_following"
-                value={formData.max_following}
-                onChange={handleInputChange}
-                placeholder="e.g., 1000"
-                min="0"
-                required
-              />
-              <small>Maximum number of accounts you want to follow</small>
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="hashtags">Hashtags</label>
+              <label>Describe your target audience *</label>
               <textarea
-                id="hashtags"
-                name="hashtags"
-                value={formData.hashtags}
-                onChange={handleInputChange}
-                placeholder="e.g., #fitness #workout #health #motivation"
+                value={formData.target_audience}
+                onChange={(e) => handleInputChange('target_audience', e.target.value)}
+                placeholder="e.g., Young professionals aged 25-35 interested in fitness and healthy living"
+                required
                 rows="3"
               />
-              <small>List hashtags you want us to use in your posts</small>
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="account_targets">Account Targets</label>
-              <textarea
-                id="account_targets"
-                name="account_targets"
-                value={formData.account_targets}
-                onChange={handleInputChange}
-                placeholder="e.g., @fitness_influencer, @health_coach, @gym_motivation"
-                rows="3"
-              />
-              <small>List specific accounts you want us to target for engagement</small>
             </div>
           </div>
 
-          {error && (
-            <div className="error-message">
-              {error}
-              <button 
-                type="button"
-                className="retry-btn"
-                onClick={() => {
-                  setError('');
-                  setLoading(false);
-                }}
-              >
-                Try Again
-              </button>
+          <div className="form-section">
+            <h3>Content Goals</h3>
+            <p>What are your main objectives for Instagram? (Select all that apply)</p>
+            
+            <div className="checkbox-group">
+              {contentGoals.map(goal => (
+                <label key={goal} className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={formData.content_goals.includes(goal)}
+                    onChange={() => handleCheckboxChange('content_goals', goal)}
+                  />
+                  <span className="checkmark"></span>
+                  {goal}
+                </label>
+              ))}
             </div>
-          )}
+          </div>
+
+          <div className="form-section">
+            <h3>Posting Preferences</h3>
+            
+            <div className="form-group">
+              <label>How often would you like to post? *</label>
+              <select
+                value={formData.posting_frequency}
+                onChange={(e) => handleInputChange('posting_frequency', e.target.value)}
+                required
+              >
+                <option value="">Select posting frequency</option>
+                {postingFrequencies.map(freq => (
+                  <option key={freq} value={freq}>{freq}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>What's your monthly marketing budget? *</label>
+              <select
+                value={formData.budget_range}
+                onChange={(e) => handleInputChange('budget_range', e.target.value)}
+                required
+              >
+                <option value="">Select budget range</option>
+                {budgetRanges.map(budget => (
+                  <option key={budget} value={budget}>{budget}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="form-section">
+            <h3>Additional Information</h3>
+            
+            <div className="form-group">
+              <label>Any special requirements or preferences?</label>
+              <textarea
+                value={formData.special_requirements}
+                onChange={(e) => handleInputChange('special_requirements', e.target.value)}
+                placeholder="e.g., Must avoid certain topics, specific brand guidelines, etc."
+                rows="3"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Preferred hashtags (comma-separated)</label>
+              <input
+                type="text"
+                value={formData.preferred_hashtags}
+                onChange={(e) => handleInputChange('preferred_hashtags', e.target.value)}
+                placeholder="e.g., #fitness, #health, #lifestyle"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Competitor accounts you'd like to follow (usernames, comma-separated)</label>
+              <input
+                type="text"
+                value={formData.competitor_accounts}
+                onChange={(e) => handleInputChange('competitor_accounts', e.target.value)}
+                placeholder="e.g., @competitor1, @competitor2"
+              />
+            </div>
+          </div>
 
           <div className="form-actions">
             <button 
@@ -358,14 +247,17 @@ const RequirementsFormPage = () => {
               className="submit-btn"
               disabled={loading}
             >
-              {loading ? 'Saving Requirements...' : 'Submit Requirements'}
+              {loading ? (
+                <>
+                  <div className="spinner"></div>
+                  Saving Requirements...
+                </>
+              ) : (
+                'Save Requirements & Continue'
+              )}
             </button>
           </div>
         </form>
-
-        <div className="form-note">
-          <p><strong>Note:</strong> These requirements are visible to you but can only be edited by our staff team. If you need to make changes, please contact support.</p>
-        </div>
       </div>
     </div>
   );

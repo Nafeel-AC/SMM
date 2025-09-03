@@ -1,104 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
-import UserList from './UserList';
-import UserDashboard from './UserDashboard';
 import './StaffPanel.css';
 
 const StaffPanel = () => {
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const { user, profile } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [activeTab, setActiveTab] = useState('users');
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (profile?.role === 'staff') {
-      fetchAssignedUsers();
-    }
-  }, [profile]);
+    fetchUsers();
+  }, []);
 
-  const fetchAssignedUsers = async () => {
+  const fetchUsers = async () => {
     try {
-      setLoading(true);
-      
-      // Get users assigned to this staff member
-      const { data: assignments, error: assignmentError } = await supabase
-        .from('staff_assignments')
-        .select(`
-          user_id,
-          profiles!staff_assignments_user_id_fkey (
-            id,
-            full_name,
-            created_at
-          )
-        `)
-        .eq('staff_id', user.id);
-
-      if (assignmentError) throw assignmentError;
-
-      // Get additional user data
-      const userIds = assignments.map(a => a.user_id);
-      const { data: userData, error: userError } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select(`
-          id,
-          full_name,
-          created_at,
-          user_requirements (*),
-          payments (*),
-          instagram_accounts (*)
+          *,
+          user_requirements(*),
+          instagram_accounts(*),
+          instagram_insights(*)
         `)
-        .in('id', userIds);
+        .order('created_at', { ascending: false });
 
-      if (userError) throw userError;
-
-      setUsers(userData || []);
+      if (error) {
+        console.error('Error fetching users:', error);
+      } else {
+        setUsers(data || []);
+      }
     } catch (error) {
-      setError(error.message);
-      console.error('Error fetching assigned users:', error);
+      console.error('Error fetching users:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUserSelect = (user) => {
-    setSelectedUser(user);
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'active': return '#10b981';
+      case 'pending': return '#f59e0b';
+      case 'inactive': return '#6b7280';
+      default: return '#6b7280';
+    }
   };
 
-  const handleBackToList = () => {
-    setSelectedUser(null);
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
-
-  if (profile?.role !== 'staff') {
-    return (
-      <div className="staff-panel">
-        <div className="access-denied">
-          <h2>Access Denied</h2>
-          <p>You don't have permission to access the staff panel.</p>
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return (
       <div className="staff-panel">
-        <div className="loading">
+        <div className="loading-container">
           <div className="spinner"></div>
-          <p>Loading assigned users...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="staff-panel">
-        <div className="error">
-          <h2>Error</h2>
-          <p>{error}</p>
-          <button onClick={fetchAssignedUsers}>Retry</button>
+          <p>Loading staff panel...</p>
         </div>
       </div>
     );
@@ -106,23 +68,212 @@ const StaffPanel = () => {
 
   return (
     <div className="staff-panel">
-      <div className="staff-header">
-        <h1>Staff Panel</h1>
-        <p>Welcome, {profile?.full_name || user?.email}</p>
-      </div>
+      <div className="staff-container">
+        <div className="staff-header">
+          <h1>Staff Panel</h1>
+          <p>Manage users and monitor their Instagram growth</p>
+        </div>
 
-      {selectedUser ? (
-        <UserDashboard 
-          user={selectedUser} 
-          onBack={handleBackToList}
-          staffId={user.id}
-        />
-      ) : (
-        <UserList 
-          users={users} 
-          onUserSelect={handleUserSelect}
-        />
-      )}
+        <div className="staff-tabs">
+          <button 
+            className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
+            onClick={() => setActiveTab('users')}
+          >
+            Users ({users.length})
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
+            onClick={() => setActiveTab('analytics')}
+          >
+            Analytics
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'support' ? 'active' : ''}`}
+            onClick={() => setActiveTab('support')}
+          >
+            Support
+          </button>
+        </div>
+
+        {activeTab === 'users' && (
+          <div className="users-section">
+            <div className="users-grid">
+              {users.map((userData) => (
+                <div 
+                  key={userData.id} 
+                  className="user-card"
+                  onClick={() => setSelectedUser(userData)}
+                >
+                  <div className="user-avatar">
+                    {userData.avatar_url ? (
+                      <img src={userData.avatar_url} alt="User Avatar" />
+                    ) : (
+                      <div className="avatar-placeholder">
+                        {userData.full_name?.charAt(0) || 'U'}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="user-info">
+                    <h3>{userData.full_name || 'Unknown User'}</h3>
+                    <p className="user-email">{userData.email}</p>
+                    <div className="user-status">
+                      <span 
+                        className="status-dot"
+                        style={{ backgroundColor: getStatusColor(userData.status) }}
+                      ></span>
+                      {userData.status || 'inactive'}
+                    </div>
+                  </div>
+
+                  <div className="user-stats">
+                    <div className="stat">
+                      <span className="stat-label">Joined</span>
+                      <span className="stat-value">{formatDate(userData.created_at)}</span>
+                    </div>
+                    <div className="stat">
+                      <span className="stat-label">Instagram</span>
+                      <span className="stat-value">
+                        {userData.instagram_accounts?.length > 0 ? 'Connected' : 'Not Connected'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="analytics-section">
+            <div className="analytics-grid">
+              <div className="analytics-card">
+                <h3>Total Users</h3>
+                <div className="analytics-value">{users.length}</div>
+                <div className="analytics-change positive">+12% this month</div>
+              </div>
+              
+              <div className="analytics-card">
+                <h3>Active Users</h3>
+                <div className="analytics-value">
+                  {users.filter(u => u.status === 'active').length}
+                </div>
+                <div className="analytics-change positive">+8% this month</div>
+              </div>
+              
+              <div className="analytics-card">
+                <h3>Instagram Connected</h3>
+                <div className="analytics-value">
+                  {users.filter(u => u.instagram_accounts?.length > 0).length}
+                </div>
+                <div className="analytics-change positive">+15% this month</div>
+              </div>
+              
+              <div className="analytics-card">
+                <h3>Avg Engagement</h3>
+                <div className="analytics-value">4.2%</div>
+                <div className="analytics-change positive">+0.3% this month</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'support' && (
+          <div className="support-section">
+            <div className="support-cards">
+              <div className="support-card">
+                <h3>Recent Support Requests</h3>
+                <div className="support-list">
+                  <div className="support-item">
+                    <div className="support-info">
+                      <h4>Account Connection Issue</h4>
+                      <p>User: john@example.com</p>
+                    </div>
+                    <div className="support-status pending">Pending</div>
+                  </div>
+                  <div className="support-item">
+                    <div className="support-info">
+                      <h4>Growth Strategy Question</h4>
+                      <p>User: sarah@example.com</p>
+                    </div>
+                    <div className="support-status resolved">Resolved</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="support-card">
+                <h3>Quick Actions</h3>
+                <div className="quick-actions">
+                  <button className="action-btn">View All Tickets</button>
+                  <button className="action-btn">Send Announcement</button>
+                  <button className="action-btn">Export User Data</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedUser && (
+          <div className="user-modal-overlay" onClick={() => setSelectedUser(null)}>
+            <div className="user-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>{selectedUser.full_name || 'User Details'}</h2>
+                <button 
+                  className="close-btn"
+                  onClick={() => setSelectedUser(null)}
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="modal-content">
+                <div className="user-details">
+                  <div className="detail-group">
+                    <label>Email</label>
+                    <span>{selectedUser.email}</span>
+                  </div>
+                  <div className="detail-group">
+                    <label>Status</label>
+                    <span className={`status ${selectedUser.status || 'inactive'}`}>
+                      {selectedUser.status || 'inactive'}
+                    </span>
+                  </div>
+                  <div className="detail-group">
+                    <label>Joined</label>
+                    <span>{formatDate(selectedUser.created_at)}</span>
+                  </div>
+                  <div className="detail-group">
+                    <label>Instagram Connected</label>
+                    <span>
+                      {selectedUser.instagram_accounts?.length > 0 ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                </div>
+                
+                {selectedUser.user_requirements && selectedUser.user_requirements.length > 0 && (
+                  <div className="requirements-section">
+                    <h3>Requirements</h3>
+                    <div className="requirements-details">
+                      <div className="requirement-item">
+                        <label>Business Type</label>
+                        <span>{selectedUser.user_requirements[0].business_type}</span>
+                      </div>
+                      <div className="requirement-item">
+                        <label>Posting Frequency</label>
+                        <span>{selectedUser.user_requirements[0].posting_frequency}</span>
+                      </div>
+                      <div className="requirement-item">
+                        <label>Budget Range</label>
+                        <span>{selectedUser.user_requirements[0].budget_range}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

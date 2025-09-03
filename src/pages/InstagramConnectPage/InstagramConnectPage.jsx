@@ -1,56 +1,89 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
-import { instagramService } from '../../lib/instagram';
 import './InstagramConnectPage.css';
 
 const InstagramConnectPage = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [connected, setConnected] = useState(false);
-  const [instagramAccount, setInstagramAccount] = useState(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    checkInstagramConnection();
-  }, []);
-
-  const checkInstagramConnection = async () => {
+  const handleConnectInstagram = async () => {
+    setLoading(true);
+    
     try {
-      const { data, error } = await supabase
+      // Simulate connection delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Insert sample Instagram account data
+      const { data: accountData, error: accountError } = await supabase
         .from('instagram_accounts')
-        .select('*')
-        .eq('user_id', user.id)
+        .insert({
+          user_id: user.id,
+          instagram_user_id: 'sample_instagram_123',
+          username: 'sample_business_account',
+          access_token: 'sample_access_token_' + Date.now(),
+          connected_at: new Date().toISOString()
+        })
+        .select()
         .single();
 
-      if (data && !error) {
-        setConnected(true);
-        setInstagramAccount(data);
+      if (accountError) {
+        console.error('Error saving Instagram account:', accountError);
+        throw accountError;
       }
-    } catch (error) {
-      console.error('Error checking Instagram connection:', error);
-    }
-  };
 
-  const handleInstagramConnect = async () => {
-    setLoading(true);
-    setError('');
+      // Insert sample Instagram insights data
+      const { data: insightsData, error: insightsError } = await supabase
+        .from('instagram_insights')
+        .insert({
+          user_id: user.id,
+          followers_count: 1250,
+          following_count: 320,
+          media_count: 25,
+          engagement_rate: 4.2,
+          avg_likes: 85,
+          avg_comments: 12,
+          reach: 980,
+          impressions: 1250,
+          profile_views: 45,
+          website_clicks: 12,
+          email_contacts: 3,
+          phone_contacts: 2,
+          get_directions: 1,
+          text_message: 0,
+          last_updated: new Date().toISOString()
+        })
+        .select()
+        .single();
 
-    try {
-      // Redirect to Instagram OAuth
-      const authUrl = instagramService.getAuthUrl();
-      window.location.href = authUrl;
+      if (insightsError) {
+        console.error('Error saving Instagram insights:', insightsError);
+        // Don't throw error, continue anyway
+      }
+
+      // Update user profile to mark Instagram as connected
+      await supabase
+        .from('profiles')
+        .update({ instagram_connected: true })
+        .eq('id', user.id);
+
+      console.log('✅ Instagram connected successfully with sample data');
+      setConnected(true);
+      
+      // Auto-redirect after 2 seconds
+      setTimeout(() => {
+        navigate('/requirements-form');
+      }, 2000);
+      
     } catch (error) {
-      console.error('Error initiating Instagram connection:', error);
-      setError('Failed to initiate Instagram connection. Please try again.');
+      console.error('Error connecting Instagram:', error);
+      alert('Failed to connect Instagram. Please try again.');
+    } finally {
       setLoading(false);
     }
-  };
-
-  const handleContinue = () => {
-    navigate('/requirements-form');
   };
 
   if (connected) {
@@ -59,27 +92,16 @@ const InstagramConnectPage = () => {
         <div className="connect-container">
           <div className="success-section">
             <div className="success-icon">
-              <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#4CAF50"/>
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#10b981"/>
               </svg>
             </div>
             <h2>Instagram Connected Successfully!</h2>
-            <p>Your Instagram account has been connected and we can now access your insights.</p>
-            
-            <div className="account-info">
-              <div className="account-details">
-                <h3>Connected Account</h3>
-                <p>Instagram User ID: {instagramAccount?.instagram_user_id}</p>
-                <p>Connected: {new Date(instagramAccount?.connected_at).toLocaleDateString()}</p>
-              </div>
+            <p>Your Instagram account has been connected with sample data for testing.</p>
+            <div className="redirect-info">
+              <p>Redirecting to requirements form...</p>
+              <div className="spinner"></div>
             </div>
-
-            <button 
-              className="continue-btn"
-              onClick={handleContinue}
-            >
-              Continue to Requirements Form
-            </button>
           </div>
         </div>
       </div>
@@ -96,53 +118,47 @@ const InstagramConnectPage = () => {
             </svg>
           </div>
           <h1>Connect Your Instagram Account</h1>
-          <p>To provide you with personalized SMM services, we need to connect to your Instagram account to access your insights and analytics.</p>
+          <p>Connect your Instagram account to access personalized growth insights and analytics.</p>
         </div>
 
         <div className="benefits-section">
-          <h3>What we'll access:</h3>
+          <h3>What you'll get:</h3>
           <ul className="benefits-list">
             <li>
               <span className="benefit-icon">📊</span>
               <div>
-                <strong>Account Insights</strong>
-                <p>Follower count, engagement rates, and growth metrics</p>
+                <strong>Growth Analytics</strong>
+                <p>Track your follower growth and engagement metrics</p>
               </div>
             </li>
             <li>
               <span className="benefit-icon">🎯</span>
               <div>
-                <strong>Audience Demographics</strong>
-                <p>Age, gender, location, and interests of your followers</p>
+                <strong>Audience Insights</strong>
+                <p>Understand your audience demographics and behavior</p>
               </div>
             </li>
             <li>
               <span className="benefit-icon">📈</span>
               <div>
-                <strong>Performance Analytics</strong>
-                <p>Post reach, impressions, and engagement data</p>
+                <strong>Performance Tracking</strong>
+                <p>Monitor your content performance and reach</p>
               </div>
             </li>
             <li>
               <span className="benefit-icon">🔒</span>
               <div>
-                <strong>Secure Access</strong>
+                <strong>Secure Connection</strong>
                 <p>Your data is encrypted and we only access what's necessary</p>
               </div>
             </li>
           </ul>
         </div>
 
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
-
         <div className="connect-actions">
           <button 
             className="connect-btn"
-            onClick={handleInstagramConnect}
+            onClick={handleConnectInstagram}
             disabled={loading}
           >
             {loading ? (

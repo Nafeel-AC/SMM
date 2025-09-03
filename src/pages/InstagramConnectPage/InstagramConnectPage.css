@@ -1,76 +1,77 @@
 .instagram-connect-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
 }
 
 .connect-container {
-  background: white;
-  border-radius: 20px;
-  padding: 3rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   max-width: 600px;
   width: 100%;
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .connect-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 40px;
 }
 
 .instagram-icon {
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
 }
 
 .connect-header h1 {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 16px;
 }
 
 .connect-header p {
-  color: #666;
   font-size: 1.1rem;
+  color: #6b7280;
   line-height: 1.6;
 }
 
 .benefits-section {
-  margin-bottom: 2rem;
+  margin-bottom: 40px;
 }
 
 .benefits-section h3 {
-  color: #333;
-  margin-bottom: 1.5rem;
   font-size: 1.3rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .benefits-list {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .benefits-list li {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 10px;
-  transition: all 0.3s ease;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f3f4f6;
 }
 
-.benefits-list li:hover {
-  background: #e9ecef;
-  transform: translateX(5px);
+.benefits-list li:last-child {
+  border-bottom: none;
 }
 
 .benefit-icon {
   font-size: 1.5rem;
-  margin-right: 1rem;
-  margin-top: 0.2rem;
+  flex-shrink: 0;
+  margin-top: 4px;
 }
 
 .benefits-list li div {
@@ -79,16 +80,17 @@
 
 .benefits-list li strong {
   display: block;
-  color: #333;
-  margin-bottom: 0.3rem;
   font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
 }
 
 .benefits-list li p {
-  color: #666;
-  margin: 0;
   font-size: 0.9rem;
-  line-height: 1.4;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .connect-actions {
@@ -99,26 +101,28 @@
   background: linear-gradient(135deg, #E4405F 0%, #C13584 100%);
   color: white;
   border: none;
-  padding: 1rem 2rem;
-  border-radius: 10px;
+  padding: 16px 32px;
+  border-radius: 12px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 12px;
+  box-shadow: 0 8px 25px rgba(228, 64, 95, 0.3);
+  margin-bottom: 20px;
 }
 
 .connect-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(228, 64, 95, 0.3);
+  box-shadow: 0 12px 35px rgba(228, 64, 95, 0.4);
 }
 
 .connect-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  transform: none;
 }
 
 .spinner {
@@ -136,98 +140,77 @@
 }
 
 .privacy-note {
-  color: #666;
   font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.5;
   margin: 0;
 }
 
-.error-message {
-  background: #ffebee;
-  color: #c62828;
-  padding: 1rem;
-  border-radius: 10px;
-  margin: 1rem 0;
-  text-align: center;
-}
-
+/* Success State */
 .success-section {
   text-align: center;
+  padding: 20px 0;
 }
 
 .success-icon {
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .success-section h2 {
-  color: #4CAF50;
-  margin-bottom: 1rem;
   font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 16px;
 }
 
 .success-section p {
-  color: #666;
-  margin-bottom: 2rem;
   font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 30px;
+  line-height: 1.6;
 }
 
-.account-info {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  text-align: left;
+.redirect-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
-.account-details h3 {
-  color: #333;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
+.redirect-info p {
+  font-size: 1rem;
+  color: #667eea;
+  font-weight: 500;
+  margin: 0;
 }
 
-.account-details p {
-  color: #666;
-  margin: 0.5rem 0;
-  font-size: 0.9rem;
-}
-
-.continue-btn {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.continue-btn:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+.redirect-info .spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-top: 2px solid #667eea;
 }
 
 @media (max-width: 768px) {
   .instagram-connect-page {
-    padding: 1rem;
+    padding: 20px 10px;
   }
   
   .connect-container {
-    padding: 2rem;
+    padding: 30px 20px;
   }
   
   .connect-header h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   
   .benefits-list li {
     flex-direction: column;
     text-align: center;
+    gap: 12px;
   }
   
   .benefit-icon {
-    margin-right: 0;
-    margin-bottom: 0.5rem;
+    margin-top: 0;
   }
 }
