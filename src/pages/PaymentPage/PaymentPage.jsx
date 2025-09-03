@@ -1,113 +1,200 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
-import pricingData from '../../data/pricingData';
 import './PaymentPage.css';
 
 const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const { user, profile } = useAuth();
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [cardDetails, setCardDetails] = useState({
+    number: '',
+    expiry: '',
+    cvv: '',
+    name: ''
+  });
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Get plan details from navigation state
-  const selectedPlan = location.state?.plan || 'Starter';
-  const billingCycle = location.state?.billingCycle || 'monthly';
-
-  // Helper function to get plan price from centralized pricing data
-  const getPlanPrice = (plan, cycle) => {
-    const planKey = String(plan).toLowerCase();
-    const cycleKey = cycle === 'yearly' ? 'yearly' : 'monthly';
-    const prices = pricingData?.pricing?.[cycleKey];
-    if (!prices) return 0;
-    const amount = prices[planKey];
-    return typeof amount === 'number' ? amount : 0;
+  const selectedPlan = location.state?.plan || 'basic';
+  
+  const planDetails = {
+    basic: { name: 'Basic Plan', price: 29 },
+    pro: { name: 'Pro Plan', price: 59 },
+    enterprise: { name: 'Enterprise Plan', price: 99 }
   };
 
-  // Helper function to get plan features from centralized plan data
-  const getPlanFeatures = (plan) => {
-    const planObj = pricingData?.plans?.find(p => p.name === plan || p.id === String(plan).toLowerCase());
-    return planObj?.features || [];
+  const currentPlan = planDetails[selectedPlan];
+
+  const handleInputChange = (field, value) => {
+    setCardDetails(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const handlePayment = async (amount = 99) => {
+  const handlePayment = async () => {
     setLoading(true);
-    setError('');
-
-    // Simulate payment processing - no database dependency
-    setTimeout(() => {
-      setSuccess(true);
-      
-      // Redirect to Instagram connection after 1 second
-      setTimeout(() => {
-        navigate('/instagram-connect');
-      }, 1000);
-
-      setLoading(false);
-    }, 500);
+    
+    // Simulate payment processing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Mock successful payment
+    console.log('Payment successful!');
+    
+    // Navigate to Instagram connect page
+    navigate('/instagram-connect');
   };
 
-  if (success) {
-    return (
-      <div className="payment-page">
-        <div className="payment-container">
-          <div className="success-message">
-            <div className="success-icon">✓</div>
-            <h2>Payment Successful!</h2>
-            <p>Thank you for your purchase. Redirecting to Instagram connection...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const formatCardNumber = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return v;
+    }
+  };
+
+  const formatExpiry = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    if (v.length >= 2) {
+      return v.substring(0, 2) + '/' + v.substring(2, 4);
+    }
+    return v;
+  };
 
   return (
     <div className="payment-page">
       <div className="payment-container">
         <div className="payment-header">
-          <h1>Complete Your Purchase</h1>
-          <p>You selected: <strong>{selectedPlan} Plan</strong> ({billingCycle})</p>
+          <h1>Complete Your Payment</h1>
+          <p>Secure payment processing for your {currentPlan.name}</p>
         </div>
 
-        <div className="pricing-cards">
-          <div className="pricing-card featured">
-            <div className="card-header">
-              <h3>{selectedPlan} Plan</h3>
-              <div className="price">
-                <span className="currency">$</span>
-                <span className="amount">{getPlanPrice(selectedPlan, billingCycle)}</span>
-                <span className="period">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
+        <div className="payment-content">
+          <div className="order-summary">
+            <h3>Order Summary</h3>
+            <div className="plan-info">
+              <div className="plan-name">{currentPlan.name}</div>
+              <div className="plan-price">${currentPlan.price}/month</div>
+            </div>
+            <div className="billing-info">
+              <div className="billing-item">
+                <span>Subtotal</span>
+                <span>${currentPlan.price}.00</span>
+              </div>
+              <div className="billing-item">
+                <span>Tax</span>
+                <span>$0.00</span>
+              </div>
+              <div className="billing-item total">
+                <span>Total</span>
+                <span>${currentPlan.price}.00</span>
               </div>
             </div>
-            <div className="card-features">
-              <ul>
-                {getPlanFeatures(selectedPlan).map((feature, index) => (
-                  <li key={index}>✓ {feature}</li>
-                ))}
-              </ul>
+            <div className="trial-info">
+              <p>🎉 7-day free trial included</p>
+              <p>Cancel anytime during trial period</p>
             </div>
+          </div>
+
+          <div className="payment-form">
+            <h3>Payment Information</h3>
+            
+            <div className="payment-methods">
+              <label className={`payment-method ${paymentMethod === 'card' ? 'selected' : ''}`}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="card"
+                  checked={paymentMethod === 'card'}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <span>💳 Credit/Debit Card</span>
+              </label>
+            </div>
+
+            {paymentMethod === 'card' && (
+              <div className="card-form">
+                <div className="form-group">
+                  <label>Card Number</label>
+                  <input
+                    type="text"
+                    placeholder="1234 5678 9012 3456"
+                    value={cardDetails.number}
+                    onChange={(e) => handleInputChange('number', formatCardNumber(e.target.value))}
+                    maxLength="19"
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Expiry Date</label>
+                    <input
+                      type="text"
+                      placeholder="MM/YY"
+                      value={cardDetails.expiry}
+                      onChange={(e) => handleInputChange('expiry', formatExpiry(e.target.value))}
+                      maxLength="5"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>CVV</label>
+                    <input
+                      type="text"
+                      placeholder="123"
+                      value={cardDetails.cvv}
+                      onChange={(e) => handleInputChange('cvv', e.target.value.replace(/\D/g, ''))}
+                      maxLength="4"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Cardholder Name</label>
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    value={cardDetails.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="security-info">
+              <div className="security-badges">
+                <span>🔒 SSL Encrypted</span>
+                <span>🛡️ PCI Compliant</span>
+                <span>💳 Secure Payment</span>
+              </div>
+            </div>
+
             <button 
-              className="select-plan-btn"
-              onClick={() => handlePayment(getPlanPrice(selectedPlan, billingCycle))}
+              className="pay-btn"
+              onClick={handlePayment}
               disabled={loading}
             >
-              {loading ? 'Processing...' : 'Complete Purchase'}
+              {loading ? (
+                <>
+                  <div className="spinner"></div>
+                  Processing Payment...
+                </>
+              ) : (
+                `Pay $${currentPlan.price}.00`
+              )}
             </button>
-          </div>
-        </div>
 
-        {error && (
-          <div className="error-message">
-            {error}
+            <div className="payment-footer">
+              <p>By completing this payment, you agree to our Terms of Service and Privacy Policy.</p>
+            </div>
           </div>
-        )}
-
-        <div className="payment-security">
-          <p>🔒 Secure payment processing</p>
-          <p>Your payment information is encrypted and secure</p>
         </div>
       </div>
     </div>

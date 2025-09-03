@@ -1,0 +1,185 @@
+.diagnostic-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.diagnostic-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.diagnostic-page h1 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+}
+
+.diagnostic-page p {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+.diagnostic-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.diagnostic-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.diagnostic-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.diagnostic-btn.secondary {
+  background: #f8f9fa;
+  color: #333;
+  border: 2px solid #dee2e6;
+}
+
+.diagnostic-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.diagnostic-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.diagnostic-logs {
+  margin-bottom: 30px;
+}
+
+.diagnostic-logs h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.logs-container {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+.log-entry {
+  margin-bottom: 5px;
+  display: flex;
+  gap: 10px;
+}
+
+.log-time {
+  color: #666;
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.log-message {
+  color: #333;
+  flex: 1;
+}
+
+.diagnostic-results {
+  margin-bottom: 30px;
+}
+
+.diagnostic-results h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.results-json {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.diagnostic-help {
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.diagnostic-help h3 {
+  color: #1976d2;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.diagnostic-help ul {
+  list-style: none;
+  padding: 0;
+}
+
+.diagnostic-help li {
+  margin-bottom: 10px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.diagnostic-help li::before {
+  content: "•";
+  color: #1976d2;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+.diagnostic-help strong {
+  color: #1976d2;
+}
+
+@media (max-width: 768px) {
+  .diagnostic-container {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .diagnostic-page h1 {
+    font-size: 2rem;
+  }
+  
+  .diagnostic-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .diagnostic-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+}

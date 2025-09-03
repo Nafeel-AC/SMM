@@ -18,11 +18,12 @@ import ServicesPage from './pages/ServicesPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import PaymentPage from './pages/PaymentPage';
 import InstagramConnectPage from './pages/InstagramConnectPage';
-import InstagramCallbackPage from './pages/InstagramCallbackPage';
+// import InstagramCallbackPage from './pages/InstagramCallbackPage'; // Not needed in test mode
 import RequirementsFormPage from './pages/RequirementsFormPage';
 import DashboardPage from './pages/DashboardPage';
 import StaffPanel from './pages/StaffPanel';
 import AdminPanel from './pages/AdminPanel';
+import DiagnosticPage from './pages/DiagnosticPage';
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -72,12 +73,13 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/diagnostic" element={<DiagnosticPage />} />
           
           {/* User Flow Routes */}
           <Route path="/subscription" element={<ProtectedRoute><SubscriptionPage /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
           <Route path="/instagram-connect" element={<ProtectedRoute><InstagramConnectPage /></ProtectedRoute>} />
-          <Route path="/instagram/callback" element={<InstagramCallbackPage />} />
+          {/* <Route path="/instagram/callback" element={<InstagramCallbackPage />} /> Not needed in test mode */}
           <Route path="/requirements-form" element={<ProtectedRoute><RequirementsFormPage /></ProtectedRoute>} />
           
           {/* Dashboard */}

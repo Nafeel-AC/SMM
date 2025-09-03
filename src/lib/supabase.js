@@ -22,4 +22,9 @@ console.log('🔧 Clean Supabase URL:', cleanUrl);
 // Create and export the Supabase client
 export const supabase = createClient(cleanUrl, supabaseAnonKey);
 
+// Make supabase available globally for console diagnostics
+if (typeof window !== 'undefined') {
+  window.supabase = supabase;
+}
+
 console.log('✅ Supabase client created successfully');
