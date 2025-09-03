@@ -20,19 +20,27 @@ const RequirementsFormPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Removed artificial per-call timeouts to allow long-running requests during debugging
+
   useEffect(() => {
+    // Guard: don't query until we have a user
+    if (!user?.id) return;
     checkExistingRequirements();
     
     // Cleanup function to clear any pending timeouts
     return () => {
       // This will be called when component unmounts
     };
-  }, []);
+  }, [user?.id]);
 
   const checkExistingRequirements = async () => {
     try {
       console.log('🔍 Checking for existing requirements on page load...');
       console.log('👤 User ID for check:', user?.id);
+      if (!user?.id) {
+        console.warn('⚠️ No user found, skipping requirements check');
+        return;
+      }
       
       const { data, error } = await supabase
         .from('user_requirements')
@@ -75,129 +83,105 @@ const RequirementsFormPage = () => {
     console.log('📝 Requirements form submitted');
     console.log('📝 Form data:', formData);
     console.log('👤 User ID:', user?.id);
+    console.log('🌐 Online status:', navigator.onLine ? 'online' : 'offline');
+    console.time('⏱️ handleSubmit total');
+    
+    if (!user?.id) {
+      setError('You must be logged in to submit requirements. Please log in and try again.');
+      return;
+    }
     
     setLoading(true);
     setError('');
     
-    // Add a timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      console.warn('⚠️ Form submission timeout - resetting loading state');
-      setLoading(false);
-      setError('Request timed out. Please try again.');
-    }, 30000); // 30 second timeout
+    // Removed overall submission timeout for debugging
+    const timeoutId = null;
+
+    // Build and log payload BEFORE any DB call so we always see it
+    const requirementsPayload = {
+      niche: formData.niche || null,
+      location: formData.location || null,
+      comments: formData.comments !== '' && formData.comments !== null ? String(formData.comments) : null,
+      dms: formData.dms !== '' && formData.dms !== null ? String(formData.dms) : null,
+      max_following: formData.max_following !== '' && formData.max_following !== null ? parseInt(formData.max_following, 10) : null,
+      hashtags: formData.hashtags || null,
+      account_targets: formData.account_targets || null
+    };
+    console.log('🧾 Normalized payload (pre-DB):', requirementsPayload);
+    console.log('🔎 Payload types (pre-DB):', {
+      niche: typeof requirementsPayload.niche,
+      location: typeof requirementsPayload.location,
+      comments: typeof requirementsPayload.comments,
+      dms: typeof requirementsPayload.dms,
+      max_following: typeof requirementsPayload.max_following,
+      hashtags: typeof requirementsPayload.hashtags,
+      account_targets: typeof requirementsPayload.account_targets
+    });
 
     try {
-      // Ensure user profile exists first
-      try {
-        console.log('👤 Ensuring user profile exists...');
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('id', user.id)
-          .single();
+      // Skip profile lookup and pre-check; go straight to upsert
+      console.log('⏭️ Skipping profile lookup and pre-check; proceeding to upsert');
 
-        if (profileError && profileError.code === 'PGRST116') {
-          console.log('👤 Creating user profile...');
-          const { error: createError } = await supabase
-            .from('profiles')
-            .insert([
-              {
-                id: user.id,
-                full_name: user.user_metadata?.full_name || null,
-                email: user.email,
-                role: 'user'
-              }
-            ]);
-          
-          if (createError) {
-            console.error('❌ Error creating profile:', createError);
-            throw createError;
-          }
-          console.log('✅ User profile created successfully');
-        } else if (profileError) {
-          console.error('❌ Error checking profile:', profileError);
-          throw profileError;
-        } else {
-          console.log('✅ User profile exists');
-        }
-      } catch (profileError) {
-        console.error('❌ Profile setup error:', profileError);
-        throw profileError;
+      // Use a single upsert to avoid branch/policy/query-shape issues
+      console.log('✅ About to upsert requirements for user:', user.id, requirementsPayload);
+      console.log('📝 Saving requirements via upsert (no select)...');
+      console.time('⏱️ user_requirements.upsert');
+      
+      // Add timeout to detect hanging calls
+      const upsertPromise = supabase
+        .from('user_requirements')
+        .upsert(
+          [
+            {
+              user_id: user.id,
+              ...requirementsPayload,
+              last_updated: new Date().toISOString()
+            }
+          ],
+          { onConflict: 'user_id' }
+        );
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Upsert timeout after 10s')), 10000)
+      );
+      
+      const { data: upsertData, error: upsertError } = await Promise.race([upsertPromise, timeoutPromise]);
+      console.timeEnd('⏱️ user_requirements.upsert');
+      console.log('📦 user_requirements.upsert result (no select):', { upsertData, upsertError });
+      if (upsertError && upsertError.message) {
+        console.error('🧰 Upsert error details:', {
+          message: upsertError.message,
+          details: upsertError.details,
+          hint: upsertError.hint,
+          code: upsertError.code
+        });
       }
 
-      // Try to save requirements to database
+      console.log('📡 Upsert finished:', upsertError ? upsertError : 'success');
+      if (upsertError) {
+        console.error('❌ Requirements save error:', upsertError);
+        throw upsertError;
+      }
+      console.log('✅ Requirements saved successfully');
+
+      // Try to update user profile (do not block success if this fails)
       try {
-        console.log('🔍 Checking for existing requirements...');
-        // Check if requirements already exist
-        const { data: existing, error: checkError } = await supabase
-          .from('user_requirements')
-          .select('id')
-          .eq('user_id', user.id)
-          .single();
-
-        console.log('🔍 Existing requirements check result:', { existing, checkError });
-
-        let result;
-        if (existing && !checkError) {
-          console.log('📝 Updating existing requirements...');
-          // Update existing requirements
-          result = await supabase
-            .from('user_requirements')
-            .update({
-              ...formData,
-              last_updated: new Date().toISOString()
-            })
-            .eq('user_id', user.id)
-            .select()
-            .single();
-        } else {
-          console.log('📝 Creating new requirements...');
-          // Insert new requirements
-          result = await supabase
-            .from('user_requirements')
-            .insert([
-              {
-                user_id: user.id,
-                ...formData,
-                created_at: new Date().toISOString()
-              }
-            ])
-            .select()
-            .single();
-        }
-
-        console.log('📝 Requirements save result:', result);
-
-        if (result.error) {
-          console.error('❌ Requirements save error:', result.error);
-          throw result.error;
-        } else {
-          console.log('✅ Requirements saved successfully');
-        }
-
-        // Try to update user profile
-        try {
-          console.log('👤 Updating user profile...');
-          const profileResult = await supabase
-            .from('profiles')
-            .update({ requirements_completed: true })
-            .eq('id', user.id);
-          
-          console.log('👤 Profile update result:', profileResult);
-        } catch (profileError) {
-          console.warn('❌ Profile update error:', profileError);
-          // Continue anyway
-        }
-
-      } catch (dbError) {
-        console.warn('❌ Database error:', dbError);
-        // Continue anyway - don't block the user flow
+        console.log('👤 Updating user profile...');
+        console.time('⏱️ profiles.update');
+        const profileResult = await supabase
+          .from('profiles')
+          .update({ requirements_completed: true })
+          .eq('id', user.id);
+        console.timeEnd('⏱️ profiles.update');
+        console.log('👤 Profile update result:', profileResult);
+      } catch (profileError) {
+        console.warn('❌ Profile update error (non-blocking):', profileError);
       }
 
       console.log('✅ Setting success state');
-      clearTimeout(timeoutId); // Clear the timeout
+      if (timeoutId) clearTimeout(timeoutId);
       setSuccess(true);
-      setLoading(false); // Reset loading state on success
+      console.timeEnd('⏱️ handleSubmit total');
       
       // Redirect to dashboard after 1 second
       setTimeout(() => {
@@ -207,7 +191,10 @@ const RequirementsFormPage = () => {
 
     } catch (error) {
       console.error('💥 Form submission error:', error);
-      clearTimeout(timeoutId); // Clear the timeout
+      if (error && error.stack) {
+        console.error('💥 Error stack:', error.stack);
+      }
+      if (timeoutId) clearTimeout(timeoutId);
       
       // Provide more specific error messages
       if (error.message?.includes('foreign key')) {
@@ -220,7 +207,8 @@ const RequirementsFormPage = () => {
         setError(`Failed to save requirements: ${error.message || 'Unknown error'}. Please try again.`);
       }
       
-      // Always reset loading state on error
+    } finally {
+      // Always reset loading state
       setLoading(false);
     }
   };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { instagramService } from '../../lib/instagram';
 import './InstagramInsights.css';
 
 const InstagramInsights = () => {
@@ -29,26 +30,30 @@ const InstagramInsights = () => {
         return;
       }
 
-      // In a real implementation, you would call the Instagram Graph API here
-      // For now, we'll simulate the data
-      const mockInsights = {
-        followers_count: 1234,
-        following_count: 892,
-        media_count: 45,
-        engagement_rate: 4.2,
-        avg_likes: 89,
-        avg_comments: 12,
-        reach: 2340,
-        impressions: 4560,
-        profile_views: 156,
-        website_clicks: 23,
-        email_contacts: 8,
-        phone_contacts: 3,
-        get_directions: 12,
-        text_message: 5
-      };
+      // Try to get stored insights first
+      let storedInsights = await instagramService.getStoredInsights(user.id);
+      
+      // If no stored insights or data is old (older than 24 hours), fetch fresh data
+      const isDataOld = !storedInsights || 
+        (new Date() - new Date(storedInsights.last_updated)) > 24 * 60 * 60 * 1000;
 
-      setInsights(mockInsights);
+      if (isDataOld) {
+        try {
+          // Fetch fresh insights from Instagram API
+          storedInsights = await instagramService.fetchAndSaveInsights(
+            user.id, 
+            instagramAccount.access_token
+          );
+        } catch (apiError) {
+          console.warn('Failed to fetch fresh insights, using stored data:', apiError);
+          // If API fails, use stored data if available
+          if (!storedInsights) {
+            throw new Error('Unable to fetch Instagram insights');
+          }
+        }
+      }
+
+      setInsights(storedInsights);
     } catch (error) {
       setError('Failed to fetch Instagram insights');
       console.error('Error fetching Instagram insights:', error);
