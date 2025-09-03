@@ -26,27 +26,13 @@ class InstagramService {
     return `${FACEBOOK_AUTH_BASE}?${params.toString()}`;
   }
 
-  // Exchange authorization code for short-lived Facebook user access token
+  // Exchange authorization code for token via serverless function (keeps secret off client)
   async exchangeCodeForToken(code) {
-    try {
-      const url = new URL(`${FACEBOOK_API_BASE.replace('/v18.0','')}/oauth/access_token`);
-      url.searchParams.append('client_id', this.appId);
-      url.searchParams.append('client_secret', this.appSecret);
-      url.searchParams.append('redirect_uri', this.redirectUri);
-      url.searchParams.append('code', code);
-
-      const response2 = await fetch(url.toString());
-
-      if (!response2.ok) {
-        throw new Error(`HTTP error! status: ${response2.status}`);
-      }
-
-      const data = await response2.json();
-      return data;
-    } catch (error) {
-      console.error('Error exchanging code for token:', error);
-      throw error;
+    const resp = await fetch(`/api/instagram/exchange?code=${encodeURIComponent(code)}`);
+    if (!resp.ok) {
+      throw new Error(`HTTP error! status: ${resp.status}`);
     }
+    return await resp.json();
   }
 
   // Get long-lived Facebook user access token
