@@ -18,6 +18,7 @@ import ServicesPage from './pages/ServicesPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import PaymentPage from './pages/PaymentPage';
 import InstagramConnectPage from './pages/InstagramConnectPage';
+import InstagramCallbackPage from './pages/InstagramCallbackPage';
 import RequirementsFormPage from './pages/RequirementsFormPage';
 import DashboardPage from './pages/DashboardPage';
 import StaffPanel from './pages/StaffPanel';
@@ -76,6 +77,7 @@ function App() {
           <Route path="/subscription" element={<ProtectedRoute><SubscriptionPage /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
           <Route path="/instagram-connect" element={<ProtectedRoute><InstagramConnectPage /></ProtectedRoute>} />
+          <Route path="/instagram/callback" element={<ProtectedRoute><InstagramCallbackPage /></ProtectedRoute>} />
           <Route path="/requirements-form" element={<ProtectedRoute><RequirementsFormPage /></ProtectedRoute>} />
           
           {/* Dashboard */}

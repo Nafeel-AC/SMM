@@ -174,6 +174,28 @@ CREATE TABLE public.support_chats (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- INSTAGRAM_INSIGHTS TABLE
+CREATE TABLE public.instagram_insights (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    followers_count INTEGER DEFAULT 0,
+    following_count INTEGER DEFAULT 0,
+    media_count INTEGER DEFAULT 0,
+    engagement_rate DECIMAL(5,2) DEFAULT 0,
+    avg_likes INTEGER DEFAULT 0,
+    avg_comments INTEGER DEFAULT 0,
+    reach INTEGER DEFAULT 0,
+    impressions INTEGER DEFAULT 0,
+    profile_views INTEGER DEFAULT 0,
+    website_clicks INTEGER DEFAULT 0,
+    email_contacts INTEGER DEFAULT 0,
+    phone_contacts INTEGER DEFAULT 0,
+    get_directions INTEGER DEFAULT 0,
+    text_message INTEGER DEFAULT 0,
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- ==============================================
 -- STEP 3: CREATE INDEXES FOR PERFORMANCE
 -- ==============================================
@@ -205,6 +227,10 @@ CREATE INDEX IF NOT EXISTS idx_dashboard_targets_user_id ON public.dashboard_tar
 CREATE INDEX IF NOT EXISTS idx_support_chats_user_id ON public.support_chats(user_id);
 CREATE INDEX IF NOT EXISTS idx_support_chats_staff_id ON public.support_chats(staff_id);
 CREATE INDEX IF NOT EXISTS idx_support_chats_created_at ON public.support_chats(created_at);
+
+-- Instagram insights indexes
+CREATE INDEX IF NOT EXISTS idx_instagram_insights_user_id ON public.instagram_insights(user_id);
+CREATE INDEX IF NOT EXISTS idx_instagram_insights_last_updated ON public.instagram_insights(last_updated);
 
 -- ==============================================
 -- STEP 4: CREATE HELPER FUNCTIONS
@@ -280,6 +306,7 @@ ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.staff_assignments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.dashboard_targets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.support_chats ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.instagram_insights ENABLE ROW LEVEL SECURITY;
 
 -- ==============================================
 -- STEP 7: CREATE RLS POLICIES
@@ -447,6 +474,26 @@ CREATE POLICY "Admins can view all support chats" ON public.support_chats
 CREATE POLICY "Admins can insert support chats" ON public.support_chats
     FOR INSERT WITH CHECK (is_admin() AND sent_by = 'admin');
 
+-- INSTAGRAM_INSIGHTS TABLE POLICIES
+CREATE POLICY "Users can view own Instagram insights" ON public.instagram_insights
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own Instagram insights" ON public.instagram_insights
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own Instagram insights" ON public.instagram_insights
+    FOR UPDATE USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Staff can view assigned user Instagram insights" ON public.instagram_insights
+    FOR SELECT USING (is_assigned_to_user(user_id));
+
+CREATE POLICY "Admins can view all Instagram insights" ON public.instagram_insights
+    FOR SELECT USING (is_admin());
+
+CREATE POLICY "Admins can manage all Instagram insights" ON public.instagram_insights
+    FOR ALL USING (is_admin());
+
 -- ==============================================
 -- STEP 8: CREATE TRIGGER FOR AUTO-PROFILE CREATION
 -- ==============================================
@@ -489,7 +536,8 @@ WHERE schemaname = 'public'
         'payments',
         'staff_assignments',
         'dashboard_targets',
-        'support_chats'
+        'support_chats',
+        'instagram_insights'
     )
 ORDER BY tablename;
 
@@ -507,7 +555,8 @@ WHERE schemaname = 'public'
         'payments',
         'staff_assignments',
         'dashboard_targets',
-        'support_chats'
+        'support_chats',
+        'instagram_insights'
     )
 ORDER BY tablename;
 

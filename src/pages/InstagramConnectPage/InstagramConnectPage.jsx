@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { instagramService } from '../../lib/instagram';
 import './InstagramConnectPage.css';
 
 const InstagramConnectPage = () => {
@@ -37,16 +38,15 @@ const InstagramConnectPage = () => {
     setLoading(true);
     setError('');
 
-    // Simulate Instagram connection - no database dependency
-    setTimeout(() => {
-      setConnected(true);
+    try {
+      // Redirect to Instagram OAuth
+      const authUrl = instagramService.getAuthUrl();
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error('Error initiating Instagram connection:', error);
+      setError('Failed to initiate Instagram connection. Please try again.');
       setLoading(false);
-      
-      // Auto-redirect to requirements form after 1 second
-      setTimeout(() => {
-        navigate('/requirements-form');
-      }, 1000);
-    }, 500);
+    }
   };
 
   const handleContinue = () => {
