@@ -75,6 +75,11 @@ export function FirebaseAuthProvider({ children }) {
         console.log('✅ Already on role-specific dashboard or diagnostic page:', currentPath);
         return;
       }
+      // Prevent redirect loop when user is navigating to /payment or /instagram-connect
+      if (currentPath === '/payment' || currentPath === '/instagram-connect') {
+        console.log(`✅ User is on ${currentPath} page, no redirect needed`);
+        return;
+      }
       // Only redirect if we're not already on the correct page
       if (currentPath !== nextStep) {
         console.log('🚀 Redirecting from', currentPath, 'to', nextStep);
@@ -235,10 +240,45 @@ export function FirebaseAuthProvider({ children }) {
     }
     // Staff role check
     if (profile.role === 'staff') {
-      console.log('� Staff user detected, redirecting to staff dashboard');
+      console.log('👥 Staff user detected, redirecting to staff dashboard');
       return '/staff-dashboard';
     }
-    // ...existing code...
+    // Onboarding checks for normal users
+    const paymentCompleted = profile.payment_completed === true;
+    const instagramConnected = profile.instagram_connected === true;
+    const requirementsCompleted = profile.requirements_completed === true;
+    console.log('🔍 Checking user progress:', {
+      payment_completed: paymentCompleted,
+      instagram_connected: instagramConnected,
+      requirements_completed: requirementsCompleted,
+      raw_values: {
+        payment_completed: profile.payment_completed,
+        instagram_connected: profile.instagram_connected,
+        requirements_completed: profile.requirements_completed
+      }
+    });
+    // If everything is completed, redirect to dashboard
+    if (paymentCompleted && instagramConnected && requirementsCompleted) {
+      console.log('✅ User has completed all steps, redirecting to dashboard');
+      return '/dashboard';
+    }
+    // Check payment completion first
+    if (!paymentCompleted) {
+      console.log('💳 Payment not completed, redirecting to subscription');
+      return '/subscription';
+    }
+    // Check Instagram connection
+    if (!instagramConnected) {
+      console.log('📱 Instagram not connected, redirecting to Instagram connect');
+      return '/instagram-connect';
+    }
+    // Check requirements completion
+    if (!requirementsCompleted) {
+      console.log('📋 Requirements not completed, redirecting to requirements form');
+      return '/requirements-form';
+    }
+    // Fallback to dashboard
+    return '/dashboard';
   };
 
   // Sign in with email and password
