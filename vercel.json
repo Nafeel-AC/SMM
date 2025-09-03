@@ -1,13 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
-  ],
-  "functions": {
-    "api/instagram/exchange.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }

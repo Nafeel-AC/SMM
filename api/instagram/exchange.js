@@ -1,9 +1,10 @@
+
 // Serverless function: Exchange Instagram/Facebook OAuth code for a user access token
 // Expects query param `code` and uses server-side env vars to keep the secret safe
 
 const FACEBOOK_API_BASE = 'https://graph.facebook.com/v18.0';
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   try {
     if (req.method !== 'GET') {
       res.setHeader('Allow', 'GET');
@@ -60,6 +61,6 @@ module.exports = async (req, res) => {
   } catch (err) {
     return res.status(500).json({ error: 'unexpected_error', details: String(err && err.message ? err.message : err) });
   }
-};
+}
 
 
