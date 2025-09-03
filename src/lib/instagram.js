@@ -1,8 +1,8 @@
 // Instagram Graph API service
 import { supabase } from './supabase';
 
-const INSTAGRAM_API_BASE = 'https://graph.instagram.com';
-const FACEBOOK_API_BASE = 'https://graph.facebook.com';
+const INSTAGRAM_BASIC_API_BASE = 'https://graph.instagram.com';
+const FACEBOOK_API_BASE = 'https://graph.facebook.com/v18.0';
 const FACEBOOK_AUTH_BASE = 'https://www.facebook.com/v18.0/dialog/oauth';
 
 class InstagramService {
@@ -17,7 +17,8 @@ class InstagramService {
     const params = new URLSearchParams({
       client_id: this.appId,
       redirect_uri: this.redirectUri,
-      scope: 'instagram_basic,instagram_manage_insights,pages_show_list',
+      // Minimal set for reading IG business insights via Graph API
+      scope: 'instagram_basic,instagram_manage_insights,pages_show_list,pages_read_engagement',
       response_type: 'code',
       state: 'instagram_auth'
     });
@@ -25,17 +26,10 @@ class InstagramService {
     return `${FACEBOOK_AUTH_BASE}?${params.toString()}`;
   }
 
-  // Exchange authorization code for access token
+  // Exchange authorization code for short-lived Facebook user access token
   async exchangeCodeForToken(code) {
     try {
-      const response = await fetch(`${FACEBOOK_API_BASE}/oauth/access_token`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      const url = new URL(`${FACEBOOK_API_BASE}/oauth/access_token`);
+      const url = new URL(`${FACEBOOK_API_BASE.replace('/v18.0','')}/oauth/access_token`);
       url.searchParams.append('client_id', this.appId);
       url.searchParams.append('client_secret', this.appSecret);
       url.searchParams.append('redirect_uri', this.redirectUri);
@@ -55,20 +49,14 @@ class InstagramService {
     }
   }
 
-  // Get long-lived access token
+  // Get long-lived Facebook user access token
   async getLongLivedToken(shortLivedToken) {
     try {
-      const response = await fetch(`${INSTAGRAM_API_BASE}/access_token`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      const url = new URL(`${INSTAGRAM_API_BASE}/access_token`);
-      url.searchParams.append('grant_type', 'ig_exchange_token');
+      const url = new URL(`${FACEBOOK_API_BASE.replace('/v18.0','')}/oauth/access_token`);
+      url.searchParams.append('grant_type', 'fb_exchange_token');
+      url.searchParams.append('client_id', this.appId);
       url.searchParams.append('client_secret', this.appSecret);
-      url.searchParams.append('access_token', shortLivedToken);
+      url.searchParams.append('fb_exchange_token', shortLivedToken);
 
       const response2 = await fetch(url.toString());
 
@@ -84,66 +72,71 @@ class InstagramService {
     }
   }
 
-  // Get user profile information
-  async getUserProfile(accessToken) {
+  // Resolve Pages and connected IG user id using Facebook user token
+  async resolveInstagramUserFromPages(accessToken) {
     try {
-      const response = await fetch(`${INSTAGRAM_API_BASE}/me`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        }
+      const pagesResponse = await fetch(`${FACEBOOK_API_BASE}/me/accounts?fields=name,access_token,connected_instagram_account`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!pagesResponse.ok) {
+        throw new Error(`Failed to fetch pages: ${pagesResponse.status}`);
       }
 
-      const data = await response.json();
-      return data;
+      const pagesData = await pagesResponse.json();
+      if (!pagesData.data || pagesData.data.length === 0) {
+        throw new Error('No Facebook Pages found on this account');
+      }
+
+      const pageWithIg = pagesData.data.find(p => p.connected_instagram_account && p.connected_instagram_account.id);
+      if (!pageWithIg) {
+        throw new Error('No Instagram Business account connected to any Page');
+      }
+
+      return {
+        pageId: pageWithIg.id,
+        pageAccessToken: pageWithIg.access_token,
+        igUserId: pageWithIg.connected_instagram_account.id
+      };
     } catch (error) {
-      console.error('Error getting user profile:', error);
+      console.error('Error resolving IG user from Pages:', error);
       throw error;
     }
   }
 
-  // Get user media
-  async getUserMedia(accessToken, limit = 25) {
+  // Get IG user profile (followers/media counts)
+  async getIgUserProfile(igUserId, accessToken) {
     try {
-      const response = await fetch(`${INSTAGRAM_API_BASE}/me/media`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const url = `${FACEBOOK_API_BASE}/${igUserId}?fields=id,username,followers_count,media_count`;
+      const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+      if (!response.ok) throw new Error(`Failed to fetch IG profile: ${response.status}`);
+      return await response.json();
     } catch (error) {
-      console.error('Error getting user media:', error);
+      console.error('Error getting IG user profile:', error);
       throw error;
     }
   }
 
-  // Get media insights (requires Instagram Business Account)
+  // Get IG user media list
+  async getIgMedia(igUserId, accessToken, limit = 25) {
+    try {
+      const url = `${FACEBOOK_API_BASE}/${igUserId}/media?fields=id,caption,like_count,comments_count,timestamp&limit=${limit}`;
+      const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+      if (!response.ok) throw new Error(`Failed to fetch IG media: ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.error('Error getting IG media:', error);
+      throw error;
+    }
+  }
+
+  // Get media insights via Graph API (reach, impressions)
   async getMediaInsights(mediaId, accessToken) {
     try {
-      const response = await fetch(`${INSTAGRAM_API_BASE}/${mediaId}/insights`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
+      const url = `${FACEBOOK_API_BASE}/${mediaId}/insights?metric=impressions,reach,saved`;
+      const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+      if (!response.ok) throw new Error(`Failed to fetch media insights: ${response.status}`);
+      return await response.json();
     } catch (error) {
       console.error('Error getting media insights:', error);
       throw error;
@@ -184,16 +177,17 @@ class InstagramService {
   // Fetch and save Instagram insights
   async fetchAndSaveInsights(userId, accessToken) {
     try {
-      // Get user profile
-      const profile = await this.getUserProfile(accessToken);
-      
-      // Get user media
-      const media = await this.getUserMedia(accessToken);
+      // Resolve IG user via Pages
+      const { igUserId } = await this.resolveInstagramUserFromPages(accessToken);
+
+      // Get IG profile and recent media
+      const profile = await this.getIgUserProfile(igUserId, accessToken);
+      const media = await this.getIgMedia(igUserId, accessToken);
       
       // Calculate basic insights
       const insights = {
         followers_count: profile.followers_count || 0,
-        following_count: profile.following_count || 0,
+        following_count: 0,
         media_count: profile.media_count || 0,
         engagement_rate: 0, // Will be calculated from media data
         avg_likes: 0,
@@ -218,15 +212,16 @@ class InstagramService {
 
         for (const mediaItem of media.data.slice(0, 10)) { // Analyze last 10 posts
           try {
+            totalLikes += mediaItem.like_count || 0;
+            totalComments += mediaItem.comments_count || 0;
+
             const mediaInsights = await this.getMediaInsights(mediaItem.id, accessToken);
-            
             if (mediaInsights.data) {
-              mediaInsights.data.forEach(insight => {
-                if (insight.name === 'likes') totalLikes += insight.values[0]?.value || 0;
-                if (insight.name === 'comments') totalComments += insight.values[0]?.value || 0;
-                if (insight.name === 'reach') totalReach += insight.values[0]?.value || 0;
-                if (insight.name === 'impressions') totalImpressions += insight.values[0]?.value || 0;
-              });
+              for (const insight of mediaInsights.data) {
+                const value = insight.values && insight.values[0] ? (insight.values[0].value || 0) : 0;
+                if (insight.name === 'reach') totalReach += value;
+                if (insight.name === 'impressions') totalImpressions += value;
+              }
             }
           } catch (error) {
             console.warn(`Could not fetch insights for media ${mediaItem.id}:`, error);
