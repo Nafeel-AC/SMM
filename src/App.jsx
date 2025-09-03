@@ -78,9 +78,9 @@ const DebugExposer = () => {
 
 function App() {
   return (
-    <FirebaseAuthProvider>
-      <DebugExposer />
-      <Router>
+    <Router>
+      <FirebaseAuthProvider>
+        <DebugExposer />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/blog" element={<BlogPage />} />
@@ -113,8 +113,8 @@ function App() {
         </Routes>
         <Footer />
         <SupportChat />
-      </Router>
-    </FirebaseAuthProvider>
+      </FirebaseAuthProvider>
+    </Router>
   );
 }
 
