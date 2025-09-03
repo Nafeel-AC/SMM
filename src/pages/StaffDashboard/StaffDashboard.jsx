@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { roleAuthService } from '../../lib/role-auth-service';
 import { dashboardDataService } from '../../lib/dashboard-data-service';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import './StaffDashboard.css';
 
 const StaffDashboard = () => {
@@ -12,6 +13,7 @@ const StaffDashboard = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editData, setEditData] = useState({});
   const navigate = useNavigate();
+  const { user } = useFirebaseAuth();
 
   useEffect(() => {
     fetchAssignedUsers();
@@ -20,8 +22,14 @@ const StaffDashboard = () => {
   const fetchAssignedUsers = async () => {
     try {
       setLoading(true);
-      // In a real app, get current staff user ID from auth context
-      const currentStaffId = 'current_staff_id'; // This should come from auth context
+      // Get current staff user ID from auth context
+      const currentStaffId = user?.uid;
+      
+      if (!currentStaffId) {
+        console.error('No user ID available');
+        setLoading(false);
+        return;
+      }
       
       const result = await roleAuthService.getAssignedUsers(currentStaffId);
       

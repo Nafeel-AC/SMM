@@ -58,6 +58,12 @@ export function FirebaseAuthProvider({ children }) {
           console.log('🚀 Current path:', currentPath);
           console.log('🚀 Next step should be:', nextStep);
           
+          // Don't redirect if we're already on a role-specific dashboard
+          if (currentPath === '/admin-dashboard' || currentPath === '/staff-dashboard') {
+            console.log('✅ Already on role-specific dashboard:', currentPath);
+            return;
+          }
+          
           // Only redirect if we're not already on the correct page
           if (currentPath !== nextStep) {
             console.log('🚀 Redirecting from', currentPath, 'to', nextStep);
@@ -205,6 +211,17 @@ export function FirebaseAuthProvider({ children }) {
   // Determine the next step in user flow based on profile progress
   const getNextUserFlowStep = () => {
     if (!profile) return '/subscription';
+    
+    // Check for admin/staff roles first - they should go to their respective dashboards
+    if (profile.role === 'admin') {
+      console.log('👑 Admin user detected, redirecting to admin dashboard');
+      return '/admin-dashboard';
+    }
+    
+    if (profile.role === 'staff') {
+      console.log('👥 Staff user detected, redirecting to staff dashboard');
+      return '/staff-dashboard';
+    }
     
     // Handle missing fields gracefully (treat undefined as false)
     const paymentCompleted = profile.payment_completed === true;
