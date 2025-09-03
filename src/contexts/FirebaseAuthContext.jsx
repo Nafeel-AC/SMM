@@ -58,9 +58,9 @@ export function FirebaseAuthProvider({ children }) {
           console.log('🚀 Current path:', currentPath);
           console.log('🚀 Next step should be:', nextStep);
           
-          // Don't redirect if we're already on a role-specific dashboard
-          if (currentPath === '/admin-dashboard' || currentPath === '/staff-dashboard') {
-            console.log('✅ Already on role-specific dashboard:', currentPath);
+          // Don't redirect if we're already on a role-specific dashboard or diagnostic page
+          if (currentPath === '/admin-dashboard' || currentPath === '/staff-dashboard' || currentPath === '/diagnostic') {
+            console.log('✅ Already on role-specific dashboard or diagnostic page:', currentPath);
             return;
           }
           
@@ -211,6 +211,12 @@ export function FirebaseAuthProvider({ children }) {
   // Determine the next step in user flow based on profile progress
   const getNextUserFlowStep = () => {
     if (!profile) return '/subscription';
+    
+    // Don't redirect if we're on the diagnostic page
+    if (window.location.pathname === '/diagnostic') {
+      console.log('🔧 On diagnostic page, not redirecting');
+      return '/diagnostic';
+    }
     
     // Check for admin/staff roles first - they should go to their respective dashboards
     if (profile.role === 'admin') {

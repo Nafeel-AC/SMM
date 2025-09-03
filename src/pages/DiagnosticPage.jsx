@@ -174,6 +174,81 @@ const DiagnosticPage = () => {
     }
   };
 
+  const checkAdminProfile = async () => {
+    setRunning(true);
+    setResults(null);
+    setLogs([]);
+    
+    // Capture console logs
+    const originalLog = console.log;
+    const originalError = console.error;
+    
+    console.log = (...args) => {
+      addLog(args.join(' '));
+      originalLog(...args);
+    };
+    
+    console.error = (...args) => {
+      addLog('❌ ' + args.join(' '));
+      originalError(...args);
+    };
+    
+    try {
+      addLog('🔍 Checking admin profile...');
+      
+      // Import Firebase functions
+      const { getAuth, signInWithEmailAndPassword } = await import('firebase/auth');
+      const { getFirestore, doc, getDoc } = await import('firebase/firestore');
+      const { getApp } = await import('firebase/app');
+      
+      // Use existing Firebase app instead of creating new one
+      const app = getApp();
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      
+      addLog('🔐 Signing in as admin...');
+      const userCredential = await signInWithEmailAndPassword(auth, 'admin@example.com', 'admin123');
+      const user = userCredential.user;
+      addLog('✅ Signed in as: ' + user.email + ' UID: ' + user.uid);
+      
+      addLog('📋 Fetching profile...');
+      const profileRef = doc(db, 'profiles', user.uid);
+      const profileSnap = await getDoc(profileRef);
+      
+      if (profileSnap.exists()) {
+        const profile = profileSnap.data();
+        addLog('✅ Profile found:');
+        addLog('  Role: ' + profile.role);
+        addLog('  Email: ' + profile.email);
+        addLog('  Display Name: ' + profile.display_name);
+        addLog('  Full Profile: ' + JSON.stringify(profile, null, 2));
+        
+        setResults({
+          success: true,
+          message: 'Admin profile found',
+          profile: profile
+        });
+      } else {
+        addLog('❌ No profile found for user');
+        setResults({
+          success: false,
+          message: 'No profile found for admin user'
+        });
+      }
+    } catch (error) {
+      addLog('❌ Error checking admin profile: ' + error.message);
+      setResults({
+        success: false,
+        message: 'Error checking admin profile',
+        error: error.message
+      });
+    } finally {
+      console.log = originalLog;
+      console.error = originalError;
+      setRunning(false);
+    }
+  };
+
   return (
     <div className="diagnostic-page">
       <div className="diagnostic-container">
@@ -211,6 +286,14 @@ const DiagnosticPage = () => {
             disabled={running}
           >
             {running ? 'Adding...' : 'Add Sample Data'}
+          </button>
+
+          <button 
+            className="diagnostic-btn profile"
+            onClick={checkAdminProfile}
+            disabled={running}
+          >
+            {running ? 'Checking...' : 'Check Admin Profile'}
           </button>
         </div>
         
