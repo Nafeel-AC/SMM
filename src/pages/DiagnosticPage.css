@@ -66,6 +66,11 @@
   color: white;
 }
 
+.diagnostic-btn.profile {
+  background: #8b5cf6;
+  color: white;
+}
+
 .diagnostic-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
