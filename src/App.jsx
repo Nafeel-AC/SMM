@@ -77,7 +77,7 @@ function App() {
           <Route path="/subscription" element={<ProtectedRoute><SubscriptionPage /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
           <Route path="/instagram-connect" element={<ProtectedRoute><InstagramConnectPage /></ProtectedRoute>} />
-          <Route path="/instagram/callback" element={<ProtectedRoute><InstagramCallbackPage /></ProtectedRoute>} />
+          <Route path="/instagram/callback" element={<InstagramCallbackPage />} />
           <Route path="/requirements-form" element={<ProtectedRoute><RequirementsFormPage /></ProtectedRoute>} />
           
           {/* Dashboard */}
