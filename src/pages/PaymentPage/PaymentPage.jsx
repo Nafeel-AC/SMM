@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
+import { firebaseDb } from '../../lib/firebase-db';
 import './PaymentPage.css';
 
 const PaymentPage = () => {
@@ -12,19 +13,86 @@ const PaymentPage = () => {
     cvv: '',
     name: ''
   });
-  const { user } = useAuth();
+  const { user, fetchUserProfile } = useFirebaseAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
-  const selectedPlan = location.state?.plan || 'basic';
+  const selectedPlan = location.state?.plan || 'starter';
   
   const planDetails = {
-    basic: { name: 'Basic Plan', price: 29 },
-    pro: { name: 'Pro Plan', price: 59 },
-    enterprise: { name: 'Enterprise Plan', price: 99 }
+    starter: { 
+      name: 'Starter', 
+      price: 59,
+      features: [
+        'Real Instagram Followers',
+        'Monthly growth Analytics',
+        '24/7 Live Support',
+        'Instagram Audit',
+        'Cancel Anytime',
+        'VPN Login Support',
+        'Account Management',
+        'Monthly Review'
+      ]
+    },
+    premium: { 
+      name: 'Premium', 
+      price: 89,
+      features: [
+        'Real Instagram Followers',
+        'Monthly growth Analytics',
+        '24/7 Live Support',
+        'Instagram Audit',
+        'Cancel Anytime',
+        'Target by Hashtag',
+        'Target by Influencer & competitor',
+        'Targeting Optimization',
+        'Gender',
+        'VPN Login Support',
+        'Account Management',
+        'Monthly Review'
+      ]
+    },
+    ultimate: { 
+      name: 'Ultimate', 
+      price: 189,
+      features: [
+        'Real Instagram Followers',
+        'Monthly growth Analytics',
+        '24/7 Live Support',
+        'Instagram Audit',
+        'Cancel Anytime',
+        'Target by Hashtag',
+        'Target by Influencer & competitor',
+        'Targeting Optimization',
+        'Gender',
+        'Comments',
+        'Likes Posts',
+        'VPN Login Support',
+        'Like After Follow',
+        'Tiktok Service',
+        'Welcome DM',
+        'Account Management',
+        'Monthly Review'
+      ]
+    }
   };
 
-  const currentPlan = planDetails[selectedPlan];
+  const currentPlan = planDetails[selectedPlan] || planDetails['starter'];
+  
+  // Safety check - if currentPlan is still undefined, show error
+  if (!currentPlan) {
+    return (
+      <div className="payment-page">
+        <div className="payment-container">
+          <div className="error-message">
+            <h1>Error</h1>
+            <p>Invalid plan selected. Please go back and select a valid plan.</p>
+            <button onClick={() => navigate('/subscription')}>Back to Plans</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleInputChange = (field, value) => {
     setCardDetails(prev => ({
@@ -36,14 +104,61 @@ const PaymentPage = () => {
   const handlePayment = async () => {
     setLoading(true);
     
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock successful payment
-    console.log('Payment successful!');
-    
-    // Navigate to Instagram connect page
-    navigate('/instagram-connect');
+    try {
+      console.log('💳 Processing payment for plan:', currentPlan.name);
+      
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Save payment record to database
+      const paymentData = {
+        user_id: user.uid,
+        amount: currentPlan.price,
+        currency: 'USD',
+        status: 'completed',
+        payment_method: 'card',
+        plan_name: currentPlan.name,
+        created_at: new Date().toISOString(),
+        completed_at: new Date().toISOString()
+      };
+      
+      console.log('💾 Saving payment record...');
+      const paymentResult = await firebaseDb.savePayment(paymentData);
+      if (paymentResult.error) {
+        console.error('❌ Error saving payment:', paymentResult.error);
+        throw paymentResult.error;
+      }
+      console.log('✅ Payment record saved successfully');
+      
+      // Update user profile to mark payment as completed
+      console.log('👤 Updating user profile...');
+      const profileResult = await firebaseDb.updateProfile(user.uid, {
+        payment_completed: true,
+        selected_plan: currentPlan.name,
+        updated_at: new Date().toISOString()
+      });
+      
+      if (profileResult.error) {
+        console.error('❌ Error updating profile:', profileResult.error);
+        throw profileResult.error;
+      }
+      console.log('✅ User profile updated successfully');
+      
+      // Refresh the user profile in the auth context
+      console.log('🔄 Refreshing user profile...');
+      await fetchUserProfile(user.uid);
+      
+      console.log('🎉 Payment completed successfully!');
+      
+      // Navigate to Instagram connect page
+      navigate('/instagram-connect');
+      
+    } catch (error) {
+      console.error('❌ Payment failed:', error);
+      alert('Payment failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatCardNumber = (value) => {
@@ -83,6 +198,18 @@ const PaymentPage = () => {
             <div className="plan-info">
               <div className="plan-name">{currentPlan.name}</div>
               <div className="plan-price">${currentPlan.price}/month</div>
+            </div>
+            
+            <div className="plan-features">
+              <h4>What's Included:</h4>
+              <ul>
+                {currentPlan.features.map((feature, index) => (
+                  <li key={index}>
+                    <span className="feature-icon">✓</span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="billing-info">
               <div className="billing-item">

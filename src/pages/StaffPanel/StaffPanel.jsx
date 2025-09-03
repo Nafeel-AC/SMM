@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
+import { db } from '../../lib/firebase';
+import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import './StaffPanel.css';
 
 const StaffPanel = () => {
@@ -8,7 +9,7 @@ const StaffPanel = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [activeTab, setActiveTab] = useState('users');
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
 
   useEffect(() => {
     fetchUsers();
@@ -16,21 +17,13 @@ const StaffPanel = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          *,
-          user_requirements(*),
-          instagram_accounts(*),
-          instagram_insights(*)
-        `)
-        .order('created_at', { ascending: false });
+      const profilesRef = collection(db, 'profiles');
+      const profilesSnapshot = await getDocs(profilesRef);
+      const usersData = profilesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      if (error) {
-        console.error('Error fetching users:', error);
-      } else {
-        setUsers(data || []);
-      }
+      // For now, we'll use the basic profile data
+      // In a real implementation, you might want to fetch related data separately
+      setUsers(usersData || []);
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
@@ -134,7 +127,7 @@ const StaffPanel = () => {
                     <div className="stat">
                       <span className="stat-label">Instagram</span>
                       <span className="stat-value">
-                        {userData.instagram_accounts?.length > 0 ? 'Connected' : 'Not Connected'}
+                        {userData.instagram_connected ? 'Connected' : 'Not Connected'}
                       </span>
                     </div>
                   </div>
@@ -164,7 +157,7 @@ const StaffPanel = () => {
               <div className="analytics-card">
                 <h3>Instagram Connected</h3>
                 <div className="analytics-value">
-                  {users.filter(u => u.instagram_accounts?.length > 0).length}
+                  {users.filter(u => u.instagram_connected).length}
                 </div>
                 <div className="analytics-change positive">+15% this month</div>
               </div>
@@ -245,7 +238,7 @@ const StaffPanel = () => {
                   <div className="detail-group">
                     <label>Instagram Connected</label>
                     <span>
-                      {selectedUser.instagram_accounts?.length > 0 ? 'Yes' : 'No'}
+                      {selectedUser.instagram_connected ? 'Yes' : 'No'}
                     </span>
                   </div>
                 </div>

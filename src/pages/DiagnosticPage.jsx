@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { SupabaseDiagnostic } from '../lib/supabase-diagnostic';
+import { FirebaseDiagnostic } from '../lib/firebase-diagnostic';
+import { createDefaultUsers } from '../lib/create-admin-user';
+import { addDashboardSampleData } from '../lib/add-dashboard-sample-data';
 import './DiagnosticPage.css';
 
 const DiagnosticPage = () => {
@@ -31,8 +33,8 @@ const DiagnosticPage = () => {
     };
     
     try {
-      addLog('🔍 Starting Supabase diagnostic...');
-      const diagnosticResults = await SupabaseDiagnostic.runFullDiagnostic();
+      addLog('🔍 Starting Firebase diagnostic...');
+      const diagnosticResults = await FirebaseDiagnostic.runFullDiagnostic();
       setResults(diagnosticResults);
       addLog('✅ Diagnostic completed');
     } catch (error) {
@@ -57,7 +59,7 @@ const DiagnosticPage = () => {
     
     try {
       addLog('⚡ Running quick test...');
-      const quickResults = await SupabaseDiagnostic.quickTest();
+      const quickResults = await FirebaseDiagnostic.quickTest();
       setResults(quickResults);
       addLog('✅ Quick test completed');
     } catch (error) {
@@ -68,11 +70,115 @@ const DiagnosticPage = () => {
     }
   };
 
+  const createDefaultAdminAndStaff = async () => {
+    setRunning(true);
+    setResults(null);
+    setLogs([]);
+    
+    const originalLog = console.log;
+    const originalError = console.error;
+    
+    console.log = (...args) => {
+      addLog(args.join(' '));
+      originalLog(...args);
+    };
+    
+    console.error = (...args) => {
+      addLog('❌ ' + args.join(' '));
+      originalError(...args);
+    };
+    
+    try {
+      addLog('🔐 Creating default admin and staff users...');
+      const result = await createDefaultUsers();
+      
+      if (result.admin.success && result.staff.success) {
+        addLog('✅ Admin and staff users created successfully!');
+        addLog('👑 Admin: admin@example.com / admin123');
+        addLog('👥 Staff: staff@example.com / staff123');
+        setResults({
+          success: true,
+          message: 'Default users created successfully',
+          admin: result.admin.credentials,
+          staff: result.staff.credentials
+        });
+      } else {
+        addLog('❌ Error creating users');
+        setResults({
+          success: false,
+          message: 'Error creating users',
+          errors: result
+        });
+      }
+    } catch (error) {
+      addLog('❌ Error creating users: ' + error.message);
+      setResults({
+        success: false,
+        message: 'Error creating users',
+        error: error.message
+      });
+    } finally {
+      console.log = originalLog;
+      console.error = originalError;
+      setRunning(false);
+    }
+  };
+
+  const addSampleData = async () => {
+    setRunning(true);
+    setResults(null);
+    setLogs([]);
+    
+    const originalLog = console.log;
+    const originalError = console.error;
+    
+    console.log = (...args) => {
+      addLog(args.join(' '));
+      originalLog(...args);
+    };
+    
+    console.error = (...args) => {
+      addLog('❌ ' + args.join(' '));
+      originalError(...args);
+    };
+    
+    try {
+      addLog('📊 Adding sample data to database...');
+      const result = await addDashboardSampleData();
+      
+      if (result.success) {
+        addLog('✅ Sample data added successfully!');
+        setResults({
+          success: true,
+          message: 'Sample data added successfully'
+        });
+      } else {
+        addLog('❌ Error adding sample data');
+        setResults({
+          success: false,
+          message: 'Error adding sample data',
+          error: result.error
+        });
+      }
+    } catch (error) {
+      addLog('❌ Error adding sample data: ' + error.message);
+      setResults({
+        success: false,
+        message: 'Error adding sample data',
+        error: error.message
+      });
+    } finally {
+      console.log = originalLog;
+      console.error = originalError;
+      setRunning(false);
+    }
+  };
+
   return (
     <div className="diagnostic-page">
       <div className="diagnostic-container">
-        <h1>🔍 Supabase Diagnostic Tool</h1>
-        <p>This tool will help identify the root cause of your Supabase connection issues.</p>
+        <h1>🔍 Firebase Diagnostic Tool</h1>
+        <p>This tool will help identify the root cause of your Firebase connection issues.</p>
         
         <div className="diagnostic-actions">
           <button 
@@ -89,6 +195,22 @@ const DiagnosticPage = () => {
             disabled={running}
           >
             {running ? 'Running...' : 'Quick Test'}
+          </button>
+
+          <button 
+            className="diagnostic-btn admin"
+            onClick={createDefaultAdminAndStaff}
+            disabled={running}
+          >
+            {running ? 'Creating...' : 'Create Admin & Staff'}
+          </button>
+
+          <button 
+            className="diagnostic-btn data"
+            onClick={addSampleData}
+            disabled={running}
+          >
+            {running ? 'Adding...' : 'Add Sample Data'}
           </button>
         </div>
         
@@ -118,10 +240,10 @@ const DiagnosticPage = () => {
         <div className="diagnostic-help">
           <h3>💡 Common Issues & Solutions:</h3>
           <ul>
-            <li><strong>Config Error:</strong> Check your .env file for VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY</li>
-            <li><strong>Connection Error:</strong> Check internet connection and Supabase service status</li>
-            <li><strong>Tables Missing:</strong> Run the SQL setup script in your Supabase dashboard</li>
-            <li><strong>RLS Issues:</strong> Check Row Level Security policies in Supabase</li>
+            <li><strong>Config Error:</strong> Check your .env file for Firebase configuration</li>
+            <li><strong>Connection Error:</strong> Check internet connection and Firebase service status</li>
+            <li><strong>Collections Missing:</strong> Check Firestore collections and security rules</li>
+            <li><strong>Auth Issues:</strong> Check Firebase Authentication configuration</li>
           </ul>
         </div>
       </div>

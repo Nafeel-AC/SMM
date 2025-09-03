@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import Navbar from '../../components/Navbar';
 import '../AuthForms/AuthForms.css';
 import heroImage from '../../assets/hero-image.jpg';
@@ -14,7 +14,7 @@ const RegisterPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signUpWithEmail } = useAuth();
+  const { signUpWithEmail } = useFirebaseAuth();
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {

@@ -1,2 +1,2 @@
-export { AuthContext, useAuth, AuthProvider } from './AuthContext';
+export { FirebaseAuthContext, useFirebaseAuth, FirebaseAuthProvider } from './FirebaseAuthContext';
 export { BlogContext, useBlog } from './BlogContext';

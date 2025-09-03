@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
+import { db } from '../../lib/firebase';
+import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import './SupportChat.css';
 
 const SupportChat = () => {
@@ -9,14 +10,21 @@ const SupportChat = () => {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { user, profile } = useAuth();
+  const { user, profile } = useFirebaseAuth();
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    let unsubscribe = null;
+    
     if (isOpen && user) {
-      fetchMessages();
-      subscribeToMessages();
+      unsubscribe = fetchMessages();
     }
+    
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [isOpen, user]);
 
   useEffect(() => {
@@ -30,47 +38,34 @@ const SupportChat = () => {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('support_chats')
-        .select(`
-          *,
-          profiles!support_chats_staff_id_fkey (
-            full_name
-          )
-        `)
-        .eq('user_id', user.id)
-        .order('sent_at', { ascending: true });
+      const messagesRef = collection(db, 'support_chats');
+      const q = query(
+        messagesRef,
+        where('user_id', '==', user.uid),
+        orderBy('sent_at', 'asc')
+      );
+      
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const messagesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setMessages(messagesData);
+        setLoading(false);
+      });
 
-      if (error) throw error;
-      setMessages(data || []);
+      return unsubscribe;
     } catch (error) {
       setError('Failed to load messages');
       console.error('Error fetching messages:', error);
-    } finally {
       setLoading(false);
     }
   };
 
   const subscribeToMessages = () => {
-    const subscription = supabase
-      .channel('support_chats')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'support_chats',
-          filter: `user_id=eq.${user.id}`
-        },
-        (payload) => {
-          setMessages(prev => [...prev, payload.new]);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    // Real-time updates are now handled by the onSnapshot in fetchMessages
+    // This function is kept for compatibility but doesn't need to do anything
+    return () => {};
   };
 
   const handleSendMessage = async (e) => {
@@ -79,17 +74,14 @@ const SupportChat = () => {
 
     try {
       setLoading(true);
-      const { error } = await supabase
-        .from('support_chats')
-        .insert([
-          {
-            user_id: user.id,
-            message: newMessage.trim(),
-            sent_by: 'user'
-          }
-        ]);
-
-      if (error) throw error;
+      const messagesRef = collection(db, 'support_chats');
+      await addDoc(messagesRef, {
+        user_id: user.uid,
+        message: newMessage.trim(),
+        sent_by: 'user',
+        sent_at: serverTimestamp(),
+        user_name: profile?.full_name || user.displayName || 'User'
+      });
 
       setNewMessage('');
       
@@ -127,9 +119,9 @@ const SupportChat = () => {
 
   const getSenderName = (message) => {
     if (message.sent_by === 'user') {
-      return profile?.full_name || 'You';
+      return message.user_name || profile?.full_name || 'You';
     } else if (message.sent_by === 'staff') {
-      return message.profiles?.full_name || 'Staff Member';
+      return message.staff_name || 'Staff Member';
     } else if (message.sent_by === 'admin') {
       return 'Admin';
     }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
+import { db } from '../../lib/firebase';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -9,7 +10,7 @@ const AdminPanel = () => {
   const [recentUsers, setRecentUsers] = useState([]);
   const [systemHealth, setSystemHealth] = useState({});
   const [activeTab, setActiveTab] = useState('overview');
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
 
   useEffect(() => {
     fetchAdminData();
@@ -18,46 +19,38 @@ const AdminPanel = () => {
   const fetchAdminData = async () => {
     try {
       // Fetch user statistics
-      const { data: usersData, error: usersError } = await supabase
-        .from('profiles')
-        .select('*');
+      const profilesRef = collection(db, 'profiles');
+      const profilesSnapshot = await getDocs(profilesRef);
+      const usersData = profilesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      if (usersError) {
-        console.error('Error fetching users:', usersError);
-      } else {
-        const totalUsers = usersData?.length || 0;
-        const activeUsers = usersData?.filter(u => u.status === 'active').length || 0;
-        const instagramConnected = usersData?.filter(u => u.instagram_accounts?.length > 0).length || 0;
-        
-        setStats({
-          totalUsers,
-          activeUsers,
-          instagramConnected,
-          newUsersThisMonth: Math.floor(totalUsers * 0.15) // Mock data
-        });
-        
-        setRecentUsers(usersData?.slice(0, 5) || []);
-      }
+      const totalUsers = usersData?.length || 0;
+      const activeUsers = usersData?.filter(u => u.status === 'active').length || 0;
+      const instagramConnected = usersData?.filter(u => u.instagram_connected).length || 0;
+      
+      setStats({
+        totalUsers,
+        activeUsers,
+        instagramConnected,
+        newUsersThisMonth: Math.floor(totalUsers * 0.15) // Mock data
+      });
+      
+      setRecentUsers(usersData?.slice(0, 5) || []);
 
       // Fetch system health data
-      const { data: insightsData, error: insightsError } = await supabase
-        .from('instagram_insights')
-        .select('*');
+      const insightsRef = collection(db, 'instagram_insights');
+      const insightsSnapshot = await getDocs(insightsRef);
+      const insightsData = insightsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      if (insightsError) {
-        console.error('Error fetching insights:', insightsError);
-      } else {
-        const avgEngagement = insightsData?.length > 0 
-          ? (insightsData.reduce((sum, insight) => sum + (insight.engagement_rate || 0), 0) / insightsData.length).toFixed(1)
-          : 0;
-        
-        setSystemHealth({
-          avgEngagement: parseFloat(avgEngagement),
-          totalInsights: insightsData?.length || 0,
-          systemUptime: '99.9%',
-          lastBackup: new Date().toLocaleDateString()
-        });
-      }
+      const avgEngagement = insightsData?.length > 0 
+        ? (insightsData.reduce((sum, insight) => sum + (insight.engagement_rate || 0), 0) / insightsData.length).toFixed(1)
+        : 0;
+      
+      setSystemHealth({
+        avgEngagement: parseFloat(avgEngagement),
+        totalInsights: insightsData?.length || 0,
+        systemUptime: '99.9%',
+        lastBackup: new Date().toLocaleDateString()
+      });
 
     } catch (error) {
       console.error('Error fetching admin data:', error);

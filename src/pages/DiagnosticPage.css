@@ -56,6 +56,16 @@
   border: 2px solid #dee2e6;
 }
 
+.diagnostic-btn.admin {
+  background: #ef4444;
+  color: white;
+}
+
+.diagnostic-btn.data {
+  background: #10b981;
+  color: white;
+}
+
 .diagnostic-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);

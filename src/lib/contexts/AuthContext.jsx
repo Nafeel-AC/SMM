@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { supabase } from '../supabase';
+// Note: This file is deprecated in favor of FirebaseAuthContext
+// Keeping for backward compatibility but should not be used
 
 // Create the authentication context
 export const AuthContext = createContext(null);
