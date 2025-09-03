@@ -4,6 +4,7 @@ import { supabase } from './supabase';
 const INSTAGRAM_BASIC_API_BASE = 'https://graph.instagram.com';
 const FACEBOOK_API_BASE = 'https://graph.facebook.com/v18.0';
 const FACEBOOK_AUTH_BASE = 'https://www.facebook.com/v18.0/dialog/oauth';
+const INSTAGRAM_AUTH_BASE = 'https://api.instagram.com/oauth/authorize';
 
 class InstagramService {
   constructor() {
@@ -12,18 +13,17 @@ class InstagramService {
     this.redirectUri = import.meta.env.VITE_INSTAGRAM_REDIRECT_URI;
   }
 
-  // Generate Facebook OAuth URL for Instagram access
+  // Generate Instagram Basic Display OAuth URL
   getAuthUrl() {
     const params = new URLSearchParams({
       client_id: this.appId,
       redirect_uri: this.redirectUri,
-      // Minimal set for reading IG business insights via Graph API
-      scope: 'instagram_basic,instagram_manage_insights,pages_show_list,pages_read_engagement',
+      scope: 'user_profile,user_media',
       response_type: 'code',
       state: 'instagram_auth'
     });
 
-    return `${FACEBOOK_AUTH_BASE}?${params.toString()}`;
+    return `${INSTAGRAM_AUTH_BASE}?${params.toString()}`;
   }
 
   // Exchange authorization code for token via serverless function (keeps secret off client)
@@ -58,60 +58,30 @@ class InstagramService {
     }
   }
 
-  // Resolve Pages and connected IG user id using Facebook user token
-  async resolveInstagramUserFromPages(accessToken) {
+  // Get Instagram user profile using Basic Display API
+  async getInstagramProfile(accessToken) {
     try {
-      const pagesResponse = await fetch(`${FACEBOOK_API_BASE}/me/accounts?fields=name,access_token,connected_instagram_account`, {
-        headers: { 'Authorization': `Bearer ${accessToken}` }
-      });
-
-      if (!pagesResponse.ok) {
-        throw new Error(`Failed to fetch pages: ${pagesResponse.status}`);
+      const response = await fetch(`${INSTAGRAM_BASIC_API_BASE}/me?fields=id,username&access_token=${accessToken}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Instagram profile: ${response.status}`);
       }
-
-      const pagesData = await pagesResponse.json();
-      if (!pagesData.data || pagesData.data.length === 0) {
-        throw new Error('No Facebook Pages found on this account');
-      }
-
-      const pageWithIg = pagesData.data.find(p => p.connected_instagram_account && p.connected_instagram_account.id);
-      if (!pageWithIg) {
-        throw new Error('No Instagram Business account connected to any Page');
-      }
-
-      return {
-        pageId: pageWithIg.id,
-        pageAccessToken: pageWithIg.access_token,
-        igUserId: pageWithIg.connected_instagram_account.id
-      };
+      return await response.json();
     } catch (error) {
-      console.error('Error resolving IG user from Pages:', error);
+      console.error('Error getting Instagram profile:', error);
       throw error;
     }
   }
 
-  // Get IG user profile (followers/media counts)
-  async getIgUserProfile(igUserId, accessToken) {
+  // Get Instagram media using Basic Display API
+  async getInstagramMedia(accessToken, limit = 25) {
     try {
-      const url = `${FACEBOOK_API_BASE}/${igUserId}?fields=id,username,followers_count,media_count`;
-      const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
-      if (!response.ok) throw new Error(`Failed to fetch IG profile: ${response.status}`);
+      const response = await fetch(`${INSTAGRAM_BASIC_API_BASE}/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Instagram media: ${response.status}`);
+      }
       return await response.json();
     } catch (error) {
-      console.error('Error getting IG user profile:', error);
-      throw error;
-    }
-  }
-
-  // Get IG user media list
-  async getIgMedia(igUserId, accessToken, limit = 25) {
-    try {
-      const url = `${FACEBOOK_API_BASE}/${igUserId}/media?fields=id,caption,like_count,comments_count,timestamp&limit=${limit}`;
-      const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
-      if (!response.ok) throw new Error(`Failed to fetch IG media: ${response.status}`);
-      return await response.json();
-    } catch (error) {
-      console.error('Error getting IG media:', error);
+      console.error('Error getting Instagram media:', error);
       throw error;
     }
   }
@@ -163,70 +133,34 @@ class InstagramService {
   // Fetch and save Instagram insights
   async fetchAndSaveInsights(userId, accessToken) {
     try {
-      // Resolve IG user via Pages
-      const { igUserId } = await this.resolveInstagramUserFromPages(accessToken);
-
-      // Get IG profile and recent media
-      const profile = await this.getIgUserProfile(igUserId, accessToken);
-      const media = await this.getIgMedia(igUserId, accessToken);
+      // Get Instagram profile using Basic Display API
+      const profile = await this.getInstagramProfile(accessToken);
       
-      // Calculate basic insights
+      // Get recent media
+      const media = await this.getInstagramMedia(accessToken, 25);
+      
+      // Calculate basic insights - Note: Basic Display API has limited data
       const insights = {
-        followers_count: profile.followers_count || 0,
-        following_count: 0,
-        media_count: profile.media_count || 0,
-        engagement_rate: 0, // Will be calculated from media data
+        followers_count: 0, // Not available in Basic Display API
+        following_count: 0, // Not available in Basic Display API
+        media_count: media.data ? media.data.length : 0,
+        engagement_rate: 0,
         avg_likes: 0,
         avg_comments: 0,
-        reach: 0,
-        impressions: 0,
-        profile_views: 0,
-        website_clicks: 0,
-        email_contacts: 0,
-        phone_contacts: 0,
-        get_directions: 0,
-        text_message: 0,
+        reach: 0, // Not available in Basic Display API
+        impressions: 0, // Not available in Basic Display API
+        profile_views: 0, // Not available in Basic Display API
+        website_clicks: 0, // Not available in Basic Display API
+        email_contacts: 0, // Not available in Basic Display API
+        phone_contacts: 0, // Not available in Basic Display API
+        get_directions: 0, // Not available in Basic Display API
+        text_message: 0, // Not available in Basic Display API
         last_updated: new Date().toISOString()
       };
 
-      // If we have media, calculate engagement metrics
-      if (media.data && media.data.length > 0) {
-        let totalLikes = 0;
-        let totalComments = 0;
-        let totalReach = 0;
-        let totalImpressions = 0;
-
-        for (const mediaItem of media.data.slice(0, 10)) { // Analyze last 10 posts
-          try {
-            totalLikes += mediaItem.like_count || 0;
-            totalComments += mediaItem.comments_count || 0;
-
-            const mediaInsights = await this.getMediaInsights(mediaItem.id, accessToken);
-            if (mediaInsights.data) {
-              for (const insight of mediaInsights.data) {
-                const value = insight.values && insight.values[0] ? (insight.values[0].value || 0) : 0;
-                if (insight.name === 'reach') totalReach += value;
-                if (insight.name === 'impressions') totalImpressions += value;
-              }
-            }
-          } catch (error) {
-            console.warn(`Could not fetch insights for media ${mediaItem.id}:`, error);
-          }
-        }
-
-        const analyzedPosts = Math.min(media.data.length, 10);
-        insights.avg_likes = Math.round(totalLikes / analyzedPosts);
-        insights.avg_comments = Math.round(totalComments / analyzedPosts);
-        insights.reach = totalReach;
-        insights.impressions = totalImpressions;
-        
-        // Calculate engagement rate
-        const totalEngagement = totalLikes + totalComments;
-        const totalFollowers = insights.followers_count;
-        if (totalFollowers > 0) {
-          insights.engagement_rate = parseFloat(((totalEngagement / analyzedPosts) / totalFollowers * 100).toFixed(2));
-        }
-      }
+      // Note: Instagram Basic Display API doesn't provide likes/comments count
+      // These would require Instagram Business API with proper app review
+      console.warn('Instagram Basic Display API has limited metrics. Consider upgrading to Instagram Business API for full insights.');
 
       // Save insights to database
       const { data, error } = await supabase

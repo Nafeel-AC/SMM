@@ -13,37 +13,43 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'server_env_missing' });
     }
 
-    const version = 'v18.0';
+    // Use Instagram Basic Display API for token exchange
+    const formData = new URLSearchParams();
+    formData.append('client_id', appId);
+    formData.append('client_secret', appSecret);
+    formData.append('grant_type', 'authorization_code');
+    formData.append('redirect_uri', redirectUri);
+    formData.append('code', code);
 
-    const tokenUrl = new URL(`https://graph.facebook.com/${version}/oauth/access_token`);
-    tokenUrl.searchParams.set('client_id', appId);
-    tokenUrl.searchParams.set('client_secret', appSecret);
-    tokenUrl.searchParams.set('redirect_uri', redirectUri);
-    tokenUrl.searchParams.set('code', code);
+    const tokenResp = await fetch('https://api.instagram.com/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData,
+    });
 
-    const tokenResp = await fetch(tokenUrl.toString());
     const tokenJson = await tokenResp.json();
     if (!tokenResp.ok) {
       return res.status(tokenResp.status).json({ error: 'exchange_failed', details: tokenJson });
     }
 
-    const shortLived = tokenJson.access_token;
-
-    // Upgrade to long‑lived user token
-    const llUrl = new URL(`https://graph.facebook.com/${version}/oauth/access_token`);
-    llUrl.searchParams.set('grant_type', 'fb_exchange_token');
-    llUrl.searchParams.set('client_id', appId);
-    llUrl.searchParams.set('client_secret', appSecret);
-    llUrl.searchParams.set('fb_exchange_token', shortLived);
-
-    const llResp = await fetch(llUrl.toString());
-    const llJson = await llResp.json();
-    if (!llResp.ok) {
-      // Fall back to short‑lived if upgrade fails
-      return res.status(200).json({ access_token: shortLived, token_type: tokenJson.token_type, expires_in: tokenJson.expires_in, upgrade_error: llJson });
+    // For Instagram Basic Display, try to get a long-lived token
+    try {
+      const longLivedUrl = `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${appSecret}&access_token=${tokenJson.access_token}`;
+      
+      const llResp = await fetch(longLivedUrl);
+      const llJson = await llResp.json();
+      
+      if (llResp.ok && llJson.access_token) {
+        return res.status(200).json(llJson);
+      }
+    } catch (error) {
+      console.warn('Failed to get long-lived token:', error);
     }
 
-    return res.status(200).json(llJson);
+    // Return short-lived token if long-lived exchange fails
+    return res.status(200).json(tokenJson);
   } catch (err) {
     return res.status(500).json({ error: 'server_error', message: err.message });
   }

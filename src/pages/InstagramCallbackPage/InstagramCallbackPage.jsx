@@ -24,38 +24,54 @@ const InstagramCallbackPage = () => {
       // Get authorization code from URL parameters
       const code = searchParams.get('code');
       const errorParam = searchParams.get('error');
+      const errorReason = searchParams.get('error_reason');
+      const errorDescription = searchParams.get('error_description');
 
       if (errorParam) {
-        throw new Error(`Instagram authorization failed: ${errorParam}`);
+        let errorMessage = `Instagram authorization failed: ${errorParam}`;
+        if (errorDescription) {
+          errorMessage += ` - ${errorDescription}`;
+        }
+        throw new Error(errorMessage);
       }
 
       if (!code) {
-        throw new Error('No authorization code received from Instagram');
+        throw new Error('No authorization code received from Instagram. Please try the connection process again.');
       }
 
+      console.log('✅ Authorization code received:', code.substring(0, 10) + '...');
+
       // Exchange code for access token
+      console.log('🔄 Exchanging code for access token...');
       const tokenData = await instagramService.exchangeCodeForToken(code);
       
       if (!tokenData.access_token) {
         throw new Error('No access token received from Instagram');
       }
 
-      // Get long-lived Facebook user access token
-      const longLivedToken = await instagramService.getLongLivedToken(tokenData.access_token);
+      console.log('✅ Access token received');
 
-      // Resolve IG Business user via Pages and get IG profile
-      const { igUserId } = await instagramService.resolveInstagramUserFromPages(longLivedToken.access_token);
-      const igProfile = await instagramService.getIgUserProfile(igUserId, longLivedToken.access_token);
+      // Get Instagram profile using Basic Display API
+      console.log('🔄 Fetching Instagram profile...');
+      const profile = await instagramService.getInstagramProfile(tokenData.access_token);
+      
+      console.log('✅ Profile fetched:', profile);
 
       // Save Instagram account to database
+      console.log('🔄 Saving Instagram account to database...');
       await instagramService.saveInstagramAccount(
         user.id,
-        igProfile,
-        longLivedToken.access_token
+        profile,
+        tokenData.access_token
       );
 
+      console.log('✅ Instagram account saved');
+
       // Fetch and save initial insights
-      await instagramService.fetchAndSaveInsights(user.id, longLivedToken.access_token);
+      console.log('🔄 Fetching initial insights...');
+      await instagramService.fetchAndSaveInsights(user.id, tokenData.access_token);
+
+      console.log('✅ Initial insights saved');
 
       setSuccess(true);
       
