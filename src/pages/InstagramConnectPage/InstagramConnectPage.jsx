@@ -7,7 +7,7 @@ import './InstagramConnectPage.css';
 const InstagramConnectPage = () => {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
-  const { user } = useFirebaseAuth();
+  const { user, fetchUserProfile } = useFirebaseAuth();
   const navigate = useNavigate();
 
   const handleConnectInstagram = async () => {
@@ -78,6 +78,17 @@ const InstagramConnectPage = () => {
         instagram_connected: true,
         updated_at: new Date().toISOString()
       });
+      // Debug: log user context before and after
+      console.log('[InstagramConnect] User context before:', user);
+      if (user && typeof user === 'object') {
+        user.instagram_connected = true;
+      }
+      console.log('[InstagramConnect] User context after:', user);
+      // Force profile refresh in context
+      if (fetchUserProfile && typeof fetchUserProfile === 'function') {
+        console.log('[InstagramConnect] Forcing profile refresh in context...');
+        await fetchUserProfile(user.uid);
+      }
       console.log('✅ User profile updated');
 
       // Sample data is now only for the current user
