@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { roleAuthService } from '../../lib/role-auth-service';
 import { dashboardDataService } from '../../lib/dashboard-data-service';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -16,6 +17,7 @@ const AdminDashboard = () => {
   const [newStaff, setNewStaff] = useState({ email: '', password: '', displayName: '' });
   const [userDashboardData, setUserDashboardData] = useState(null);
   const navigate = useNavigate();
+  const { user } = useFirebaseAuth();
 
   useEffect(() => {
     fetchData();
@@ -53,7 +55,7 @@ const AdminDashboard = () => {
         newStaff.password,
         {
           displayName: newStaff.displayName,
-          createdBy: 'admin' // In real app, get from current user
+          createdBy: user?.uid || 'admin' // Get from current user
         }
       );
 

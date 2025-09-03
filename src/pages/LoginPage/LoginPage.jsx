@@ -17,16 +17,11 @@ const LoginPage = () => {
     console.log('🔄 LoginPage: Loading state changed to:', loading);
   }, [loading]);
   const [error, setError] = useState('');
-  const { signInWithEmail, user } = useFirebaseAuth();
+  const { signInWithEmail, user, profile } = useFirebaseAuth();
   const navigate = useNavigate();
   
-  // Redirect if user is already signed in
-  useEffect(() => {
-    if (user) {
-      console.log('👤 User already signed in, redirecting to subscription page');
-      navigate('/subscription');
-    }
-  }, [user, navigate]);
+  // Note: Redirect logic is handled by FirebaseAuthContext auth state listener
+  // No need to redirect here to avoid conflicts
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,9 +49,8 @@ const LoginPage = () => {
         setLoading(false);
       } else {
         console.log('✅ Sign in successful, data:', data);
-        // Success - navigate to subscription page
-        console.log('🚀 Navigating to subscription page');
-        navigate('/subscription');
+        // Success - the useEffect will handle role-based redirection
+        console.log('🚀 Login successful, waiting for role-based redirect...');
         setLoading(false);
       }
     } catch (error) {
