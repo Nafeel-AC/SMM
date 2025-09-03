@@ -1,8 +1,7 @@
-// Simple test Instagram service - completely local, no API calls, no redirects
-import { supabase } from './supabase';
-import { DatabaseChecker } from './database-checker';
+// Firebase Instagram service - replaces Supabase Instagram service
+import { firebaseDb } from './firebase-db';
 
-class InstagramService {
+class FirebaseInstagramService {
   constructor() {
     // No need for environment variables in test mode
   }
@@ -86,7 +85,7 @@ class InstagramService {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
-      return {
+    return {
       data: [
         {
           name: 'impressions',
@@ -153,65 +152,42 @@ class InstagramService {
     };
   }
 
-  // Save Instagram account to database
+  // Save Instagram account to Firestore
   async saveInstagramAccount(userId, instagramData, accessToken) {
     try {
-      console.log('🧪 Test mode: Saving Instagram account to database');
+      console.log('🧪 Test mode: Saving Instagram account to Firestore');
       console.log('🧪 Data to save:', { userId, instagramData, accessToken });
       
-      // Add timeout for database operations
-      const savePromise = supabase
-        .from('instagram_accounts')
-        .upsert({
-          user_id: userId,
-          instagram_user_id: instagramData.id,
-          username: instagramData.username,
-          access_token: accessToken,
-          connected_at: new Date().toISOString(),
-          last_sync: new Date().toISOString()
-        })
-        .select()
-        .single();
+      const accountData = {
+        user_id: userId,
+        instagram_user_id: instagramData.id,
+        username: instagramData.username,
+        access_token: accessToken,
+        connected_at: new Date().toISOString(),
+        last_sync: new Date().toISOString()
+      };
 
-      const saveTimeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database save timeout')), 8000)
-      );
+      const result = await firebaseDb.saveInstagramAccount(accountData);
 
-      const { data, error } = await Promise.race([savePromise, saveTimeoutPromise]);
-
-      if (error) {
-        console.error('❌ Supabase error saving Instagram account:', error);
+      if (result.error) {
+        console.error('❌ Firebase error saving Instagram account:', result.error);
         // In test mode, we can continue even if database save fails
         console.log('🧪 Test mode: Continuing despite database save failure');
         return { id: 'test_account_' + Date.now(), user_id: userId };
       }
 
-      console.log('✅ Instagram account saved to database:', data);
+      console.log('✅ Instagram account saved to Firestore:', result.data);
 
-      // Update user profile to mark Instagram as connected (with timeout)
+      // Update user profile to mark Instagram as connected
       try {
-        const profilePromise = supabase
-          .from('profiles')
-          .update({ instagram_connected: true })
-          .eq('id', userId);
-
-        const profileTimeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Profile update timeout')), 5000)
-        );
-
-        const { error: profileError } = await Promise.race([profilePromise, profileTimeoutPromise]);
-
-        if (profileError) {
-          console.error('❌ Error updating profile:', profileError);
-          console.log('🧪 Test mode: Continuing despite profile update failure');
-        } else {
-          console.log('✅ Profile updated to mark Instagram as connected');
-        }
+        await firebaseDb.updateProfile(userId, { instagram_connected: true });
+        console.log('✅ Profile updated to mark Instagram as connected');
       } catch (profileError) {
-        console.log('🧪 Test mode: Profile update failed, continuing anyway');
+        console.error('❌ Error updating profile:', profileError);
+        console.log('🧪 Test mode: Continuing despite profile update failure');
       }
 
-      return data;
+      return result.data;
     } catch (error) {
       console.error('❌ Error saving Instagram account:', error);
       // In test mode, return mock data instead of throwing
@@ -236,6 +212,7 @@ class InstagramService {
       
       // Process insights data
       const processedInsights = {
+        user_id: userId,
         followers_count: 1250, // Test data
         following_count: 320,  // Test data
         media_count: profile.media_count || 0,
@@ -310,117 +287,70 @@ class InstagramService {
         }
       }
 
-      // Save insights to database with timeout
-      console.log('🧪 Saving insights to database:', processedInsights);
-      const insightsPromise = supabase
-        .from('instagram_insights')
-        .upsert({
-          user_id: userId,
-          ...processedInsights
-        })
-        .select()
-        .single();
+      // Save insights to Firestore
+      console.log('🧪 Saving insights to Firestore:', processedInsights);
+      const result = await firebaseDb.saveInstagramInsights(processedInsights);
 
-      const insightsTimeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Insights save timeout')), 8000)
-      );
-
-      const { data, error } = await Promise.race([insightsPromise, insightsTimeoutPromise]);
-
-      if (error) {
-        console.error('❌ Supabase error saving insights:', error);
+      if (result.error) {
+        console.error('❌ Firebase error saving insights:', result.error);
         // In test mode, we can continue even if insights save fails
         console.log('🧪 Test mode: Continuing despite insights save failure');
         return { id: 'test_insights_' + Date.now(), user_id: userId };
       }
 
-      console.log('✅ Test insights saved successfully:', data);
-      return data;
+      console.log('✅ Test insights saved successfully:', result.data);
+      return result.data;
     } catch (error) {
       console.error('Error fetching and saving insights:', error);
       throw error;
     }
   }
 
-  // Get stored insights from database
+  // Get stored insights from Firestore
   async getStoredInsights(userId) {
     try {
-      const { data, error } = await supabase
-        .from('instagram_insights')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      return data;
+      const result = await firebaseDb.getInstagramInsights(userId);
+      return result.data;
     } catch (error) {
       console.error('Error getting stored insights:', error);
       throw error;
     }
   }
 
-  // Test Supabase connection with detailed logging
-  async testSupabaseConnection(userId) {
-    console.log('🔍 Testing Supabase connection with detailed logging...');
+  // Test Firebase connection with detailed logging
+  async testFirebaseConnection(userId) {
+    console.log('🔍 Testing Firebase connection with detailed logging...');
     
     try {
       // Test 1: Basic connection
-      console.log('🔍 Test 1: Basic Supabase client test...');
-      const { data: authData, error: authError } = await supabase.auth.getSession();
-      console.log('🔍 Auth session test:', { authData: !!authData, authError: !!authError });
-      
-      // Test 2: Simple table query
-      console.log('🔍 Test 2: Testing profiles table access...');
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .limit(1);
-      console.log('🔍 Profiles table test:', { 
+      console.log('🔍 Test 1: Basic Firebase client test...');
+      const { data: profileData, error: profileError } = await firebaseDb.getProfile(userId);
+      console.log('🔍 Profile test:', { 
         data: profileData, 
         error: profileError,
-        hasData: !!profileData,
-        dataLength: profileData?.length || 0
+        hasData: !!profileData
       });
       
-      // Test 3: User-specific query
-      console.log('🔍 Test 3: Testing user-specific query...');
-      const { data: userData, error: userError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', userId)
-        .single();
-      console.log('🔍 User-specific query test:', { 
-        data: userData, 
-        error: userError,
-        hasData: !!userData
-      });
-      
-      // Test 4: Instagram accounts table
-      console.log('🔍 Test 4: Testing instagram_accounts table...');
-      const { data: instagramData, error: instagramError } = await supabase
-        .from('instagram_accounts')
-        .select('id')
-        .limit(1);
-      console.log('🔍 Instagram accounts table test:', { 
+      // Test 2: Instagram accounts collection
+      console.log('🔍 Test 2: Testing instagram_accounts collection...');
+      const { data: instagramData, error: instagramError } = await firebaseDb.getInstagramAccount(userId);
+      console.log('🔍 Instagram accounts test:', { 
         data: instagramData, 
         error: instagramError,
         hasData: !!instagramData
       });
       
-      // Test 5: Instagram insights table
-      console.log('🔍 Test 5: Testing instagram_insights table...');
-      const { data: insightsData, error: insightsError } = await supabase
-        .from('instagram_insights')
-        .select('id')
-        .limit(1);
-      console.log('🔍 Instagram insights table test:', { 
+      // Test 3: Instagram insights collection
+      console.log('🔍 Test 3: Testing instagram_insights collection...');
+      const { data: insightsData, error: insightsError } = await firebaseDb.getInstagramInsights(userId);
+      console.log('🔍 Instagram insights test:', { 
         data: insightsData, 
         error: insightsError,
         hasData: !!insightsData
       });
       
-      // Test 6: Try to insert test data (this will help identify RLS issues)
-      console.log('🔍 Test 6: Testing data insertion...');
+      // Test 4: Try to insert test data
+      console.log('🔍 Test 4: Testing data insertion...');
       const testInsertData = {
         user_id: userId,
         instagram_user_id: 'test_user_123',
@@ -429,11 +359,7 @@ class InstagramService {
         connected_at: new Date().toISOString()
       };
       
-      const { data: insertData, error: insertError } = await supabase
-        .from('instagram_accounts')
-        .insert(testInsertData)
-        .select()
-        .single();
+      const { data: insertData, error: insertError } = await firebaseDb.saveInstagramAccount(testInsertData);
       
       console.log('🔍 Insert test result:', { 
         data: insertData, 
@@ -442,27 +368,22 @@ class InstagramService {
       });
       
       // If insert was successful, clean up the test data
-      if (insertData) {
+      if (insertData && insertData.id) {
         console.log('🔍 Cleaning up test data...');
-        await supabase
-          .from('instagram_accounts')
-          .delete()
-          .eq('id', insertData.id);
+        await firebaseDb.deleteDocument('instagram_accounts', insertData.id);
         console.log('🔍 Test data cleaned up');
       }
       
       return {
         success: true,
-        auth: !authError,
-        profiles: !profileError,
-        userQuery: !userError,
+        profile: !profileError,
         instagram: !instagramError,
         insights: !insightsError,
         insert: !insertError
       };
       
     } catch (error) {
-      console.error('❌ Supabase connection test failed:', error);
+      console.error('❌ Firebase connection test failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -472,27 +393,16 @@ class InstagramService {
     try {
       console.log('🧪 Test mode: Starting complete Instagram connection flow for user:', userId);
       
-      // Test Supabase connection with detailed logging
-      console.log('🧪 Testing Supabase connection...');
+      // Test Firebase connection with detailed logging
+      console.log('🧪 Testing Firebase connection...');
       
-      // First, check database setup
-      const dbCheck = await DatabaseChecker.checkDatabaseSetup();
-      console.log('🔍 Database setup check:', dbCheck);
+      const connectionTest = await this.testFirebaseConnection(userId);
+      let firebaseAvailable = connectionTest.success;
       
-      // Then test connection
-      const connectionTest = await this.testSupabaseConnection(userId);
-      let supabaseAvailable = connectionTest.success;
-      
-      if (!supabaseAvailable) {
-        console.log('🧪 Test mode: Supabase not available, using offline mode');
-        console.log('💡 Database setup status:', dbCheck.overall);
-        
-        if (dbCheck.overall === 'needs_setup') {
-          console.log('📋 Database needs setup. Please run the SQL script in Supabase dashboard.');
-          console.log('📋 File: sql/safe_database_setup.sql');
-        }
+      if (!firebaseAvailable) {
+        console.log('🧪 Test mode: Firebase not available, using offline mode');
       } else {
-        console.log('✅ Supabase connection test passed:', connectionTest);
+        console.log('✅ Firebase connection test passed:', connectionTest);
       }
       
       // Step 1: Connect Instagram (get token)
@@ -505,8 +415,8 @@ class InstagramService {
       const profile = await this.getInstagramProfile(tokenData.access_token);
       console.log('✅ Step 2 complete:', profile);
       
-      // Step 3: Save account (only if Supabase is available)
-      if (supabaseAvailable) {
+      // Step 3: Save account (only if Firebase is available)
+      if (firebaseAvailable) {
         console.log('🧪 Step 3: Saving account...');
         try {
           await this.saveInstagramAccount(userId, profile, tokenData.access_token);
@@ -515,11 +425,11 @@ class InstagramService {
           console.log('🧪 Step 3 failed but continuing:', error.message);
         }
       } else {
-        console.log('🧪 Step 3: Skipping account save (Supabase not available)');
+        console.log('🧪 Step 3: Skipping account save (Firebase not available)');
       }
       
-      // Step 4: Fetch and save insights (only if Supabase is available)
-      if (supabaseAvailable) {
+      // Step 4: Fetch and save insights (only if Firebase is available)
+      if (firebaseAvailable) {
         console.log('🧪 Step 4: Fetching and saving insights...');
         try {
           await this.fetchAndSaveInsights(userId, tokenData.access_token);
@@ -528,7 +438,7 @@ class InstagramService {
           console.log('🧪 Step 4 failed but continuing:', error.message);
         }
       } else {
-        console.log('🧪 Step 4: Skipping insights save (Supabase not available)');
+        console.log('🧪 Step 4: Skipping insights save (Firebase not available)');
       }
       
       console.log('✅ Complete Instagram connection flow finished successfully');
@@ -541,5 +451,4 @@ class InstagramService {
   }
 }
 
-export const instagramService = new InstagramService();
-
+export const firebaseInstagramService = new FirebaseInstagramService();

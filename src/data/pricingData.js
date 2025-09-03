@@ -10,11 +10,14 @@ const pricingData = {
             name: 'Starter',
             description: 'Perfect for personal accounts seeking steady, organic growth and targeted global followers that align with your interests.',
             features: [
-                'Real Followers Guaranteed',
-                'Organic growth method',
-                'Niche Targeting',
-                '24/7 live chat support',
-                'Cancel Anytime'
+                'Real Instagram Followers',
+                'Monthly growth Analytics',
+                '24/7 Live Support',
+                'Instagram Audit',
+                'Cancel Anytime',
+                'VPN Login Support',
+                'Account Management',
+                'Monthly Review'
             ],
             popular: false
         },
@@ -23,13 +26,18 @@ const pricingData = {
             name: 'Premium',
             description: 'Ideal for individuals and businesses looking to build a relevant local community with focused, location-based targeting and hands-on support.',
             features: [
-                'Everything in Basic',
-                'Faster Follower Growth',
-                'Location based targeting',
-                'Gender based targeting',
-                'Dedicated Campaign Manager',
-                'Profile Optimization Coaching',
-                'Cancel Anytime'
+                'Real Instagram Followers',
+                'Monthly growth Analytics',
+                '24/7 Live Support',
+                'Instagram Audit',
+                'Cancel Anytime',
+                'Target by Hashtag',
+                'Target by Influencer & competitor',
+                'Targeting Optimization',
+                'Gender',
+                'VPN Login Support',
+                'Account Management',
+                'Monthly Review'
             ],
             popular: true
         },
@@ -38,11 +46,23 @@ const pricingData = {
             name: 'Ultimate',
             description: 'Designed for people building their brand with tailored engagement and advanced targeting to reach a specific audience with guidance from our top performers.',
             features: [
-                'Everything in Premium',
-                'Ultimate growth',
-                'Monthly Content Coaching',
-                'Senior Campaign Manager',
-                'Cancel Anytime'
+                'Real Instagram Followers',
+                'Monthly growth Analytics',
+                '24/7 Live Support',
+                'Instagram Audit',
+                'Cancel Anytime',
+                'Target by Hashtag',
+                'Target by Influencer & competitor',
+                'Targeting Optimization',
+                'Gender',
+                'Comments',
+                'Likes Posts',
+                'VPN Login Support',
+                'Like After Follow',
+                'Tiktok Service',
+                'Welcome DM',
+                'Account Management',
+                'Monthly Review'
             ],
             popular: false
         }
@@ -65,38 +85,35 @@ const pricingData = {
     // Feature categories for comparison table
     comparisonCategories: [
         {
-            name: 'Features',
+            name: 'Core Features',
             items: [
                 { name: 'Real Instagram Followers', starter: true, premium: true, ultimate: true },
                 { name: 'Monthly growth Analytics', starter: true, premium: true, ultimate: true },
-                { name: 'Competitor Targeting', starter: true, premium: true, ultimate: true },
-                { name: 'Cancel Anytime', starter: false, premium: true, ultimate: true },
-                { name: 'Target by Hashtag', starter: false, premium: true, ultimate: true },
-                { name: 'Target by Influencer and competitor', starter: false, premium: true, ultimate: true },
-                { name: 'Gender', starter: false, premium: false, ultimate: true },
-                { name: 'Comments', starter: false, premium: false, ultimate: true },
-                { name: 'Like Posts', starter: false, premium: false, ultimate: true },
-                { name: 'Vpn Login', starter: false, premium: false, ultimate: true },
-                { name: 'Like After Flow', starter: false, premium: false, ultimate: true },
-                { name: 'Tiktok Service', starter: false, premium: false, ultimate: true },
-                { name: 'Welcome DM', starter: false, premium: false, ultimate: true },
-
-            ]
-        },
-        {
-            name: 'Reporting',
-            items: [
+                { name: '24/7 Live Support', starter: true, premium: true, ultimate: true },
                 { name: 'Instagram Audit', starter: true, premium: true, ultimate: true },
-                { name: 'Advanced Targeting Optimization', starter: false, premium: false, ultimate: true }
+                { name: 'Cancel Anytime', starter: true, premium: true, ultimate: true },
+                { name: 'VPN Login Support', starter: true, premium: true, ultimate: true },
+                { name: 'Account Management', starter: true, premium: true, ultimate: true },
+                { name: 'Monthly Review', starter: true, premium: true, ultimate: true }
             ]
         },
         {
-            name: 'Support',
+            name: 'Advanced Targeting',
             items: [
-                { name: '24/7 Live Chat', starter: true, premium: true, ultimate: true },
-                { name: 'Welcome Call', starter: false, premium: true, ultimate: true },
-                { name: 'Account Management', starter: false, premium: true, ultimate: true },
-                { name: 'Monthly Performance Review', starter: false, premium: true, ultimate: true }
+                { name: 'Target by Hashtag', starter: false, premium: true, ultimate: true },
+                { name: 'Target by Influencer & competitor', starter: false, premium: true, ultimate: true },
+                { name: 'Targeting Optimization', starter: false, premium: true, ultimate: true },
+                { name: 'Gender', starter: false, premium: true, ultimate: true }
+            ]
+        },
+        {
+            name: 'Premium Features',
+            items: [
+                { name: 'Comments', starter: false, premium: false, ultimate: true },
+                { name: 'Likes Posts', starter: false, premium: false, ultimate: true },
+                { name: 'Like After Follow', starter: false, premium: false, ultimate: true },
+                { name: 'Tiktok Service', starter: false, premium: false, ultimate: true },
+                { name: 'Welcome DM', starter: false, premium: false, ultimate: true }
             ]
         }
     ]

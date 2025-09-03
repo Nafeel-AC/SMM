@@ -1,74 +1,86 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
+import { firebaseDb } from '../../lib/firebase-db';
 import './InstagramConnectPage.css';
 
 const InstagramConnectPage = () => {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
   const navigate = useNavigate();
 
   const handleConnectInstagram = async () => {
     setLoading(true);
     
     try {
+      console.log('🧪 Starting Instagram connection with sample data...');
+      
       // Simulate connection delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      // Generate random sample data for variety
+      const randomFollowers = Math.floor(Math.random() * 2000) + 500; // 500-2500 followers
+      const randomEngagement = (Math.random() * 3 + 2).toFixed(1); // 2.0-5.0% engagement
+      const randomLikes = Math.floor(Math.random() * 100) + 50; // 50-150 avg likes
+      const randomComments = Math.floor(Math.random() * 20) + 5; // 5-25 avg comments
+      
       // Insert sample Instagram account data
-      const { data: accountData, error: accountError } = await supabase
-        .from('instagram_accounts')
-        .insert({
-          user_id: user.id,
-          instagram_user_id: 'sample_instagram_123',
-          username: 'sample_business_account',
-          access_token: 'sample_access_token_' + Date.now(),
-          connected_at: new Date().toISOString()
-        })
-        .select()
-        .single();
+      const accountData = {
+        user_id: user.uid,
+        instagram_user_id: 'sample_instagram_' + Date.now(),
+        username: 'sample_business_' + Math.floor(Math.random() * 1000),
+        access_token: 'sample_access_token_' + Date.now(),
+        connected_at: new Date().toISOString(),
+        last_sync: new Date().toISOString()
+      };
 
-      if (accountError) {
-        console.error('Error saving Instagram account:', accountError);
-        throw accountError;
+      console.log('📱 Saving Instagram account data...');
+      const accountResult = await firebaseDb.saveInstagramAccount(accountData);
+      if (accountResult.error) {
+        console.error('❌ Error saving Instagram account:', accountResult.error);
+        throw accountResult.error;
       }
+      console.log('✅ Instagram account saved successfully');
 
       // Insert sample Instagram insights data
-      const { data: insightsData, error: insightsError } = await supabase
-        .from('instagram_insights')
-        .insert({
-          user_id: user.id,
-          followers_count: 1250,
-          following_count: 320,
-          media_count: 25,
-          engagement_rate: 4.2,
-          avg_likes: 85,
-          avg_comments: 12,
-          reach: 980,
-          impressions: 1250,
-          profile_views: 45,
-          website_clicks: 12,
-          email_contacts: 3,
-          phone_contacts: 2,
-          get_directions: 1,
-          text_message: 0,
-          last_updated: new Date().toISOString()
-        })
-        .select()
-        .single();
+      const insightsData = {
+        user_id: user.uid,
+        followers_count: randomFollowers,
+        following_count: Math.floor(randomFollowers * 0.3),
+        media_count: Math.floor(Math.random() * 50) + 10,
+        engagement_rate: parseFloat(randomEngagement),
+        avg_likes: randomLikes,
+        avg_comments: randomComments,
+        reach: Math.floor(randomFollowers * 0.8),
+        impressions: Math.floor(randomFollowers * 1.2),
+        profile_views: Math.floor(Math.random() * 100) + 20,
+        website_clicks: Math.floor(Math.random() * 30) + 5,
+        email_contacts: Math.floor(Math.random() * 10) + 1,
+        phone_contacts: Math.floor(Math.random() * 5),
+        get_directions: Math.floor(Math.random() * 3),
+        text_message: Math.floor(Math.random() * 2),
+        last_updated: new Date().toISOString()
+      };
 
-      if (insightsError) {
-        console.error('Error saving Instagram insights:', insightsError);
+      console.log('📊 Saving Instagram insights data...');
+      const insightsResult = await firebaseDb.saveInstagramInsights(insightsData);
+      if (insightsResult.error) {
+        console.error('❌ Error saving Instagram insights:', insightsResult.error);
         // Don't throw error, continue anyway
+      } else {
+        console.log('✅ Instagram insights saved successfully');
       }
 
       // Update user profile to mark Instagram as connected
-      await supabase
-        .from('profiles')
-        .update({ instagram_connected: true })
-        .eq('id', user.id);
+      console.log('👤 Updating user profile...');
+      await firebaseDb.updateProfile(user.uid, { 
+        instagram_connected: true,
+        updated_at: new Date().toISOString()
+      });
+      console.log('✅ User profile updated');
+
+      // Sample data is now only for the current user
 
       console.log('✅ Instagram connected successfully with sample data');
       setConnected(true);
@@ -79,12 +91,14 @@ const InstagramConnectPage = () => {
       }, 2000);
       
     } catch (error) {
-      console.error('Error connecting Instagram:', error);
+      console.error('❌ Error connecting Instagram:', error);
       alert('Failed to connect Instagram. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+
 
   if (connected) {
     return (
@@ -97,7 +111,7 @@ const InstagramConnectPage = () => {
               </svg>
             </div>
             <h2>Instagram Connected Successfully!</h2>
-            <p>Your Instagram account has been connected with sample data for testing.</p>
+            <p>Your Instagram account has been connected with sample data for testing. Your personalized analytics and insights are now available in your dashboard.</p>
             <div className="redirect-info">
               <p>Redirecting to requirements form...</p>
               <div className="spinner"></div>

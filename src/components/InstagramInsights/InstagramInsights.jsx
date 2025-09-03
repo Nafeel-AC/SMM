@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { supabase } from '../../lib/supabase';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
+import { db } from '../../lib/firebase';
+import { collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
 import { instagramService } from '../../lib/instagram';
 import './InstagramInsights.css';
 
@@ -8,7 +9,7 @@ const InstagramInsights = () => {
   const [insights, setInsights] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
 
   useEffect(() => {
     fetchInstagramInsights();
@@ -19,19 +20,19 @@ const InstagramInsights = () => {
       setLoading(true);
 
       // Get user's Instagram account
-      const { data: instagramAccount, error: accountError } = await supabase
-        .from('instagram_accounts')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (accountError || !instagramAccount) {
+      const instagramAccountsRef = collection(db, 'instagram_accounts');
+      const q = query(instagramAccountsRef, where('user_id', '==', user.uid), limit(1));
+      const snapshot = await getDocs(q);
+      
+      if (snapshot.empty) {
         setError('No Instagram account connected');
         return;
       }
+      
+      const instagramAccount = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
 
       // Try to get stored insights first
-      let storedInsights = await instagramService.getStoredInsights(user.id);
+      let storedInsights = await instagramService.getStoredInsights(user.uid);
       
       // If no stored insights or data is old (older than 24 hours), fetch fresh data
       const isDataOld = !storedInsights || 
@@ -41,7 +42,7 @@ const InstagramInsights = () => {
         try {
           // Fetch fresh insights from Instagram API
           storedInsights = await instagramService.fetchAndSaveInsights(
-            user.id, 
+            user.uid, 
             instagramAccount.access_token
           );
         } catch (apiError) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import Navbar from '../../components/Navbar';
 import '../AuthForms/AuthForms.css';
 import heroImage from '../../assets/hero-image.jpg';
@@ -17,7 +17,7 @@ const LoginPage = () => {
     console.log('🔄 LoginPage: Loading state changed to:', loading);
   }, [loading]);
   const [error, setError] = useState('');
-  const { signInWithEmail, user } = useAuth();
+  const { signInWithEmail, user } = useFirebaseAuth();
   const navigate = useNavigate();
   
   // Redirect if user is already signed in

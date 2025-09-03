@@ -1,52 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/lib/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { useNavigate } from 'react-router-dom';
+import { useFirebaseAuth } from '../contexts/FirebaseAuthContext';
+import { dashboardDataService } from '../lib/dashboard-data-service';
+import { addUserSampleData } from '../lib/add-dashboard-sample-data';
+import AnalyticsChart from '../components/AnalyticsChart';
+import MetricsDisplay from '../components/MetricsDisplay';
+import StrategySection from '../components/StrategySection';
+import HashtagsSection from '../components/HashtagsSection';
+import AccountsSection from '../components/AccountsSection';
 import './DashboardPage.css';
 
 const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
-  const [insights, setInsights] = useState(null);
-  const [requirements, setRequirements] = useState(null);
-  const { user } = useAuth();
+  const [dashboardData, setDashboardData] = useState(null);
+  const [timeRange, setTimeRange] = useState('12months');
+  const [isRealtime, setIsRealtime] = useState(false);
+  const { user } = useFirebaseAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [user]);
 
   const fetchDashboardData = async () => {
     try {
-      // Fetch Instagram insights
-      const { data: insightsData, error: insightsError } = await supabase
-        .from('instagram_insights')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('last_updated', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (insightsError && insightsError.code !== 'PGRST116') {
-        console.error('Error fetching insights:', insightsError);
+      console.log('🔍 Fetching comprehensive dashboard data for user:', user.uid);
+      
+      const result = await dashboardDataService.getDashboardData(user.uid);
+      
+      if (result.error) {
+        console.error('❌ Error fetching dashboard data:', result.error);
       } else {
-        setInsights(insightsData);
-      }
-
-      // Fetch user requirements
-      const { data: requirementsData, error: requirementsError } = await supabase
-        .from('user_requirements')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (requirementsError && requirementsError.code !== 'PGRST116') {
-        console.error('Error fetching requirements:', requirementsError);
-      } else {
-        setRequirements(requirementsData);
+        console.log('✅ Dashboard data loaded successfully:', result.data);
+        setDashboardData(result.data);
       }
 
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('❌ Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
     }
@@ -67,6 +59,29 @@ const DashboardPage = () => {
     return '#ef4444';
   };
 
+  const handleTimeRangeChange = (range) => {
+    setTimeRange(range);
+  };
+
+  const handleRealtimeToggle = () => {
+    setIsRealtime(!isRealtime);
+  };
+
+  const handleAddSampleData = async () => {
+    try {
+      setLoading(true);
+      const result = await addUserSampleData(user.uid);
+      if (result.success) {
+        // Refresh dashboard data
+        await fetchDashboardData();
+      }
+    } catch (error) {
+      console.error('Error adding sample data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="dashboard-page">
@@ -81,148 +96,69 @@ const DashboardPage = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-container">
-        <div className="dashboard-header">
-          <h1>Welcome back, {user?.user_metadata?.full_name || 'User'}!</h1>
-          <p>Here's your Instagram growth overview</p>
-        </div>
+        {dashboardData ? (
+          <div className="dashboard-layout">
+            <div className="dashboard-main">
+              {/* Top Metrics and Realtime Toggle */}
+              <MetricsDisplay 
+                followers={dashboardData.insights.followers_count}
+                following={dashboardData.insights.following_count}
+                onRealtimeToggle={handleRealtimeToggle}
+                isRealtime={isRealtime}
+              />
 
-        {insights ? (
-          <>
-            <div className="metrics-grid">
-              <div className="metric-card">
-                <div className="metric-icon">👥</div>
-                <div className="metric-content">
-                  <h3>Followers</h3>
-                  <div className="metric-value">{formatNumber(insights.followers_count)}</div>
-                  <div className="metric-change positive">+12% this month</div>
-                </div>
-              </div>
+              {/* Analytics Chart */}
+              <AnalyticsChart 
+                data={dashboardData.insights.chartData}
+                timeRange={timeRange}
+                onTimeRangeChange={handleTimeRangeChange}
+              />
 
-              <div className="metric-card">
-                <div className="metric-icon">📊</div>
-                <div className="metric-content">
-                  <h3>Engagement Rate</h3>
-                  <div className="metric-value" style={{ color: getEngagementColor(insights.engagement_rate) }}>
-                    {insights.engagement_rate}%
-                  </div>
-                  <div className="metric-change positive">+0.8% this month</div>
-                </div>
-              </div>
+              {/* Strategy Section */}
+              <StrategySection 
+                targetLocations={dashboardData.strategy.target_locations}
+                targetAudience={dashboardData.strategy.target_audience}
+              />
 
-              <div className="metric-card">
-                <div className="metric-icon">👀</div>
-                <div className="metric-content">
-                  <h3>Reach</h3>
-                  <div className="metric-value">{formatNumber(insights.reach)}</div>
-                  <div className="metric-change positive">+18% this month</div>
-                </div>
-              </div>
-
-              <div className="metric-card">
-                <div className="metric-icon">📱</div>
-                <div className="metric-content">
-                  <h3>Posts</h3>
-                  <div className="metric-value">{insights.media_count}</div>
-                  <div className="metric-change">+3 this month</div>
-                </div>
-              </div>
+              {/* Accounts Section */}
+              <AccountsSection 
+                initialAccounts={dashboardData.accounts.selected}
+                initialBulkAccounts={dashboardData.accounts.bulk}
+                userId={user.uid}
+              />
             </div>
 
-            <div className="insights-grid">
-              <div className="insight-card">
-                <h3>Content Performance</h3>
-                <div className="performance-metrics">
-                  <div className="performance-item">
-                    <span className="label">Avg Likes</span>
-                    <span className="value">{insights.avg_likes}</span>
-                  </div>
-                  <div className="performance-item">
-                    <span className="label">Avg Comments</span>
-                    <span className="value">{insights.avg_comments}</span>
-                  </div>
-                  <div className="performance-item">
-                    <span className="label">Impressions</span>
-                    <span className="value">{formatNumber(insights.impressions)}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="insight-card">
-                <h3>Profile Activity</h3>
-                <div className="activity-metrics">
-                  <div className="activity-item">
-                    <span className="label">Profile Views</span>
-                    <span className="value">{insights.profile_views}</span>
-                  </div>
-                  <div className="activity-item">
-                    <span className="label">Website Clicks</span>
-                    <span className="value">{insights.website_clicks}</span>
-                  </div>
-                  <div className="activity-item">
-                    <span className="label">Email Contacts</span>
-                    <span className="value">{insights.email_contacts}</span>
-                  </div>
-                </div>
-              </div>
+            <div className="dashboard-sidebar">
+              {/* Hashtags Section */}
+              <HashtagsSection 
+                initialHashtags={dashboardData.hashtags.selected}
+                predefinedHashtags={dashboardData.hashtags.predefined}
+                userId={user.uid}
+              />
             </div>
-          </>
+          </div>
         ) : (
           <div className="no-data-card">
             <div className="no-data-icon">📊</div>
             <h3>No Instagram Data Yet</h3>
-            <p>Connect your Instagram account to see detailed analytics and insights.</p>
-            <button className="connect-btn">Connect Instagram</button>
-          </div>
-        )}
-
-        {requirements && (
-          <div className="requirements-card">
-            <h3>Your Growth Strategy</h3>
-            <div className="strategy-details">
-              <div className="strategy-item">
-                <span className="label">Business Type</span>
-                <span className="value">{requirements.business_type}</span>
-              </div>
-              <div className="strategy-item">
-                <span className="label">Posting Frequency</span>
-                <span className="value">{requirements.posting_frequency}</span>
-              </div>
-              <div className="strategy-item">
-                <span className="label">Budget Range</span>
-                <span className="value">{requirements.budget_range}</span>
-              </div>
-              {requirements.content_goals && requirements.content_goals.length > 0 && (
-                <div className="strategy-item">
-                  <span className="label">Goals</span>
-                  <span className="value">{requirements.content_goals.join(', ')}</span>
-                </div>
-              )}
+            <p>Connect your Instagram account to see detailed analytics and insights, or add sample data to explore the dashboard.</p>
+            <div className="no-data-actions">
+              <button 
+                className="connect-btn"
+                onClick={() => navigate('/instagram-connect')}
+              >
+                Connect Instagram
+              </button>
+              <button 
+                className="sample-data-btn"
+                onClick={handleAddSampleData}
+                disabled={loading}
+              >
+                {loading ? 'Adding Sample Data...' : 'Add Sample Data'}
+              </button>
             </div>
           </div>
         )}
-
-        <div className="action-cards">
-          <div className="action-card">
-            <div className="action-icon">📈</div>
-            <h4>Growth Report</h4>
-            <p>View detailed analytics and growth trends</p>
-            <button className="action-btn">View Report</button>
-          </div>
-
-          <div className="action-card">
-            <div className="action-icon">🎯</div>
-            <h4>Content Strategy</h4>
-            <p>Get personalized content recommendations</p>
-            <button className="action-btn">View Strategy</button>
-          </div>
-
-          <div className="action-card">
-            <div className="action-icon">💬</div>
-            <h4>Support</h4>
-            <p>Get help from our growth experts</p>
-            <button className="action-btn">Contact Support</button>
-          </div>
-        </div>
       </div>
     </div>
   );

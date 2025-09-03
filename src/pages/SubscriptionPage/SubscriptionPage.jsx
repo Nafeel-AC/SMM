@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import './SubscriptionPage.css';
 
 const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState('basic');
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
   const navigate = useNavigate();
 
   const plans = [

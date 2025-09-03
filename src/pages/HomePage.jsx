@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useFirebaseAuth } from '../contexts/FirebaseAuthContext';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import FeatureSection from '../components/FeatureSection';
@@ -15,7 +15,7 @@ import FAQSection from '../components/FAQSection';
 
 
 const HomePage = () => {
-  const { user, loading, getNextUserFlowStep } = useAuth();
+  const { user, loading, getNextUserFlowStep } = useFirebaseAuth();
   const navigate = useNavigate();
 
   // Redirect to appropriate step if user is already logged in

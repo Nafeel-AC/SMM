@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import Navbar from '../../components/Navbar';
 import '../LoginPage/LoginPage.css'; // We're reusing the login page styles
 
 const ForgotPasswordPage = () => {
-  const { resetPassword } = useAuth();
+  const { resetPassword } = useFirebaseAuth();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
