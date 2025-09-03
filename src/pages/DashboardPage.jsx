@@ -15,7 +15,7 @@ const DashboardPage = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [timeRange, setTimeRange] = useState('12months');
   const [isRealtime, setIsRealtime] = useState(false);
-  const { user } = useFirebaseAuth();
+  const { user, signOut } = useFirebaseAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -96,6 +96,18 @@ const DashboardPage = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-container">
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}>
+          <button
+            className="logout-btn"
+            style={{ background: '#ef4444', color: 'white', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
+            onClick={async () => {
+              await signOut();
+              navigate('/login');
+            }}
+          >
+            Logout
+          </button>
+        </div>
         {dashboardData ? (
           <div className="dashboard-layout">
             <div className="dashboard-main">
