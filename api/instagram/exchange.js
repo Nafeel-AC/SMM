@@ -1,58 +1,45 @@
-export default async function handler(req, res) {
+// Serverless function: Exchange Instagram/Facebook OAuth code for a user access token
+// Expects query param `code` and uses server-side env vars to keep the secret safe
+
+const FACEBOOK_API_BASE = 'https://graph.facebook.com/v18.0';
+
+module.exports = async (req, res) => {
   try {
-    const { code } = req.method === 'GET' ? req.query : req.body || {};
+    if (req.method !== 'GET') {
+      res.setHeader('Allow', 'GET');
+      return res.status(405).json({ error: 'method_not_allowed' });
+    }
+
+    const { code } = req.query;
     if (!code) {
       return res.status(400).json({ error: 'missing_code' });
     }
 
-    const appId = process.env.FB_APP_ID || process.env.VITE_INSTAGRAM_APP_ID;
-    const appSecret = process.env.FB_APP_SECRET || process.env.VITE_INSTAGRAM_APP_SECRET;
-    const redirectUri = process.env.FB_REDIRECT_URI || process.env.VITE_INSTAGRAM_REDIRECT_URI;
+    const appId = process.env.INSTAGRAM_APP_ID || process.env.VITE_INSTAGRAM_APP_ID;
+    const appSecret = process.env.INSTAGRAM_APP_SECRET || process.env.VITE_INSTAGRAM_APP_SECRET;
+    const redirectUri = process.env.INSTAGRAM_REDIRECT_URI || process.env.VITE_INSTAGRAM_REDIRECT_URI;
 
     if (!appId || !appSecret || !redirectUri) {
-      return res.status(500).json({ error: 'server_env_missing' });
+      return res.status(500).json({ error: 'missing_server_env', details: ['INSTAGRAM_APP_ID', 'INSTAGRAM_APP_SECRET', 'INSTAGRAM_REDIRECT_URI'] });
     }
 
-    // Use Instagram Basic Display API for token exchange
-    const formData = new URLSearchParams();
-    formData.append('client_id', appId);
-    formData.append('client_secret', appSecret);
-    formData.append('grant_type', 'authorization_code');
-    formData.append('redirect_uri', redirectUri);
-    formData.append('code', code);
+    const url = new URL(`${FACEBOOK_API_BASE}/oauth/access_token`);
+    url.searchParams.set('client_id', appId);
+    url.searchParams.set('client_secret', appSecret);
+    url.searchParams.set('redirect_uri', redirectUri);
+    url.searchParams.set('code', code);
 
-    const tokenResp = await fetch('https://api.instagram.com/oauth/access_token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData,
-    });
+    const fbResp = await fetch(url.toString());
+    const body = await fbResp.json();
 
-    const tokenJson = await tokenResp.json();
-    if (!tokenResp.ok) {
-      return res.status(tokenResp.status).json({ error: 'exchange_failed', details: tokenJson });
+    if (!fbResp.ok) {
+      return res.status(400).json({ error: 'exchange_failed', details: body });
     }
 
-    // For Instagram Basic Display, try to get a long-lived token
-    try {
-      const longLivedUrl = `https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${appSecret}&access_token=${tokenJson.access_token}`;
-      
-      const llResp = await fetch(longLivedUrl);
-      const llJson = await llResp.json();
-      
-      if (llResp.ok && llJson.access_token) {
-        return res.status(200).json(llJson);
-      }
-    } catch (error) {
-      console.warn('Failed to get long-lived token:', error);
-    }
-
-    // Return short-lived token if long-lived exchange fails
-    return res.status(200).json(tokenJson);
+    return res.status(200).json(body);
   } catch (err) {
-    return res.status(500).json({ error: 'server_error', message: err.message });
+    return res.status(500).json({ error: 'unexpected_error', details: String(err && err.message ? err.message : err) });
   }
-}
+};
 
 
