@@ -40,16 +40,17 @@ const InstagramCallbackPage = () => {
         throw new Error('No access token received from Instagram');
       }
 
-      // Get long-lived access token
+      // Get long-lived Facebook user access token
       const longLivedToken = await instagramService.getLongLivedToken(tokenData.access_token);
-      
-      // Get user profile
-      const userProfile = await instagramService.getUserProfile(longLivedToken.access_token);
-      
+
+      // Resolve IG Business user via Pages and get IG profile
+      const { igUserId } = await instagramService.resolveInstagramUserFromPages(longLivedToken.access_token);
+      const igProfile = await instagramService.getIgUserProfile(igUserId, longLivedToken.access_token);
+
       // Save Instagram account to database
       await instagramService.saveInstagramAccount(
         user.id,
-        userProfile,
+        igProfile,
         longLivedToken.access_token
       );
 
