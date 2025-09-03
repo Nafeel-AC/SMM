@@ -1,33 +1,154 @@
-# Instagram Integration Setup Guide (Updated 2024)
+# Instagram Business Account Setup Guide
 
-This guide will help you set up real Instagram authentication and data fetching for your SMM marketing application using the current Instagram Graph API.
+## ⚠️ Important: Instagram Graph API Requirements
 
-## Prerequisites
+Our SMM platform uses **Instagram Graph API** to provide comprehensive business insights. This requires specific account setup that differs from personal Instagram usage.
 
-1. **Facebook Developer Account**: You need a Facebook Developer account to create an Instagram app
-2. **Instagram Business Account**: The user's Instagram account must be a Business or Creator account to access insights
-3. **Facebook Page**: You need a Facebook Page connected to your Instagram Business account
-4. **Supabase Database**: Your database should be set up with the updated schema
+## Prerequisites for Users
 
-## Step 1: Create Facebook App
+### 🏢 What You Need:
+1. **Instagram Business Account** (not personal account)
+2. **Facebook Page** (business page on Facebook)
+3. **Connected accounts** (Instagram Business account linked to Facebook Page)
+4. **Admin permissions** on both accounts
 
-1. Go to [Facebook Developers](https://developers.facebook.com/)
-2. Click "My Apps" → "Create App"
-3. Choose "Business" as the app type (required for Instagram Graph API)
-4. Fill in the app details:
-   - App Name: Your SMM App Name
-   - App Contact Email: Your email
-   - App Purpose: Business
+### 📊 What You Get:
+- Complete follower analytics
+- Engagement rate calculations
+- Post performance metrics
+- Audience demographics
+- Growth tracking
 
-## Step 2: Add Instagram Product
+## Step-by-Step User Setup
 
-1. In your app dashboard, click "Add Product"
-2. Find "Instagram" and click "Set Up"
-3. This will set up Instagram Graph API (the current method)
+### Step 1: Convert to Instagram Business Account
 
-## Step 3: Configure Instagram Basic Display
+**If you have a Personal Instagram Account:**
+1. Open Instagram mobile app
+2. Go to **Profile** → **☰ Menu** → **Settings**
+3. Tap **Account** → **Switch to Professional Account**
+4. Choose **Business** (not Creator)
+5. Connect to your Facebook Page (next step)
+6. Complete business information
 
-1. **Basic Display Settings**:
+**If you already have a Business Account:**
+✅ Skip to Step 2
+
+### Step 2: Create/Use Facebook Page
+
+**If you don't have a Facebook Page:**
+1. Go to [facebook.com/pages/create](https://facebook.com/pages/create)
+2. Choose **Business or Brand**
+3. Enter your business/brand name
+4. Add category and basic info
+5. Click **Create Page**
+
+**If you have a Facebook Page:**
+✅ Ensure you have **Admin** access
+
+### Step 3: Connect Instagram to Facebook Page
+
+**Method 1: Through Instagram App**
+1. Instagram app → **Profile** → **☰ Menu** → **Settings**
+2. **Account** → **Linked Accounts** → **Facebook**
+3. Log in and select your Facebook Page
+4. Grant permissions
+
+**Method 2: Through Facebook Page**
+1. Go to your Facebook Page
+2. **Settings** → **Instagram** (left sidebar)
+3. **Connect Account**
+4. Enter Instagram credentials
+5. Complete connection
+
+### Step 4: Verify Setup
+
+**Check on Instagram:**
+- Go to **Settings** → **Account** → **Linked Accounts**
+- Facebook should show your Page name
+
+**Check on Facebook:**
+- Page **Settings** → **Instagram**
+- Should show "Connected" with your Instagram username
+
+## Step 5: Connect to Our Platform
+
+1. Visit our SMM platform
+2. Navigate to **Instagram Connect** page
+3. Click **Connect Instagram Account**
+4. **Important**: You'll be redirected to Facebook (not Instagram)
+5. Log in with the Facebook account that owns your Page
+6. Grant permissions for:
+   - ✅ Your Facebook Page
+   - ✅ Connected Instagram Business account
+   - ✅ Basic profile info
+   - ✅ Instagram insights and media
+
+## Common Issues & Solutions
+
+### ❌ "Invalid platform app"
+**Cause**: Using personal Instagram account or not properly connected to Facebook Page
+**Solution**: Complete Steps 1-3 above
+
+### ❌ "No Facebook Pages found"
+**Cause**: No Facebook Page or not admin of the page
+**Solution**: Create a Facebook Page and ensure you're admin
+
+### ❌ "No Instagram Business account connected"
+**Cause**: Instagram account not linked to Facebook Page
+**Solution**: Complete Step 3 above
+
+### ❌ "Access denied during connection"
+**Cause**: Not granting all required permissions
+**Solution**: During Facebook OAuth, accept all permissions
+
+## Why These Requirements?
+
+Instagram Graph API (used by businesses) has different requirements than personal Instagram usage:
+
+1. **Business Focus**: Designed for business analytics and management
+2. **Facebook Integration**: Instagram is owned by Meta (Facebook)
+3. **Page Connection**: Ensures business legitimacy and proper access controls
+4. **Comprehensive Data**: Provides detailed insights not available to personal accounts
+
+## What Data We Access
+
+With proper setup, our platform can provide:
+
+### 📈 Growth Metrics
+- Follower count and growth rate
+- Following count
+- Media count
+
+### 💬 Engagement Analytics
+- Average likes per post
+- Average comments per post
+- Engagement rate calculation
+
+### 📊 Content Performance
+- Individual post metrics
+- Best performing content
+- Posting frequency analysis
+
+### 👥 Advanced Insights (if available)
+- Audience demographics
+- Reach and impressions
+- Profile interactions
+
+## Need Help?
+
+**Instagram Business Account Setup:**
+- [Instagram Business Account Guide](https://help.instagram.com/502981923235522)
+
+**Facebook Page Creation:**
+- [Facebook Page Help](https://www.facebook.com/help/104002523024878)
+
+**Connecting Accounts:**
+- [Link Instagram to Facebook Page](https://www.facebook.com/help/instagram/176235849218188)
+
+**Platform Issues:**
+- Contact our support team
+- Check our troubleshooting guide
    - Valid OAuth Redirect URIs: `http://localhost:5173/instagram/callback` (for development)
    - For production: `https://yourdomain.com/instagram/callback`
    - Deauthorize Callback URL: `https://yourdomain.com/instagram/deauthorize`
