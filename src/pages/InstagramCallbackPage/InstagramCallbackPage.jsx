@@ -42,18 +42,24 @@ const InstagramCallbackPage = () => {
       console.log('✅ Authorization code received:', code.substring(0, 10) + '...');
 
       // Exchange code for access token
-      console.log('🔄 Exchanging code for access token...');
+      console.log('🔄 Exchanging code for Facebook access token...');
       const tokenData = await instagramService.exchangeCodeForToken(code);
       
       if (!tokenData.access_token) {
-        throw new Error('No access token received from Instagram');
+        throw new Error('No access token received from Facebook');
       }
 
-      console.log('✅ Access token received');
+      console.log('✅ Facebook access token received');
 
-      // Get Instagram profile using Basic Display API
+      // Resolve Instagram Business account from Facebook Pages
+      console.log('🔄 Resolving Instagram Business account...');
+      const { igUserId, pageAccessToken } = await instagramService.resolveInstagramUserFromPages(tokenData.access_token);
+      
+      console.log('✅ Instagram Business account found:', igUserId);
+
+      // Get Instagram profile using Graph API
       console.log('🔄 Fetching Instagram profile...');
-      const profile = await instagramService.getInstagramProfile(tokenData.access_token);
+      const profile = await instagramService.getInstagramProfile(igUserId, pageAccessToken);
       
       console.log('✅ Profile fetched:', profile);
 
@@ -62,7 +68,7 @@ const InstagramCallbackPage = () => {
       await instagramService.saveInstagramAccount(
         user.id,
         profile,
-        tokenData.access_token
+        pageAccessToken
       );
 
       console.log('✅ Instagram account saved');

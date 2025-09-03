@@ -3,56 +3,54 @@
 ## Issue
 
 You're getting errors when trying to connect Instagram accounts:
-1. "No authorization code received from Instagram" 
-2. 404 NOT_FOUND errors from Supabase
+1. "Invalid platform app" error 
+2. "No authorization code received from Instagram"
+3. API permission issues
 
 ## Root Cause
 
 The issues were caused by:
-1. **Wrong OAuth Flow**: Using Facebook OAuth instead of Instagram Basic Display API
-2. **Missing database tables** (`instagram_insights`)
-3. **Missing database column** (`instagram_connected` in profiles table)
-4. **Incorrect API endpoints** in the serverless function
+1. **App Configuration Mismatch**: App was configured for Basic Display but code was trying to use Graph API
+2. **Missing Business Account Setup**: Instagram Graph API requires Instagram Business account connected to Facebook Page
+3. **Wrong OAuth Flow**: Need to use Facebook OAuth for Instagram Graph API access
 
-## Recent Fixes Applied
+## Current Setup: Instagram Graph API
 
-### ✅ Fixed OAuth Flow
-- Updated to use Instagram Basic Display API (`https://api.instagram.com/oauth/authorize`)
-- Fixed serverless function to use correct Instagram token exchange endpoint
-- Updated scopes to `user_profile,user_media` (Basic Display API)
+### ✅ What We're Using Now
+- **Instagram Graph API** (not Basic Display API)
+- **Facebook OAuth flow** for authentication
+- **Business account access** through Facebook Pages
+- **Full insights and metrics** available
 
-### ✅ Fixed Database Schema
-- Added missing `instagram_insights` table
-- Added `instagram_connected` column to profiles table
-- Created proper RLS policies for security
-
-### ✅ Updated API Integration
-- Switched from Facebook Pages approach to Instagram Basic Display API
-- Updated token exchange to use Instagram endpoints
-- Improved error handling and logging
+### ⚠️ Requirements for Instagram Graph API
+1. **Facebook App** with Instagram Graph API product enabled
+2. **Instagram Business Account** (not personal account)
+3. **Facebook Page** connected to the Instagram Business account
+4. **Proper permissions**: `instagram_basic`, `instagram_manage_insights`, `pages_show_list`, `pages_read_engagement`
 
 ## Solution Steps
 
-### Step 1: Run Database Migration
+### Step 1: Verify Facebook App Configuration
+1. Go to [Meta for Developers](https://developers.facebook.com)
+2. Navigate to your app (App ID: 1489254978768389)
+3. Under **Products**, ensure you have:
+   - ✅ **Instagram Graph API** (not Basic Display)
+   - ✅ **Facebook Login**
+4. Under **Instagram Graph API** → **Settings**:
+   - **Valid OAuth Redirect URIs**: `https://smm-marketing.vercel.app/instagram/callback`
+
+### Step 2: Instagram Business Account Setup
+⚠️ **Critical**: Users must have:
+1. **Instagram Business Account** (not personal)
+2. **Facebook Page** created and connected to Instagram Business account
+3. **Admin access** to both the Facebook Page and Instagram Business account
+
+### Step 3: Run Database Migration
 1. Open your Supabase dashboard: https://supabase.com/dashboard
 2. Navigate to your project: `jjbbpjteedaidhgxftqg`
 3. Go to **SQL Editor**
 4. Copy and paste the contents of `sql/instagram_migration.sql`
 5. Click **Run** to execute the migration
-
-### Step 2: Update Instagram App Settings
-1. Go to [Meta for Developers](https://developers.facebook.com)
-2. Navigate to your Instagram app (App ID: 1489254978768389)
-3. Go to **Products** → **Instagram Basic Display**
-4. Under **Basic Display Settings**, verify:
-   - **Valid OAuth Redirect URIs**: `https://smm-marketing.vercel.app/instagram/callback`
-   - **Deauthorize Callback URL**: `https://smm-marketing.vercel.app/instagram/deauth`
-   - **Data Deletion Request URL**: `https://smm-marketing.vercel.app/instagram/delete`
-
-### Step 3: Deploy Latest Changes
-1. Commit and push the latest changes to your repository
-2. Deploy to Vercel (should auto-deploy from main branch)
-3. Verify environment variables are set in Vercel
 
 ### Step 4: Test the Integration
 1. Navigate to your deployed app: https://smm-marketing.vercel.app
