@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     email TEXT,
     role TEXT DEFAULT 'user' CHECK (role IN ('user', 'staff', 'admin')),
     requirements_completed BOOLEAN DEFAULT FALSE,
+    instagram_connected BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -96,6 +97,30 @@ CREATE TABLE IF NOT EXISTS public.support_chats (
     message TEXT NOT NULL,
     sent_by TEXT NOT NULL CHECK (sent_by IN ('user', 'staff', 'admin')),
     is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ==============================================
+-- INSTAGRAM_INSIGHTS TABLE
+-- ==============================================
+CREATE TABLE IF NOT EXISTS public.instagram_insights (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    followers_count INTEGER DEFAULT 0,
+    following_count INTEGER DEFAULT 0,
+    media_count INTEGER DEFAULT 0,
+    engagement_rate DECIMAL(5,2) DEFAULT 0,
+    avg_likes INTEGER DEFAULT 0,
+    avg_comments INTEGER DEFAULT 0,
+    reach INTEGER DEFAULT 0,
+    impressions INTEGER DEFAULT 0,
+    profile_views INTEGER DEFAULT 0,
+    website_clicks INTEGER DEFAULT 0,
+    email_contacts INTEGER DEFAULT 0,
+    phone_contacts INTEGER DEFAULT 0,
+    get_directions INTEGER DEFAULT 0,
+    text_message INTEGER DEFAULT 0,
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
