@@ -48,7 +48,7 @@
 .cmn-btn-close {
   background: none;
   border: none;
-  color: #9665fd;
+  color: #ffffff;
   font-size: 1.25rem;
   cursor: pointer;
 }
@@ -75,7 +75,7 @@
 
 
 .navbar-nav .nav-link {
-  color: #000 !important;
+  color: #000;
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.5rem 0.75rem;
@@ -110,7 +110,7 @@
 
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link.active {
-  color: #8f46b9 !important;
+  color: #ffffff !important ;
 }
 
 .navbar-nav .nav-link:hover::after,
@@ -120,7 +120,7 @@
 
 
 .offcanvas .navbar-nav .nav-link {
-  color: #212529;
+  color: #333333;
   position: relative;
   text-decoration: none;
   background: inherit;
@@ -137,18 +137,19 @@
   right: 0;
   bottom: 0.15em;
   height: 2px;
-  background: #9665fd;
-  transform: scaleX(0);
+  /* background: #9665fd;
+  transform: scaleX(0); */
   transform-origin: left;
   transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
   z-index: 0;
 }
 
 
-
-.offcanvas .navbar-nav .nav-link:hover,
-.offcanvas .navbar-nav .nav-link.active {
-  color: #9665fd;
+@media screen and (max-width: 991.98px) {
+  .offcanvas .navbar-nav .nav-link:hover,
+  .offcanvas .navbar-nav .nav-link.active {
+    color: #9665fd !important;
+  }
 }
 
 .offcanvas .navbar-nav .nav-link:hover::after,
@@ -246,6 +247,12 @@
     height: 30px;
   }
   
+  .offcanvas-header img {
+    display: none;
+  }
+  .offcanvas-header {
+    background: #9565fc;
+  }
   .offcanvas-body .navbar-nav {
     margin-bottom: 1rem;
   }

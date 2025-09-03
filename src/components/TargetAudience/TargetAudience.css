@@ -24,7 +24,7 @@
   z-index: 0;
 }
 
-.target-audience-section::after {
+/* .target-audience-section::after {
   content: "";
   position: absolute;
   bottom: -150px;
@@ -32,9 +32,9 @@
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: rgba(150, 101, 253, 0.05); /* Matching feature section accent */
+  background: rgba(150, 101, 253, 0.05); 
   z-index: 0;
-}
+} */
 
 /* Section header */
 .section-header {
@@ -67,11 +67,13 @@
 }
 
 .section-title .highlight {
-  color: #9665fd;
   position: relative;
+  background: linear-gradient(45deg, #9665fd, #8b5cf6) !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent;
 }
 
-.section-title .highlight::after {
+/* .section-title .highlight::after {
   content: "";
   position: absolute;
   bottom: -5px;
@@ -80,7 +82,7 @@
   height: 3px;
   background-color: #9665fd;
   border-radius: 2px;
-}
+} */
 
 .section-description {
   font-size: 1.1rem;
