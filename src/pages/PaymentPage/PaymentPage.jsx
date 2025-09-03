@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import pricingData from '../../data/pricingData';
 import './PaymentPage.css';
 
 const PaymentPage = () => {
@@ -16,42 +17,20 @@ const PaymentPage = () => {
   const selectedPlan = location.state?.plan || 'Starter';
   const billingCycle = location.state?.billingCycle || 'monthly';
 
-  // Helper function to get plan price
+  // Helper function to get plan price from centralized pricing data
   const getPlanPrice = (plan, cycle) => {
-    const prices = {
-      'Starter': { monthly: 99, yearly: 990 },
-      'Premium': { monthly: 199, yearly: 1990 },
-      'Ultimate': { monthly: 299, yearly: 2990 }
-    };
-    return prices[plan]?.[cycle] || 99;
+    const planKey = String(plan).toLowerCase();
+    const cycleKey = cycle === 'yearly' ? 'yearly' : 'monthly';
+    const prices = pricingData?.pricing?.[cycleKey];
+    if (!prices) return 0;
+    const amount = prices[planKey];
+    return typeof amount === 'number' ? amount : 0;
   };
 
-  // Helper function to get plan features
+  // Helper function to get plan features from centralized plan data
   const getPlanFeatures = (plan) => {
-    const features = {
-      'Starter': [
-        'Instagram Growth Management',
-        'Target Audience Analysis',
-        'Content Strategy',
-        '24/7 Support',
-        'Monthly Reports'
-      ],
-      'Premium': [
-        'Everything in Basic',
-        'Multiple Account Management',
-        'Advanced Analytics',
-        'Priority Support',
-        'Custom Campaigns'
-      ],
-      'Ultimate': [
-        'Everything in Premium',
-        'Dedicated Account Manager',
-        'Real-time Analytics',
-        'White-label Reports',
-        'Custom Growth Strategies'
-      ]
-    };
-    return features[plan] || features['Starter'];
+    const planObj = pricingData?.plans?.find(p => p.name === plan || p.id === String(plan).toLowerCase());
+    return planObj?.features || [];
   };
 
   const handlePayment = async (amount = 99) => {
