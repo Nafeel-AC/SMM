@@ -96,46 +96,6 @@ const HashtagsSection = ({
           ))}
         </div>
       </div>
-
-      {/* Hashtag Input Field */}
-      <div className="hashtag-input-container">
-        <form onSubmit={handleInputSubmit}>
-          <input
-            type="text"
-            placeholder="#example"
-            value={newHashtag}
-            onChange={(e) => setNewHashtag(e.target.value)}
-            className="hashtag-input"
-          />
-        </form>
-      </div>
-
-      {/* Selected Hashtags List */}
-      <div className="selected-hashtags">
-        <div className="hashtags-scroll-container">
-          {selectedHashtags.map((item) => (
-            <div key={item.id} className="selected-hashtag-item">
-              <div className="hashtag-avatar">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
-                </svg>
-              </div>
-              <div className="hashtag-content">
-                <div className="hashtag-name">{item.hashtag}</div>
-                <div className="hashtag-posts">{item.posts} posts</div>
-              </div>
-              <button 
-                className="remove-hashtag"
-                onClick={() => handleRemoveHashtag(item.id)}
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/>
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };

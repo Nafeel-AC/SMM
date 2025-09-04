@@ -176,7 +176,7 @@ const DashboardPage = () => {
                 initialHashtags={Array.isArray(requirements?.hashtags)
                   ? requirements.hashtags.map((tag, idx) => ({ id: idx + 1, hashtag: tag, posts: 0 }))
                   : dashboardSettings?.hashtags || []}
-                predefinedHashtags={dashboardSettings?.predefinedHashtags || dashboardData.hashtags.predefined}
+                predefinedHashtags={Array.isArray(requirements?.hashtags) ? requirements.hashtags : []}
                 userId={user.uid}
                 disabled={true}
               />
