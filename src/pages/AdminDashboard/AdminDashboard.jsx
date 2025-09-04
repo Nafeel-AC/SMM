@@ -52,7 +52,6 @@ const AdminDashboard = () => {
   const handleViewUserDashboard = (user) => {
     try {
       const stableUserId = user.id || user.uid;
-      console.debug('[AdminDashboard] Navigating to user dashboard:', stableUserId, user);
       navigate(`/admin-dashboard/user/${stableUserId}`, { state: { user } });
     } catch (err) {
       console.error('[AdminDashboard] Navigate failed:', err);

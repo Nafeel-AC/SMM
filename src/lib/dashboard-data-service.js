@@ -9,7 +9,7 @@ class DashboardDataService {
   async getDashboardData(userId) {
     try {
       console.log('🔍 Fetching dashboard data for user:', userId);
-      
+
       // Fetch all related data in parallel
       const [
         insightsResult,
@@ -25,13 +25,13 @@ class DashboardDataService {
 
       // Process insights data
       const insights = insightsResult.data || this.getMockInsights();
-      
+
       // Process requirements data
       const requirements = requirementsResult.data || this.getMockRequirements();
-      
+
       // Process targets data
       const targets = targetsResult.data || this.getMockTargets();
-      
+
       // Process profile data
       const profile = profileResult.data || this.getMockProfile();
 
@@ -91,8 +91,8 @@ class DashboardDataService {
       content_goals: ['Brand Awareness', 'Engagement', 'Lead Generation'],
       target_locations: ['USA', 'New York', 'India', 'Canada', 'Chicago'],
       target_audience: [
-        'Minimalist', 'Travel', 'Wellness', 'fitness', 'healthyfood', 
-        'facelessinstagram', 'quotes', 'aesthetic vibes', 'health tips', 
+        'Minimalist', 'Travel', 'Wellness', 'fitness', 'healthyfood',
+        'facelessinstagram', 'quotes', 'aesthetic vibes', 'health tips',
         'wellness resort', 'yoga and zen mode', 'Journaling and vision boards'
       ],
       preferred_content_types: ['Images', 'Videos', 'Stories', 'Reels'],
@@ -127,27 +127,27 @@ class DashboardDataService {
   generateChartData(insights) {
     const currentFollowers = insights.followers_count || 1381;
     const currentFollowing = insights.following_count || 676;
-    
+
     // Generate historical data for the last 6 months
     const months = ['March', 'April', 'May', 'June', 'July', 'August'];
     const chartData = [];
-    
+
     // Calculate starting values (assume growth over 6 months)
     const followersGrowth = currentFollowers * 0.7; // 70% of current
     const followingGrowth = currentFollowing * 0.8; // 80% of current
-    
+
     months.forEach((month, index) => {
       const progress = (index + 1) / months.length;
       const followers = Math.round(followersGrowth + (currentFollowers - followersGrowth) * progress);
       const following = Math.round(followingGrowth + (currentFollowing - followingGrowth) * progress);
-      
+
       chartData.push({
         month,
         followers,
         following
       });
     });
-    
+
     return chartData;
   }
 
@@ -188,8 +188,8 @@ class DashboardDataService {
     return {
       target_locations: requirements?.target_locations || ['USA', 'New York', 'India', 'Canada', 'Chicago'],
       target_audience: requirements?.target_audience || [
-        'Minimalist', 'Travel', 'Wellness', 'fitness', 'healthyfood', 
-        'facelessinstagram', 'quotes', 'aesthetic vibes', 'health tips', 
+        'Minimalist', 'Travel', 'Wellness', 'fitness', 'healthyfood',
+        'facelessinstagram', 'quotes', 'aesthetic vibes', 'health tips',
         'wellness resort', 'yoga and zen mode', 'Journaling and vision boards'
       ]
     };
@@ -221,7 +221,7 @@ class DashboardDataService {
       if (result.error || !result.data || result.data.length === 0) {
         return { data: null, error: 'No settings found' };
       }
-      
+
       // Return the most recent settings
       return { data: result.data[0], error: null };
     } catch (error) {
@@ -278,6 +278,22 @@ class DashboardDataService {
       }
     } catch (error) {
       console.error('Error updating strategy:', error);
+      return { data: null, error };
+    }
+  }
+
+  // Update user requirements in Firestore
+  async updateUserRequirements(userId, updates) {
+    try {
+      // Get the requirements document for the user
+      const result = await this.db.getDocumentsByField('user_requirements', 'user_id', userId);
+      if (result.error || !result.data || result.data.length === 0) {
+        return { data: null, error: 'No requirements found for user' };
+      }
+      const requirementsId = result.data[0].id;
+      return await this.db.updateUserRequirements(requirementsId, updates);
+    } catch (error) {
+      console.error('Error updating user requirements:', error);
       return { data: null, error };
     }
   }
