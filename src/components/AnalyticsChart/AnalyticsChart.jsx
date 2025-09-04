@@ -41,7 +41,7 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
       <div className="chart-header">
         <div className="chart-title">Growth Analytics</div>
         <div className="time-range-selector">
-          <button 
+          {/* <button 
             className={`time-btn ${timeRange === '7days' ? 'active' : ''}`}
             onClick={() => onTimeRangeChange('7days')}
           >
@@ -52,7 +52,7 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
             onClick={() => onTimeRangeChange('4weeks')}
           >
             Last 4 Weeks
-          </button>
+          </button> */}
           <button 
             className={`time-btn ${timeRange === '12months' ? 'active' : ''}`}
             onClick={() => onTimeRangeChange('12months')}
