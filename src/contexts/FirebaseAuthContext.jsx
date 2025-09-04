@@ -70,8 +70,8 @@ export function FirebaseAuthProvider({ children }) {
       const currentPath = window.location.pathname;
       console.log('🚀 Current path:', currentPath);
       console.log('🚀 Next step should be:', nextStep);
-      // Don't redirect if we're already on a role-specific dashboard or diagnostic page
-      if (currentPath === '/admin-dashboard' || currentPath === '/staff-dashboard' || currentPath === '/diagnostic') {
+      // Don't redirect if we're already on a role-specific dashboard (including sub-routes) or diagnostic page
+      if (currentPath.startsWith('/admin-dashboard') || currentPath.startsWith('/staff-dashboard') || currentPath === '/diagnostic') {
         console.log('✅ Already on role-specific dashboard or diagnostic page:', currentPath);
         return;
       }
@@ -120,9 +120,12 @@ export function FirebaseAuthProvider({ children }) {
   // Create user profile
   const createUserProfile = async (userId, fullName = null) => {
     try {
+      const resolvedFullName = fullName || user?.displayName || null;
       const profileData = {
         id: userId,
-        full_name: fullName || user?.displayName || null,
+        full_name: resolvedFullName,
+        display_name: resolvedFullName,
+        email: user?.email || null,
         role: 'user',
         instagram_connected: false,
         requirements_completed: false,
@@ -306,7 +309,25 @@ export function FirebaseAuthProvider({ children }) {
           displayName: fullName
         });
       }
-      
+
+      // Proactively create Firestore profile with provided full name to avoid null
+      try {
+        await setDoc(doc(db, 'profiles', userCredential.user.uid), {
+          id: userCredential.user.uid,
+          full_name: fullName || userCredential.user.displayName || null,
+          display_name: fullName || userCredential.user.displayName || null,
+          email: email,
+          role: 'user',
+          instagram_connected: false,
+          requirements_completed: false,
+          payment_completed: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+      } catch (profileErr) {
+        console.warn('[signUpWithEmail] Could not proactively create profile, will rely on fetchUserProfile:', profileErr);
+      }
+
       return { data: userCredential.user, error: null };
     } catch (error) {
       console.error('Sign up error:', error);
