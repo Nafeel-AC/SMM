@@ -130,15 +130,9 @@ const StaffDashboard = () => {
                 <div className="user-actions">
                   <button 
                     className="view-btn"
-                    onClick={() => handleViewUserDashboard(user)}
-                  >
-                    View Dashboard
-                  </button>
-                  <button 
-                    className="edit-btn"
                     onClick={() => handleEditUser(user)}
                   >
-                    Edit Profile
+                    View Dashboard
                   </button>
                 </div>
               </div>
