@@ -198,7 +198,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .modal-overlay.large {
@@ -214,6 +214,8 @@
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
+  position: relative;
+  z-index: 2001;
 }
 
 .modal.large {

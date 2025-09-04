@@ -25,6 +25,7 @@ import DashboardPage from './pages/DashboardPage';
 import StaffPanel from './pages/StaffPanel';
 import AdminPanel from './pages/AdminPanel';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminUserDashboard from './pages/AdminUserDashboard';
 import StaffDashboard from './pages/StaffDashboard';
 import DiagnosticPage from './pages/DiagnosticPage';
 
@@ -110,6 +111,7 @@ function App() {
           {/* Admin Panel */}
           <Route path="/admin" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminPanel /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />
+          <Route path="/admin-dashboard/user/:userId" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminUserDashboard /></RoleProtectedRoute>} />
         </Routes>
         <Footer />
         <SupportChat />

@@ -10,12 +10,12 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState([]);
   const [staff, setStaff] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+  // Removed selectedUser modal usage in favor of dedicated page navigation
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [showCreateStaff, setShowCreateStaff] = useState(false);
   const [showAssignUsers, setShowAssignUsers] = useState(false);
   const [newStaff, setNewStaff] = useState({ email: '', password: '', displayName: '' });
-  const [userDashboardData, setUserDashboardData] = useState(null);
+  // Removed inline user dashboard modal state
   const navigate = useNavigate();
   const { user } = useFirebaseAuth();
 
@@ -78,7 +78,8 @@ const AdminDashboard = () => {
       const formData = new FormData(e.target);
       const userIds = formData.getAll('userIds');
       
-      const result = await roleAuthService.assignUsersToStaff(selectedStaff.uid, userIds);
+      const staffId = selectedStaff.id || selectedStaff.uid;
+      const result = await roleAuthService.assignUsersToStaff(staffId, userIds);
       
       if (result.success) {
         setShowAssignUsers(false);
@@ -92,18 +93,13 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleViewUserDashboard = async (user) => {
+  const handleViewUserDashboard = (user) => {
     try {
-      setLoading(true);
-      const result = await dashboardDataService.getDashboardData(user.uid);
-      if (result.success) {
-        setUserDashboardData(result.data);
-        setSelectedUser(user);
-      }
-    } catch (error) {
-      console.error('Error fetching user dashboard:', error);
-    } finally {
-      setLoading(false);
+      const stableUserId = user.id || user.uid;
+      console.debug('[AdminDashboard] Navigating to user dashboard:', stableUserId, user);
+      navigate(`/admin-dashboard/user/${stableUserId}`, { state: { user } });
+    } catch (err) {
+      console.error('[AdminDashboard] Navigate failed:', err);
     }
   };
 
@@ -188,7 +184,7 @@ const AdminDashboard = () => {
           
           <div className="users-grid">
             {users.map((user) => (
-              <div key={user.uid} className="user-card">
+              <div key={user.id || user.uid || user.email} className="user-card">
                 <div className="user-info">
                   <h3>{user.display_name || user.email}</h3>
                   <p>{user.email}</p>
@@ -199,14 +195,16 @@ const AdminDashboard = () => {
                 </div>
                 <div className="user-actions">
                   <button 
+                    type="button"
                     className="view-btn"
                     onClick={() => handleViewUserDashboard(user)}
                   >
                     View Dashboard
                   </button>
                   <button 
+                    type="button"
                     className="delete-btn"
-                    onClick={() => handleDeleteUser(user.uid)}
+                    onClick={() => handleDeleteUser(user.id || user.uid)}
                   >
                     Delete
                   </button>
@@ -231,7 +229,7 @@ const AdminDashboard = () => {
           
           <div className="staff-grid">
             {staff.map((staffMember) => (
-              <div key={staffMember.uid} className="staff-card">
+              <div key={staffMember.id || staffMember.uid || staffMember.email} className="staff-card">
                 <div className="staff-info">
                   <h3>{staffMember.display_name || staffMember.email}</h3>
                   <p>{staffMember.email}</p>
@@ -254,7 +252,7 @@ const AdminDashboard = () => {
                   </button>
                   <button 
                     className="delete-btn"
-                    onClick={() => handleDeleteStaff(staffMember.uid)}
+                    onClick={() => handleDeleteStaff(staffMember.id || staffMember.uid)}
                   >
                     Delete
                   </button>
@@ -280,8 +278,9 @@ const AdminDashboard = () => {
             </div>
             <form onSubmit={handleCreateStaff} className="modal-form">
               <div className="form-group">
-                <label>Email:</label>
+                <label htmlFor="staff-email">Email:</label>
                 <input
+                  id="staff-email"
                   type="email"
                   value={newStaff.email}
                   onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
@@ -289,8 +288,9 @@ const AdminDashboard = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Password:</label>
+                <label htmlFor="staff-password">Password:</label>
                 <input
+                  id="staff-password"
                   type="password"
                   value={newStaff.password}
                   onChange={(e) => setNewStaff({...newStaff, password: e.target.value})}
@@ -298,8 +298,9 @@ const AdminDashboard = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Display Name:</label>
+                <label htmlFor="staff-display-name">Display Name:</label>
                 <input
+                  id="staff-display-name"
                   type="text"
                   value={newStaff.displayName}
                   onChange={(e) => setNewStaff({...newStaff, displayName: e.target.value})}
@@ -335,14 +336,14 @@ const AdminDashboard = () => {
                 <label>Select Users to Assign:</label>
                 <div className="checkbox-list">
                   {users.map((user) => (
-                    <label key={user.uid} className="checkbox-item">
+                    <label key={user.id || user.uid || user.email} className="checkbox-item">
                       <input
                         type="checkbox"
                         name="userIds"
-                        value={user.uid}
-                        defaultChecked={selectedStaff.assigned_users?.includes(user.uid)}
+                        value={user.id || user.uid}
+                        defaultChecked={selectedStaff.assigned_users?.includes(user.id || user.uid)}
                       />
-                      {user.display_name || user.email}
+                      {user.display_name || user.full_name || user.email}
                     </label>
                   ))}
                 </div>
@@ -358,64 +359,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* User Dashboard Modal */}
-      {selectedUser && userDashboardData && (
-        <div className="modal-overlay large">
-          <div className="modal large">
-            <div className="modal-header">
-              <h3>{selectedUser.display_name || selectedUser.email} - Dashboard</h3>
-              <button 
-                className="close-btn"
-                onClick={() => {
-                  setSelectedUser(null);
-                  setUserDashboardData(null);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="user-dashboard-content">
-              <div className="dashboard-metrics">
-                <div className="metric">
-                  <h4>Followers</h4>
-                  <p>{userDashboardData.insights.followers_count}</p>
-                </div>
-                <div className="metric">
-                  <h4>Following</h4>
-                  <p>{userDashboardData.insights.following_count}</p>
-                </div>
-                <div className="metric">
-                  <h4>Engagement Rate</h4>
-                  <p>{userDashboardData.insights.engagement_rate}%</p>
-                </div>
-                <div className="metric">
-                  <h4>Posts</h4>
-                  <p>{userDashboardData.insights.media_count}</p>
-                </div>
-              </div>
-              
-              <div className="dashboard-details">
-                <div className="detail-section">
-                  <h4>Business Type</h4>
-                  <p>{userDashboardData.requirements.business_type}</p>
-                </div>
-                <div className="detail-section">
-                  <h4>Posting Frequency</h4>
-                  <p>{userDashboardData.requirements.posting_frequency}</p>
-                </div>
-                <div className="detail-section">
-                  <h4>Target Locations</h4>
-                  <p>{userDashboardData.strategy.target_locations.join(', ')}</p>
-                </div>
-                <div className="detail-section">
-                  <h4>Selected Hashtags</h4>
-                  <p>{userDashboardData.hashtags.selected.map(h => h.hashtag).join(', ')}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* User Dashboard Modal removed - navigates to dedicated page now */}
     </div>
   );
 };
