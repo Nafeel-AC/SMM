@@ -13,6 +13,8 @@ import './DashboardPage.css';
 const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
+  const [requirements, setRequirements] = useState(null);
+  const [dashboardSettings, setDashboardSettings] = useState(null);
   const [timeRange, setTimeRange] = useState('12months');
   const [isRealtime, setIsRealtime] = useState(false);
   const { user, signOut } = useFirebaseAuth();
@@ -21,8 +23,32 @@ const DashboardPage = () => {
   useEffect(() => {
     if (user) {
       fetchDashboardData();
+      fetchRequirements();
+      fetchDashboardSettings();
     }
   }, [user]);
+
+  const fetchRequirements = async () => {
+    try {
+      const result = await dashboardDataService.db.getUserRequirements(user.uid);
+      if (!result.error && result.data) {
+        setRequirements(result.data);
+      }
+    } catch (error) {
+      console.error('Error fetching requirements:', error);
+    }
+  };
+
+  const fetchDashboardSettings = async () => {
+    try {
+      const result = await dashboardDataService.getDashboardSettings(user.uid);
+      if (!result.error && result.data) {
+        setDashboardSettings(result.data);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard settings:', error);
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -128,24 +154,31 @@ const DashboardPage = () => {
 
               {/* Strategy Section */}
               <StrategySection 
-                targetLocations={dashboardData.strategy.target_locations}
-                targetAudience={dashboardData.strategy.target_audience}
+                targetLocations={requirements?.location || dashboardSettings?.strategy?.target_locations || []}
+                targetAudience={requirements?.niche || dashboardSettings?.strategy?.target_audience || []}
+                disabled={true}
               />
 
               {/* Accounts Section */}
               <AccountsSection 
-                initialAccounts={dashboardData.accounts.selected}
-                initialBulkAccounts={dashboardData.accounts.bulk}
+                initialAccounts={Array.isArray(requirements?.account_targets)
+                  ? requirements.account_targets.map((acc, idx) => ({ id: idx + 1, account: acc }))
+                  : dashboardSettings?.accounts || []}
+                initialBulkAccounts={Array.isArray(requirements?.account_targets) ? requirements.account_targets.join(' ') : ''}
                 userId={user.uid}
+                disabled={true}
               />
             </div>
 
             <div className="dashboard-sidebar">
               {/* Hashtags Section */}
               <HashtagsSection 
-                initialHashtags={dashboardData.hashtags.selected}
-                predefinedHashtags={dashboardData.hashtags.predefined}
+                initialHashtags={Array.isArray(requirements?.hashtags)
+                  ? requirements.hashtags.map((tag, idx) => ({ id: idx + 1, hashtag: tag, posts: 0 }))
+                  : dashboardSettings?.hashtags || []}
+                predefinedHashtags={dashboardSettings?.predefinedHashtags || dashboardData.hashtags.predefined}
                 userId={user.uid}
+                disabled={true}
               />
             </div>
           </div>
