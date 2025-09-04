@@ -103,14 +103,14 @@
 .users-grid,
 .staff-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
   gap: 20px;
 }
 
 .user-card,
 .staff-card {
   background: white;
-  border-radius: 12px;
+  border-radius: 0;
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
@@ -124,6 +124,33 @@
 .user-info,
 .staff-info {
   margin-bottom: 15px;
+}
+
+/* Improve staff card info layout: left (name/email), right (stats) */
+.staff-info {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 6px;
+  column-gap: 16px;
+  align-items: center;
+}
+
+.staff-info h3,
+.staff-info p:nth-child(2) {
+  grid-column: 1 / 2;
+}
+
+.staff-info .staff-assigned,
+.staff-info .staff-created {
+  grid-column: 2 / 3;
+  text-align: right;
+  white-space: nowrap;
+  color: #6b7280;
+}
+
+.staff-info .staff-assigned {
+  color: #3b82f6;
+  font-weight: 500;
 }
 
 .user-info h3,

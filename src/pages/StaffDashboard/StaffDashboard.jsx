@@ -8,10 +8,7 @@ import './StaffDashboard.css';
 const StaffDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [assignedUsers, setAssignedUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [userDashboardData, setUserDashboardData] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editData, setEditData] = useState({});
+  // Modals removed; we'll navigate to dedicated pages
   const navigate = useNavigate();
   const { user } = useFirebaseAuth();
 
@@ -45,30 +42,14 @@ const StaffDashboard = () => {
     }
   };
 
-  const handleViewUserDashboard = async (user) => {
-    try {
-      setLoading(true);
-      const result = await dashboardDataService.getDashboardData(user.uid);
-      if (result.success) {
-        setUserDashboardData(result.data);
-        setSelectedUser(user);
-      }
-    } catch (error) {
-      console.error('Error fetching user dashboard:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleViewUserDashboard = (user) => {
+    const stableUserId = user.id || user.uid;
+    navigate(`/staff-dashboard/user/${stableUserId}`, { state: { user } });
   };
 
   const handleEditUser = (user) => {
-    setSelectedUser(user);
-    setEditData({
-      display_name: user.display_name || '',
-      business_type: user.business_type || '',
-      posting_frequency: user.posting_frequency || '',
-      budget_range: user.budget_range || ''
-    });
-    setShowEditModal(true);
+    const stableUserId = user.id || user.uid;
+    navigate(`/staff-dashboard/edit-user/${stableUserId}`, { state: { user } });
   };
 
   const handleSaveUser = async (e) => {
@@ -166,143 +147,7 @@ const StaffDashboard = () => {
         )}
       </div>
 
-      {/* User Dashboard Modal */}
-      {selectedUser && userDashboardData && (
-        <div className="modal-overlay large">
-          <div className="modal large">
-            <div className="modal-header">
-              <h3>{selectedUser.display_name || selectedUser.email} - Dashboard</h3>
-              <button 
-                className="close-btn"
-                onClick={() => {
-                  setSelectedUser(null);
-                  setUserDashboardData(null);
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="user-dashboard-content">
-              <div className="dashboard-metrics">
-                <div className="metric">
-                  <h4>Followers</h4>
-                  <p>{userDashboardData.insights.followers_count}</p>
-                </div>
-                <div className="metric">
-                  <h4>Following</h4>
-                  <p>{userDashboardData.insights.following_count}</p>
-                </div>
-                <div className="metric">
-                  <h4>Engagement Rate</h4>
-                  <p>{userDashboardData.insights.engagement_rate}%</p>
-                </div>
-                <div className="metric">
-                  <h4>Posts</h4>
-                  <p>{userDashboardData.insights.media_count}</p>
-                </div>
-              </div>
-              
-              <div className="dashboard-details">
-                <div className="detail-section">
-                  <h4>Business Type</h4>
-                  <p>{userDashboardData.requirements.business_type}</p>
-                </div>
-                <div className="detail-section">
-                  <h4>Posting Frequency</h4>
-                  <p>{userDashboardData.requirements.posting_frequency}</p>
-                </div>
-                <div className="detail-section">
-                  <h4>Budget Range</h4>
-                  <p>{userDashboardData.requirements.budget_range}</p>
-                </div>
-                <div className="detail-section">
-                  <h4>Target Locations</h4>
-                  <p>{userDashboardData.strategy.target_locations.join(', ')}</p>
-                </div>
-                <div className="detail-section">
-                  <h4>Selected Hashtags</h4>
-                  <p>{userDashboardData.hashtags.selected.map(h => h.hashtag).join(', ')}</p>
-                </div>
-                <div className="detail-section">
-                  <h4>Target Accounts</h4>
-                  <p>{userDashboardData.accounts.selected.map(a => a.account).join(', ')}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit User Modal */}
-      {showEditModal && selectedUser && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h3>Edit User Profile</h3>
-              <button 
-                className="close-btn"
-                onClick={() => {
-                  setShowEditModal(false);
-                  setSelectedUser(null);
-                  setEditData({});
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleSaveUser} className="modal-form">
-              <div className="form-group">
-                <label>Display Name:</label>
-                <input
-                  type="text"
-                  value={editData.display_name}
-                  onChange={(e) => setEditData({...editData, display_name: e.target.value})}
-                />
-              </div>
-              <div className="form-group">
-                <label>Business Type:</label>
-                <input
-                  type="text"
-                  value={editData.business_type}
-                  onChange={(e) => setEditData({...editData, business_type: e.target.value})}
-                />
-              </div>
-              <div className="form-group">
-                <label>Posting Frequency:</label>
-                <select
-                  value={editData.posting_frequency}
-                  onChange={(e) => setEditData({...editData, posting_frequency: e.target.value})}
-                >
-                  <option value="">Select Frequency</option>
-                  <option value="Daily">Daily</option>
-                  <option value="3-4 times per week">3-4 times per week</option>
-                  <option value="2-3 times per week">2-3 times per week</option>
-                  <option value="Weekly">Weekly</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Budget Range:</label>
-                <select
-                  value={editData.budget_range}
-                  onChange={(e) => setEditData({...editData, budget_range: e.target.value})}
-                >
-                  <option value="">Select Budget</option>
-                  <option value="$100-300/month">$100-300/month</option>
-                  <option value="$300-500/month">$300-500/month</option>
-                  <option value="$500-1000/month">$500-1000/month</option>
-                  <option value="$1000+/month">$1000+/month</option>
-                </select>
-              </div>
-              <div className="modal-actions">
-                <button type="button" onClick={() => setShowEditModal(false)}>
-                  Cancel
-                </button>
-                <button type="submit">Save Changes</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Modals removed - navigation used instead */}
     </div>
   );
 };

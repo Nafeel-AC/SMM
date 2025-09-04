@@ -25,6 +25,18 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const analytics = getAnalytics(app);
 
+// Provide a lazily-created secondary app/auth for privileged operations
+let secondaryApp = null;
+let secondaryAuth = null;
+
+export const getSecondaryAuth = () => {
+  if (!secondaryApp) {
+    secondaryApp = initializeApp(firebaseConfig, 'secondary');
+    secondaryAuth = getAuth(secondaryApp);
+  }
+  return secondaryAuth;
+};
+
 // Make Firebase services available globally for console diagnostics
 if (typeof window !== 'undefined') {
   window.firebase = { auth, db, storage, analytics };

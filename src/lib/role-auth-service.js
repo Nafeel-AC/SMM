@@ -1,6 +1,6 @@
 import { firebaseDb } from './firebase-db';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth } from './firebase';
+import { auth, getSecondaryAuth } from './firebase';
 
 class RoleAuthService {
   constructor() {
@@ -41,9 +41,10 @@ class RoleAuthService {
   async createStaff(email, password, staffData) {
     try {
       console.log('👥 Creating staff user:', email);
-      
+      // Use a secondary auth instance to avoid affecting current admin session
+      const secondaryAuth = getSecondaryAuth();
       // Create Firebase auth user
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
       const user = userCredential.user;
 
       // Create staff profile
@@ -62,6 +63,12 @@ class RoleAuthService {
       await this.db.createProfile(user.uid, staffProfile);
       
       console.log('✅ Staff user created successfully');
+      try {
+        // Sign out the secondary auth to avoid session buildup
+        await signOut(secondaryAuth);
+      } catch (e) {
+        console.warn('Secondary auth signOut warning:', e?.message || e);
+      }
       return { success: true, user: staffProfile };
     } catch (error) {
       console.error('❌ Error creating staff user:', error);
