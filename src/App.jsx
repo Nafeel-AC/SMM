@@ -32,6 +32,7 @@ import StaffDashboard from './pages/StaffDashboard';
 import StaffUserDashboardPage from './pages/StaffUserDashboardPage';
 import StaffEditUserPage from './pages/StaffEditUserPage';
 import DiagnosticPage from './pages/DiagnosticPage';
+import UserDashboard from './pages/AdminDashboard/UserDashboard';
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -119,7 +120,7 @@ function App() {
           <Route path="/admin-dashboard" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard/create-staff" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminCreateStaffPage /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard/assign-users/:staffId" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminAssignUsersPage /></RoleProtectedRoute>} />
-          <Route path="/admin-dashboard/user/:userId" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminUserDashboard /></RoleProtectedRoute>} />
+          <Route path="/admin-dashboard/user/:userId" element={<RoleProtectedRoute allowedRoles={['admin']}><UserDashboard /></RoleProtectedRoute>} />
         </Routes>
         <Footer />
         <SupportChat />
