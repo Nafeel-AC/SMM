@@ -33,6 +33,7 @@ import StaffUserDashboardPage from './pages/StaffUserDashboardPage';
 import StaffEditUserPage from './pages/StaffEditUserPage';
 import DiagnosticPage from './pages/DiagnosticPage';
 import UserDashboard from './pages/AdminDashboard/UserDashboard';
+import EditUserDashboard from './pages/StaffDashboard/EditUserDashboard';
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -113,7 +114,7 @@ function App() {
           <Route path="/staff" element={<RoleProtectedRoute allowedRoles={['staff', 'admin']}><StaffPanel /></RoleProtectedRoute>} />
           <Route path="/staff-dashboard" element={<RoleProtectedRoute allowedRoles={['staff']}><StaffDashboard /></RoleProtectedRoute>} />
           <Route path="/staff-dashboard/user/:userId" element={<RoleProtectedRoute allowedRoles={['staff']}><StaffUserDashboardPage /></RoleProtectedRoute>} />
-          <Route path="/staff-dashboard/edit-user/:userId" element={<RoleProtectedRoute allowedRoles={['staff']}><StaffEditUserPage /></RoleProtectedRoute>} />
+          <Route path="/staff-dashboard/edit-user/:userId" element={<RoleProtectedRoute allowedRoles={['staff']}><EditUserDashboard /></RoleProtectedRoute>} />
           
           {/* Admin Panel */}
           <Route path="/admin" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminPanel /></RoleProtectedRoute>} />
