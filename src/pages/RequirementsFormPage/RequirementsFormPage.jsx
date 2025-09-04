@@ -7,15 +7,15 @@ import './RequirementsFormPage.css';
 const RequirementsFormPage = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    niche: '',
-    location: '',
-    comments: '',
-    dms: '',
+    niche: [''], // max 5
+    location: [''], // max 3
+    comments: [''], // max 5
+    dms: [''], // max 3
     max_following: '',
-    hashtags: '',
-    account_targets: ''
+    hashtags: [''], // max 10
+    account_targets: [''] // max 5
   });
-  const { user } = useFirebaseAuth();
+  const { user, fetchUserProfile } = useFirebaseAuth();
   const navigate = useNavigate();
 
   const nicheOptions = [
@@ -46,6 +46,35 @@ const RequirementsFormPage = () => {
     }));
   };
 
+  // For array fields
+  // Usage: handleArrayChange('niche', idx, value)
+  const handleArrayChange = (field, idx, value) => {
+    setFormData(prev => {
+      const arr = [...prev[field]];
+      arr[idx] = value;
+      return { ...prev, [field]: arr };
+    });
+  };
+
+  // Add item to array field
+  const handleAddItem = (field, max) => {
+    setFormData(prev => {
+      if (prev[field].length < max) {
+        return { ...prev, [field]: [...prev[field], ''] };
+      }
+      return prev;
+    });
+  };
+
+  // Remove item from array field
+  const handleRemoveItem = (field, idx) => {
+    setFormData(prev => {
+      const arr = [...prev[field]];
+      arr.splice(idx, 1);
+      return { ...prev, [field]: arr.length ? arr : [''] };
+    });
+  };
+
 
 
   const handleSubmit = async (e) => {
@@ -57,8 +86,28 @@ const RequirementsFormPage = () => {
     console.log('📝 Form data:', formData);
 
     // Validate required fields
-    if (!formData.niche || !formData.location || !formData.max_following || !formData.hashtags || !formData.account_targets) {
-      alert('Please fill in all required fields.');
+    const requiredArrays = [
+      { field: 'niche', max: 5 },
+      { field: 'location', max: 3 },
+      { field: 'comments', max: 5 },
+      { field: 'dms', max: 3 },
+      { field: 'hashtags', max: 10 },
+      { field: 'account_targets', max: 5 }
+    ];
+    for (const { field, max } of requiredArrays) {
+      if (!formData[field] || !formData[field].length || formData[field].some(v => !v.trim())) {
+        alert(`Please fill in all required fields for ${field}.`);
+        setLoading(false);
+        return;
+      }
+      if (formData[field].length > max) {
+        alert(`Maximum allowed for ${field} is ${max}.`);
+        setLoading(false);
+        return;
+      }
+    }
+    if (!formData.max_following) {
+      alert('Please fill in max following.');
       setLoading(false);
       return;
     }
@@ -78,8 +127,8 @@ const RequirementsFormPage = () => {
         user_id: user.uid,
         niche: formData.niche,
         location: formData.location,
-        comments: formData.comments || null,
-        dms: formData.dms || null,
+        comments: formData.comments,
+        dms: formData.dms,
         max_following: formData.max_following ? parseInt(formData.max_following) : null,
         hashtags: formData.hashtags,
         account_targets: formData.account_targets
@@ -105,8 +154,12 @@ const RequirementsFormPage = () => {
         console.error('⚠️ Warning: Could not update profile:', profileResult.error);
       } else {
         console.log('✅ Profile updated successfully');
+        // Reload profile context
+        if (fetchUserProfile && typeof fetchUserProfile === 'function') {
+          console.log('🔄 Reloading profile context...');
+          await fetchUserProfile(user.uid);
+        }
       }
-      
       // Navigate to dashboard
       navigate('/dashboard');
       
@@ -161,95 +214,143 @@ const RequirementsFormPage = () => {
         <form onSubmit={handleSubmit} className="requirements-form">
           <div className="form-section">
             <h3>Niche Information</h3>
-            
             <div className="form-group">
               <label>Niche (Target Audience) *</label>
-              <select
-                value={formData.niche}
-                onChange={(e) => handleInputChange('niche', e.target.value)}
-                required
-              >
-                <option value="">Select your niche</option>
-                {nicheOptions.map(niche => (
-                  <option key={niche} value={niche}>{niche}</option>
-                ))}
-              </select>
+              {formData.niche.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  <select
+                    value={item}
+                    onChange={e => handleArrayChange('niche', idx, e.target.value)}
+                    required
+                  >
+                    <option value="">Select your niche</option>
+                    {nicheOptions.map(niche => (
+                      <option key={niche} value={niche}>{niche}</option>
+                    ))}
+                  </select>
+                  {formData.niche.length > 1 && (
+                    <button type="button" onClick={() => handleRemoveItem('niche', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                  )}
+                </div>
+              ))}
+              {formData.niche.length < 5 && (
+                <button type="button" onClick={() => handleAddItem('niche', 5)}>Add item</button>
+              )}
             </div>
-
-            <div className="form-group">
-              <label>Location *</label>
-              <input
-                type="text"
-                value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                placeholder="e.g., New York, USA or Global"
-                required
-              />
-            </div>
+            <label>Location *</label>
+            {formData.location.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <input
+                  type="text"
+                  value={item}
+                  onChange={e => handleArrayChange('location', idx, e.target.value)}
+                  placeholder="e.g., New York, USA or Global"
+                  required
+                />
+                {formData.location.length > 1 && (
+                  <button type="button" onClick={() => handleRemoveItem('location', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                )}
+              </div>
+            ))}
+            {formData.location.length < 3 && (
+              <button type="button" onClick={() => handleAddItem('location', 3)}>Add item</button>
+            )}
           </div>
-
           <div className="form-section">
             <h3>Engagement Preferences</h3>
-            
             <div className="form-group">
               <label>Comments (describe your comment strategy)</label>
-              <textarea
-                value={formData.comments}
-                onChange={(e) => handleInputChange('comments', e.target.value)}
-                placeholder="e.g., Engage with fitness content, ask questions, share tips"
-                rows="3"
-              />
+              {formData.comments.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  <textarea
+                    value={item}
+                    onChange={e => handleArrayChange('comments', idx, e.target.value)}
+                    placeholder="e.g., Engage with fitness content, ask questions, share tips"
+                    rows="2"
+                  />
+                  {formData.comments.length > 1 && (
+                    <button type="button" onClick={() => handleRemoveItem('comments', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                  )}
+                </div>
+              ))}
+              {formData.comments.length < 5 && (
+                <button type="button" onClick={() => handleAddItem('comments', 5)}>Add item</button>
+              )}
             </div>
-
             <div className="form-group">
               <label>DMs (describe your DM strategy)</label>
-              <textarea
-                value={formData.dms}
-                onChange={(e) => handleInputChange('dms', e.target.value)}
-                placeholder="e.g., Send welcome messages, share exclusive content, build relationships"
-                rows="3"
-              />
+              {formData.dms.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  <textarea
+                    value={item}
+                    onChange={e => handleArrayChange('dms', idx, e.target.value)}
+                    placeholder="e.g., Send welcome messages, share exclusive content, build relationships"
+                    rows="2"
+                  />
+                  {formData.dms.length > 1 && (
+                    <button type="button" onClick={() => handleRemoveItem('dms', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                  )}
+                </div>
+              ))}
+              {formData.dms.length < 3 && (
+                <button type="button" onClick={() => handleAddItem('dms', 3)}>Add item</button>
+              )}
             </div>
-
             <div className="form-group">
               <label>Max Following (numbers only) *</label>
               <input
                 type="number"
                 value={formData.max_following}
-                onChange={(e) => handleInputChange('max_following', e.target.value)}
+                onChange={e => handleInputChange('max_following', e.target.value)}
                 placeholder="e.g., 5000"
                 required
                 min="0"
               />
             </div>
           </div>
-
           <div className="form-section">
             <h3>Content Strategy</h3>
-            
             <div className="form-group">
               <label>Hashtags *</label>
-              <textarea
-                value={formData.hashtags}
-                onChange={(e) => handleInputChange('hashtags', e.target.value)}
-                placeholder="e.g., #fitness #health #lifestyle #motivation #workout"
-                required
-                rows="3"
-              />
+              {formData.hashtags.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={e => handleArrayChange('hashtags', idx, e.target.value)}
+                    placeholder="#fitness #health #lifestyle #motivation #workout"
+                    required
+                  />
+                  {formData.hashtags.length > 1 && (
+                    <button type="button" onClick={() => handleRemoveItem('hashtags', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                  )}
+                </div>
+              ))}
+              {formData.hashtags.length < 10 && (
+                <button type="button" onClick={() => handleAddItem('hashtags', 10)}>Add item</button>
+              )}
             </div>
-
             <div className="form-group">
               <label>Account Targets *</label>
-              <textarea
-                value={formData.account_targets}
-                onChange={(e) => handleInputChange('account_targets', e.target.value)}
-                placeholder="e.g., @fitness_influencer1, @health_coach2, @lifestyle_blogger3"
-                required
-                rows="3"
-              />
+              {formData.account_targets.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={e => handleArrayChange('account_targets', idx, e.target.value)}
+                    placeholder="@fitness_influencer1, @health_coach2, @lifestyle_blogger3"
+                    required
+                  />
+                  {formData.account_targets.length > 1 && (
+                    <button type="button" onClick={() => handleRemoveItem('account_targets', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                  )}
+                </div>
+              ))}
+              {formData.account_targets.length < 5 && (
+                <button type="button" onClick={() => handleAddItem('account_targets', 5)}>Add item</button>
+              )}
             </div>
           </div>
-
           <div className="form-actions">
             <button 
               type="submit" 
