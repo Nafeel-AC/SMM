@@ -11,10 +11,8 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [staff, setStaff] = useState([]);
   // Removed selectedUser modal usage in favor of dedicated page navigation
-  const [selectedStaff, setSelectedStaff] = useState(null);
-  const [showCreateStaff, setShowCreateStaff] = useState(false);
-  const [showAssignUsers, setShowAssignUsers] = useState(false);
-  const [newStaff, setNewStaff] = useState({ email: '', password: '', displayName: '' });
+  // Assign users handled on a dedicated page now
+  // Removed local form state for create staff
   // Removed inline user dashboard modal state
   const navigate = useNavigate();
   const { user } = useFirebaseAuth();
@@ -47,51 +45,9 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleCreateStaff = async (e) => {
-    e.preventDefault();
-    try {
-      const result = await roleAuthService.createStaff(
-        newStaff.email,
-        newStaff.password,
-        {
-          displayName: newStaff.displayName,
-          createdBy: user?.uid || 'admin' // Get from current user
-        }
-      );
+  // Create staff handled on separate page now
 
-      if (result.success) {
-        setShowCreateStaff(false);
-        setNewStaff({ email: '', password: '', displayName: '' });
-        fetchData(); // Refresh staff list
-        alert('Staff created successfully!');
-      } else {
-        alert('Error creating staff: ' + result.error);
-      }
-    } catch (error) {
-      alert('Error creating staff: ' + error.message);
-    }
-  };
-
-  const handleAssignUsers = async (e) => {
-    e.preventDefault();
-    try {
-      const formData = new FormData(e.target);
-      const userIds = formData.getAll('userIds');
-      
-      const staffId = selectedStaff.id || selectedStaff.uid;
-      const result = await roleAuthService.assignUsersToStaff(staffId, userIds);
-      
-      if (result.success) {
-        setShowAssignUsers(false);
-        setSelectedStaff(null);
-        alert('Users assigned successfully!');
-      } else {
-        alert('Error assigning users: ' + result.error);
-      }
-    } catch (error) {
-      alert('Error assigning users: ' + error.message);
-    }
-  };
+  // Assign users handled on dedicated page
 
   const handleViewUserDashboard = (user) => {
     try {
@@ -220,8 +176,9 @@ const AdminDashboard = () => {
           <div className="section-header">
             <h2>Staff Management</h2>
             <button 
+              type="button"
               className="create-staff-btn"
-              onClick={() => setShowCreateStaff(true)}
+              onClick={() => navigate('/admin-dashboard/create-staff')}
             >
               Create Staff
             </button>
@@ -242,10 +199,11 @@ const AdminDashboard = () => {
                 </div>
                 <div className="staff-actions">
                   <button 
+                    type="button"
                     className="assign-btn"
                     onClick={() => {
-                      setSelectedStaff(staffMember);
-                      setShowAssignUsers(true);
+                      const staffId = staffMember.id || staffMember.uid;
+                      navigate(`/admin-dashboard/assign-users/${staffId}`, { state: { staff: staffMember } });
                     }}
                   >
                     Assign Users
@@ -263,101 +221,9 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Create Staff Modal */}
-      {showCreateStaff && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h3>Create New Staff</h3>
-              <button 
-                className="close-btn"
-                onClick={() => setShowCreateStaff(false)}
-              >
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleCreateStaff} className="modal-form">
-              <div className="form-group">
-                <label htmlFor="staff-email">Email:</label>
-                <input
-                  id="staff-email"
-                  type="email"
-                  value={newStaff.email}
-                  onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="staff-password">Password:</label>
-                <input
-                  id="staff-password"
-                  type="password"
-                  value={newStaff.password}
-                  onChange={(e) => setNewStaff({...newStaff, password: e.target.value})}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="staff-display-name">Display Name:</label>
-                <input
-                  id="staff-display-name"
-                  type="text"
-                  value={newStaff.displayName}
-                  onChange={(e) => setNewStaff({...newStaff, displayName: e.target.value})}
-                  required
-                />
-              </div>
-              <div className="modal-actions">
-                <button type="button" onClick={() => setShowCreateStaff(false)}>
-                  Cancel
-                </button>
-                <button type="submit">Create Staff</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Create Staff Modal removed - using dedicated page */}
 
-      {/* Assign Users Modal */}
-      {showAssignUsers && selectedStaff && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h3>Assign Users to {selectedStaff.display_name}</h3>
-              <button 
-                className="close-btn"
-                onClick={() => setShowAssignUsers(false)}
-              >
-                ×
-              </button>
-            </div>
-            <form onSubmit={handleAssignUsers} className="modal-form">
-              <div className="form-group">
-                <label>Select Users to Assign:</label>
-                <div className="checkbox-list">
-                  {users.map((user) => (
-                    <label key={user.id || user.uid || user.email} className="checkbox-item">
-                      <input
-                        type="checkbox"
-                        name="userIds"
-                        value={user.id || user.uid}
-                        defaultChecked={selectedStaff.assigned_users?.includes(user.id || user.uid)}
-                      />
-                      {user.display_name || user.full_name || user.email}
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div className="modal-actions">
-                <button type="button" onClick={() => setShowAssignUsers(false)}>
-                  Cancel
-                </button>
-                <button type="submit">Assign Users</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Assign Users Modal removed - navigates to dedicated page now */}
 
       {/* User Dashboard Modal removed - navigates to dedicated page now */}
     </div>

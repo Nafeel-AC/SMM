@@ -26,7 +26,11 @@ import StaffPanel from './pages/StaffPanel';
 import AdminPanel from './pages/AdminPanel';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUserDashboard from './pages/AdminUserDashboard';
+import AdminCreateStaffPage from './pages/AdminCreateStaffPage';
+import AdminAssignUsersPage from './pages/AdminAssignUsersPage';
 import StaffDashboard from './pages/StaffDashboard';
+import StaffUserDashboardPage from './pages/StaffUserDashboardPage';
+import StaffEditUserPage from './pages/StaffEditUserPage';
 import DiagnosticPage from './pages/DiagnosticPage';
 
 // Protected route component
@@ -107,10 +111,14 @@ function App() {
           {/* Staff Panel */}
           <Route path="/staff" element={<RoleProtectedRoute allowedRoles={['staff', 'admin']}><StaffPanel /></RoleProtectedRoute>} />
           <Route path="/staff-dashboard" element={<RoleProtectedRoute allowedRoles={['staff']}><StaffDashboard /></RoleProtectedRoute>} />
+          <Route path="/staff-dashboard/user/:userId" element={<RoleProtectedRoute allowedRoles={['staff']}><StaffUserDashboardPage /></RoleProtectedRoute>} />
+          <Route path="/staff-dashboard/edit-user/:userId" element={<RoleProtectedRoute allowedRoles={['staff']}><StaffEditUserPage /></RoleProtectedRoute>} />
           
           {/* Admin Panel */}
           <Route path="/admin" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminPanel /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />
+          <Route path="/admin-dashboard/create-staff" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminCreateStaffPage /></RoleProtectedRoute>} />
+          <Route path="/admin-dashboard/assign-users/:staffId" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminAssignUsersPage /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard/user/:userId" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminUserDashboard /></RoleProtectedRoute>} />
         </Routes>
         <Footer />
