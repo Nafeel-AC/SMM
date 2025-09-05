@@ -14,11 +14,12 @@
   z-index: 2;
 }
 
-.section-subtitle {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+.hero-section-subtitle {
+  /* background-color: rgba(255, 255, 255, 0.  2); */
+  color: #fff !important;
   padding: 10px 24px;
   border-radius: 50px;
+  border: 2px solid #fff;
   font-size: 14px;
   font-weight: 500;
   display: inline-block;
@@ -30,10 +31,10 @@
 .hero-title {
   font-size: 48px;
   font-weight: 800;
-  color: #152235;
-  background: linear-gradient(53deg, white, #f8f9fa);
+  color: #ffffff ;
+  /* background: linear-gradient(53deg, white, #f8f9fa);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: transparent; */
   margin-bottom: 24px;
   line-height: 1.2;
 }
@@ -60,7 +61,7 @@
 }
 
 .cmn-btn {
-  background-color: #6e3bda;
+  background-color: #2e263e;
   color: #fff;
   padding: 14px 32px;
   border-radius: 50px;

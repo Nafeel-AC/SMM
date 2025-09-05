@@ -56,18 +56,15 @@ const Footer = () => {
               </div>
 
               {/* Third Column: Company Policy */}
-              <div className="footer-column">
+              {/* <div className="footer-column">
                 <div className="footer-section">
                   <h4 className="section-title">Company Policy</h4>
                   <ul className="footer-links">
                     <li><Link to="/api-docs">Api Docs</Link></li>
-                    <li><Link to="/privacy">Privacy & Policy</Link></li>
-                    <li><Link to="/terms">Terms and Conditions</Link></li>
-                    <li><Link to="/refund">Refund Policy</Link></li>
                     <li><Link to="/cookies">Cookie Policy</Link></li>
                   </ul>
                 </div>
-              </div>
+              </div> */}
 
               {/* Fourth Column: Newsletter */}
               <div className="footer-column">

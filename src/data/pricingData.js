@@ -73,12 +73,12 @@ const pricingData = {
         monthly: {
             starter: 59,
             premium: 89,
-            ultimate: 189
+            ultimate: 249
         },
         yearly: {
             starter: 579,
             premium: 829,
-            ultimate: 189
+            ultimate: 1879
         }
     },
 

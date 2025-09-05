@@ -41,7 +41,7 @@ const AboutSection = () => {
               <div className="about-content">
                 <span className="section-subtitle">{data.title}</span>
                 <h2 className="section-title">{data.subtitle}</h2>
-                {/* <p>{data.description}</p> */}
+                <p>{data.description}</p>
                 <ul className="item-list-container">
                   {data.features.map((feature, index) => (
                     <li className="cmn-box4" key={index}>
