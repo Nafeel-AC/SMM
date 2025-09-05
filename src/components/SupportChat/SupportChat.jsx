@@ -201,7 +201,7 @@ const SupportChat = () => {
       )}
 
       <form onSubmit={handleSendMessage} className="chat-input-form">
-        <div className="input-group">
+        <div className="input-group support-input-group">
           <input
             type="text"
             value={newMessage}

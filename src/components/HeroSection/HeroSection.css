@@ -1,6 +1,6 @@
 .hero-section {
-  background-color: #9665fd;
-  background-image: linear-gradient(to bottom, #9665fd 0%, #9665fd 60%, #ffffff 100%);
+  background-color: #4f46e5;
+  background-image: linear-gradient(to bottom, #4f46e5 0%, #9333ea 60%, #ffffff 100%);
   padding: 130px 0 80px;
   position: relative;
   min-height: calc(100vh - 60px); /* Account for navbar height */

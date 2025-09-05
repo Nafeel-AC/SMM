@@ -194,10 +194,12 @@
 
 .input-group {
   display: flex;
-  gap: 0.5rem;
+  gap: 0rem !important;
   align-items: center;
 }
-
+.support-input-group {
+  flex-direction: row !important;
+}
 .message-input {
   flex: 1;
   padding: 0.8rem 1rem;
@@ -206,6 +208,7 @@
   font-size: 1rem;
   outline: none;
   transition: all 0.3s ease;
+  padding: 10px 14px !important;
 }
 
 .message-input:focus {
@@ -248,7 +251,7 @@
 @media (max-width: 768px) {
   .support-chat {
     width: calc(100vw - 2rem);
-    height: calc(100vh - 2rem);
+    height: calc(100vh - 5rem);
     bottom: 1rem;
     right: 1rem;
     left: 1rem;
