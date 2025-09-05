@@ -21,6 +21,20 @@
   margin-bottom: 60px;
 }
 
+.section-header::before,
+.section-header::after {
+  display: none !important;
+}
+
+.section-header * {
+  border: none !important;
+}
+
+.section-header *::before,
+.section-header *::after {
+  display: none !important;
+}
+
 .section-subtitle {
   display: inline-block;
   background: linear-gradient(45deg, #3b82f6, #8b5cf6);
@@ -31,7 +45,7 @@
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 
 .section-title {
@@ -39,6 +53,7 @@
   font-weight: 700;
   color: #1e293b;
   margin-bottom: 20px;
+  margin-top: 0;
   line-height: 1.2;
 }
 
