@@ -8,11 +8,8 @@ const PricingSection = ({ onPlanSelect }) => {
   const { plans, pricing, comparisonCategories } = pricingData;
 
   const handleGetStarted = (planName) => {
-    // Handle plan selection - can be connected to payment gateway
-    console.log(`Selected plan: ${planName}`);
-    if (onPlanSelect) {
-      onPlanSelect(planName);
-    }
+    // Redirect to login page on plan selection
+    window.location.href = '/login';
   };
 
   // Helper function to render checkmark or minus
@@ -69,7 +66,7 @@ const PricingSection = ({ onPlanSelect }) => {
             {plans.map((plan) => (
               <div key={plan.id} className={`pricing-card ${plan.popular ? 'popular' : ''}`}>
                 {plan.popular && (
-                  <div className="popular-badge">Most popular</div>
+                  <div className="popular-badge pricing-popular-badge">Most popular</div>
                 )}
                 
                 <div className="card-header" style={{ backgroundColor: plan.id === 'starter' ? '#4b5563' : plan.id === 'premium' ? '#1c64f2' : '#f59e0b' }}>
