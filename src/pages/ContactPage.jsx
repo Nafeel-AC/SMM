@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 import './ContactPage.css';
 import Navbar from '../components/Navbar';
+import { EMAILJS_CONFIG, validateEmailJSConfig } from '../lib/emailjs';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +19,14 @@ const ContactPage = () => {
   // Set page title for SEO
   useEffect(() => {
     document.title = 'Contact Us - Get In Touch | Glowup Agency';
+    
+    // Initialize EmailJS and validate configuration
+    if (validateEmailJSConfig()) {
+      emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+      console.log('EmailJS initialized successfully');
+    } else {
+      console.warn('EmailJS not configured - form will not send emails');
+    }
   }, []);
 
   const handleInputChange = (e) => {
@@ -33,10 +43,31 @@ const ContactPage = () => {
     setSubmitError('');
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      console.log('Form submitted:', formData);
+      // Validate EmailJS configuration
+      if (!validateEmailJSConfig()) {
+        throw new Error('EmailJS is not properly configured. Please check environment variables.');
+      }
+
+      // Prepare template parameters
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        reply_to: formData.email,
+        to_name: 'SMM Team',
+        // Add timestamp
+        sent_at: new Date().toLocaleString(),
+      };
+
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams
+      );
+
+      console.log('Email sent successfully:', result);
       
       // Success state
       setIsSubmitted(true);
@@ -55,7 +86,41 @@ const ContactPage = () => {
       }, 5000);
       
     } catch (error) {
-      setSubmitError('Something went wrong. Please try again.');
+      console.error('Error sending email:', error);
+      
+      // Set user-friendly error message based on error type
+      let errorMessage = 'Something went wrong. Please try again or contact us directly.';
+      
+      if (error.message && error.message.includes('EmailJS')) {
+        errorMessage = 'Email service is not configured. Please try again later or contact us directly.';
+      } else if (error.text) {
+        errorMessage = `Failed to send message: ${error.text}`;
+      } else if (error.status) {
+        // EmailJS specific error handling
+        switch (error.status) {
+          case 400:
+            errorMessage = 'Invalid form data. Please check your inputs and try again.';
+            break;
+          case 401:
+            errorMessage = 'Email service authentication failed. Please try again later.';
+            break;
+          case 402:
+            errorMessage = 'Email quota exceeded. Please try again later or contact us directly.';
+            break;
+          case 404:
+            errorMessage = 'Email service not found. Please try again later.';
+            break;
+          case 429:
+            errorMessage = 'Too many requests. Please wait a moment and try again.';
+            break;
+          default:
+            errorMessage = `Email service error (${error.status}). Please try again later.`;
+        }
+      } else if (error.name === 'EmailJSResponseStatus') {
+        errorMessage = 'Failed to send email. Please check your internet connection and try again.';
+      }
+      
+      setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
