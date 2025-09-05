@@ -95,6 +95,22 @@ const UserDashboard = () => {
     <div className="dashboard-page">
       <div className="dashboard-container">
         <h2>User Dashboard</h2>
+        {/* Show order status at the top if requirements are loaded */}
+        {requirements && typeof requirements.order_completed !== 'undefined' && (
+          <div style={{
+            background: requirements.order_completed ? '#e6ffed' : '#fffbe6',
+            color: requirements.order_completed ? '#237804' : '#ad8b00',
+            border: '1px solid',
+            borderColor: requirements.order_completed ? '#b7eb8f' : '#ffe58f',
+            borderRadius: 8,
+            padding: '12px 20px',
+            marginBottom: 24,
+            fontWeight: 600,
+            fontSize: 18
+          }}>
+            Order Status: {requirements.order_completed ? 'Completed' : 'Pending'}
+          </div>
+        )}
         {dashboardData ? (
           <div className="dashboard-layout">
             <div className="dashboard-main">
@@ -134,32 +150,43 @@ const UserDashboard = () => {
             {/* All User Fields section at the end of the page */}
             <div className="editable-section" style={{ marginTop: 48 }}>
               <h3>All User Fields</h3>
+              {/* Show Order completed field if present */}
+              {requirements && typeof requirements.order_completed !== 'undefined' && (
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontWeight: 600 }}>Order completed:</label>
+                  <span style={{ marginLeft: 8 }}>
+                    {requirements.order_completed ? 'Yes' : 'No'}
+                  </span>
+                </div>
+              )}
               <div className="editable-fields">
-                {requirements && Object.keys(requirements).map((key) => (
-                  <div key={key} style={{ marginBottom: '16px' }}>
-                    <label style={{ fontWeight: 600 }}>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</label>
-                    {editMode ? (
-                      <input
-                        type="text"
-                        value={typeof editedRequirements[key] === 'object' && editedRequirements[key] !== null
-                          ? editedRequirements[key].seconds !== undefined
-                            ? new Date(editedRequirements[key].seconds * 1000).toISOString()
-                            : JSON.stringify(editedRequirements[key])
-                          : editedRequirements[key] || ''}
-                        onChange={e => handleFieldChange(key, e.target.value)}
-                        style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
-                      />
-                    ) : (
-                      <span style={{ marginLeft: 8 }}>
-                        {typeof requirements[key] === 'object' && requirements[key] !== null
-                          ? requirements[key].seconds !== undefined
-                            ? new Date(requirements[key].seconds * 1000).toLocaleString()
-                            : JSON.stringify(requirements[key])
-                          : requirements[key]}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                {requirements && Object.keys(requirements)
+                  .filter(key => key !== 'order_completed')
+                  .map((key) => (
+                    <div key={key} style={{ marginBottom: '16px' }}>
+                      <label style={{ fontWeight: 600 }}>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</label>
+                      {editMode ? (
+                        <input
+                          type="text"
+                          value={typeof editedRequirements[key] === 'object' && editedRequirements[key] !== null
+                            ? editedRequirements[key].seconds !== undefined
+                              ? new Date(editedRequirements[key].seconds * 1000).toISOString()
+                              : JSON.stringify(editedRequirements[key])
+                            : editedRequirements[key] || ''}
+                          onChange={e => handleFieldChange(key, e.target.value)}
+                          style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                        />
+                      ) : (
+                        <span style={{ marginLeft: 8 }}>
+                          {typeof requirements[key] === 'object' && requirements[key] !== null
+                            ? requirements[key].seconds !== undefined
+                              ? new Date(requirements[key].seconds * 1000).toLocaleString()
+                              : JSON.stringify(requirements[key])
+                            : requirements[key]}
+                        </span>
+                      )}
+                    </div>
+                  ))}
               </div>
             </div>
             {/* Edit/Save buttons at the end of the page */}

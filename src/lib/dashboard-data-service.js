@@ -1,6 +1,10 @@
 import { firebaseDb } from './firebase-db';
 
 class DashboardDataService {
+  // Expose getAllStaff for staff assignment
+  async getAllStaff() {
+    return this.db.getAllStaff();
+  }
   constructor() {
     this.db = firebaseDb;
   }

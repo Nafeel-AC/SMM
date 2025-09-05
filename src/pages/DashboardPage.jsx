@@ -134,6 +134,22 @@ const DashboardPage = () => {
             Logout
           </button>
         </div>
+        {/* Show order status at the top if requirements are loaded */}
+        {requirements && typeof requirements.order_completed !== 'undefined' && (
+          <div style={{
+            background: requirements.order_completed ? '#e6ffed' : '#fffbe6',
+            color: requirements.order_completed ? '#237804' : '#ad8b00',
+            border: '1px solid',
+            borderColor: requirements.order_completed ? '#b7eb8f' : '#ffe58f',
+            borderRadius: 8,
+            padding: '12px 20px',
+            marginBottom: 24,
+            fontWeight: 600,
+            fontSize: 18
+          }}>
+            Order Status: {requirements.order_completed ? 'Completed' : 'Pending'}
+          </div>
+        )}
         {dashboardData ? (
           <div className="dashboard-layout">
             <div className="dashboard-main">
