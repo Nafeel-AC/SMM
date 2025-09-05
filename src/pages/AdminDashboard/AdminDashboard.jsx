@@ -23,6 +23,7 @@ const AdminDashboard = () => {
     cancelledOrders: 0
   });
   const [chartData, setChartData] = useState([]);
+  const [selectedTimeframe, setSelectedTimeframe] = useState('thisMonth');
   // Removed selectedUser modal usage in favor of dedicated page navigation
   // Assign users handled on a dedicated page now
   // Removed local form state for create staff
@@ -78,20 +79,40 @@ const AdminDashboard = () => {
     }
   };
 
-  // Generate mock chart data for the last 30 days
-  const generateChartData = () => {
+  // Generate mock chart data for the selected timeframe
+  const generateChartData = (timeframe = 'thisMonth') => {
     const data = [];
-    for (let i = 1; i <= 30; i++) {
-      // Create realistic transaction data with some peaks
-      let value = Math.floor(Math.random() * 20) + 5;
-      if (i === 17) value = Math.floor(Math.random() * 40) + 60; // Peak around day 17
-      if (i === 24) value = Math.floor(Math.random() * 30) + 40; // Smaller peak around day 24
+    const days = 30;
+    
+    for (let i = 1; i <= days; i++) {
+      let value;
+      
+      if (timeframe === 'thisMonth') {
+        // This month data with peaks
+        value = Math.floor(Math.random() * 20) + 5;
+        if (i === 17) value = Math.floor(Math.random() * 40) + 60; // Peak around day 17
+        if (i === 24) value = Math.floor(Math.random() * 30) + 40; // Smaller peak around day 24
+      } else {
+        // Last month data with different pattern
+        value = Math.floor(Math.random() * 15) + 8;
+        if (i === 12) value = Math.floor(Math.random() * 35) + 45; // Peak around day 12
+        if (i === 28) value = Math.floor(Math.random() * 25) + 35; // Peak around day 28
+        // Generally lower values for last month
+        value = Math.floor(value * 0.7);
+      }
+      
       data.push({
         day: `Day ${i.toString().padStart(2, '0')}`,
         value: value
       });
     }
     setChartData(data);
+  };
+
+  // Handle timeframe change
+  const handleTimeframeChange = (timeframe) => {
+    setSelectedTimeframe(timeframe);
+    generateChartData(timeframe);
   };
 
   // Fetch all user requirements and split by order_completed
@@ -238,11 +259,23 @@ const AdminDashboard = () => {
               <div className="chart-controls">
                 <div className="current-metric">
                   <span className="metric-label">DEPOSIT:</span>
-                  <span className="metric-value">150.72 USD</span>
+                  <span className="metric-value">
+                    {selectedTimeframe === 'thisMonth' ? '150.72 USD' : '98.45 USD'}
+                  </span>
                 </div>
                 <div className="timeframe-tabs">
-                  <button className="timeframe-btn active">This Month</button>
-                  <button className="timeframe-btn">Last Month</button>
+                  <button 
+                    className={`timeframe-btn ${selectedTimeframe === 'thisMonth' ? 'active' : ''}`}
+                    onClick={() => handleTimeframeChange('thisMonth')}
+                  >
+                    This Month
+                  </button>
+                  <button 
+                    className={`timeframe-btn ${selectedTimeframe === 'lastMonth' ? 'active' : ''}`}
+                    onClick={() => handleTimeframeChange('lastMonth')}
+                  >
+                    Last Month
+                  </button>
                 </div>
               </div>
             </div>
