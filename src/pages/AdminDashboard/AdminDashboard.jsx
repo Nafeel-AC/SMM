@@ -9,9 +9,20 @@ const AdminDashboard = () => {
   const [pendingOrders, setPendingOrders] = useState([]);
   const [completedOrders, setCompletedOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('users');
+  const [activeTab, setActiveTab] = useState('overview');
   const [users, setUsers] = useState([]);
   const [staff, setStaff] = useState([]);
+  const [dashboardStats, setDashboardStats] = useState({
+    totalUsers: 0,
+    pendingTickets: 0,
+    pendingKYC: 0,
+    thisMonthTransactions: 0,
+    totalOrders: 0,
+    pendingOrders: 0,
+    completedOrders: 0,
+    cancelledOrders: 0
+  });
+  const [chartData, setChartData] = useState([]);
   // Removed selectedUser modal usage in favor of dedicated page navigation
   // Assign users handled on a dedicated page now
   // Removed local form state for create staff
@@ -41,11 +52,46 @@ const AdminDashboard = () => {
       if (staffResult.success) {
         setStaff(staffResult.staff);
       }
+
+      // Calculate dashboard statistics
+      const totalUsers = usersResult.success ? usersResult.users.length : 0;
+      const totalStaff = staffResult.success ? staffResult.staff.length : 0;
+      
+      setDashboardStats(prev => ({
+        ...prev,
+        totalUsers: totalUsers,
+        pendingTickets: Math.floor(Math.random() * 10) + 1, // Mock data
+        pendingKYC: Math.floor(Math.random() * 8) + 1, // Mock data
+        thisMonthTransactions: Math.floor(Math.random() * 20) + 5, // Mock data
+        totalOrders: pendingOrders.length + completedOrders.length,
+        pendingOrders: pendingOrders.length,
+        completedOrders: completedOrders.length,
+        cancelledOrders: Math.floor(Math.random() * 5) + 1 // Mock data
+      }));
+
+      // Generate mock chart data for the last 30 days
+      generateChartData();
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Generate mock chart data for the last 30 days
+  const generateChartData = () => {
+    const data = [];
+    for (let i = 1; i <= 30; i++) {
+      // Create realistic transaction data with some peaks
+      let value = Math.floor(Math.random() * 20) + 5;
+      if (i === 17) value = Math.floor(Math.random() * 40) + 60; // Peak around day 17
+      if (i === 24) value = Math.floor(Math.random() * 30) + 40; // Smaller peak around day 24
+      data.push({
+        day: `Day ${i.toString().padStart(2, '0')}`,
+        value: value
+      });
+    }
+    setChartData(data);
   };
 
   // Fetch all user requirements and split by order_completed
@@ -62,6 +108,14 @@ const AdminDashboard = () => {
       const completed = result.data.filter(req => req.order_completed === true);
       setPendingOrders(pending);
       setCompletedOrders(completed);
+      
+      // Update dashboard stats with real order data
+      setDashboardStats(prev => ({
+        ...prev,
+        totalOrders: pending.length + completed.length,
+        pendingOrders: pending.length,
+        completedOrders: completed.length
+      }));
     } catch (error) {
       console.error('Error fetching orders:', error);
       setPendingOrders([]);
@@ -144,6 +198,12 @@ const AdminDashboard = () => {
 
       <div className="admin-tabs">
         <button 
+          className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
+          onClick={() => setActiveTab('overview')}
+        >
+          Overview
+        </button>
+        <button 
           className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
           onClick={() => setActiveTab('users')}
         >
@@ -168,6 +228,235 @@ const AdminDashboard = () => {
           Completed Orders ({completedOrders.length})
         </button>
       </div>
+
+      {activeTab === 'overview' && (
+        <div className="overview-section">
+          {/* Recent Transaction Chart */}
+          <div className="chart-container">
+            <div className="chart-header">
+              <h2>Recent Transaction</h2>
+              <div className="chart-controls">
+                <div className="current-metric">
+                  <span className="metric-label">DEPOSIT:</span>
+                  <span className="metric-value">150.72 USD</span>
+                </div>
+                <div className="timeframe-tabs">
+                  <button className="timeframe-btn active">This Month</button>
+                  <button className="timeframe-btn">Last Month</button>
+                </div>
+              </div>
+            </div>
+            <div className="chart-legend">
+              <div className="legend-item">
+                <div className="legend-dot blue"></div>
+                <span>Deposit</span>
+              </div>
+            </div>
+            <div className="chart-wrapper">
+              <svg className="transaction-chart" viewBox="0 0 800 200">
+                <defs>
+                  <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3"/>
+                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0"/>
+                  </linearGradient>
+                </defs>
+                <g className="chart-grid">
+                  {[0, 25, 50, 75, 100].map((y, i) => (
+                    <line key={i} x1="50" y1={40 + (y * 1.2)} x2="750" y2={40 + (y * 1.2)} stroke="#e5e7eb" strokeWidth="1"/>
+                  ))}
+                </g>
+                <g className="chart-line">
+                  <path
+                    d={`M 50,${200 - (chartData[0]?.value || 0) * 1.2} ${chartData.map((point, i) => 
+                      `L ${50 + (i * 23.3)},${200 - (point.value * 1.2)}`
+                    ).join(' ')}`}
+                    fill="none"
+                    stroke="#3b82f6"
+                    strokeWidth="2"
+                  />
+                  <path
+                    d={`M 50,${200 - (chartData[0]?.value || 0) * 1.2} ${chartData.map((point, i) => 
+                      `L ${50 + (i * 23.3)},${200 - (point.value * 1.2)}`
+                    ).join(' ')} L 750,200 L 50,200 Z`}
+                    fill="url(#lineGradient)"
+                  />
+                </g>
+                <g className="chart-points">
+                  {chartData.map((point, i) => (
+                    <circle
+                      key={i}
+                      cx={50 + (i * 23.3)}
+                      cy={200 - (point.value * 1.2)}
+                      r="3"
+                      fill="#3b82f6"
+                    />
+                  ))}
+                </g>
+                <g className="chart-labels">
+                  {chartData.filter((_, i) => i % 5 === 0).map((point, i) => (
+                    <text
+                      key={i}
+                      x={50 + (i * 5 * 23.3)}
+                      y="220"
+                      textAnchor="middle"
+                      fontSize="10"
+                      fill="#6b7280"
+                    >
+                      {point.day}
+                    </text>
+                  ))}
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          {/* Metrics Cards */}
+          <div className="metrics-grid">
+            <div className="metric-card">
+              <div className="metric-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <div className="metric-content">
+                <h3>Total Users</h3>
+                <div className="metric-value">{dashboardStats.totalUsers}</div>
+                <div className="metric-change">0% from {dashboardStats.totalUsers}</div>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <div className="metric-content">
+                <h3>Pending Tickets</h3>
+                <div className="metric-value">{dashboardStats.pendingTickets}</div>
+                <div className="metric-change">0% from 18</div>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M9 12H15M9 16H15M9 8H15" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <div className="metric-content">
+                <h3>Pending KYC</h3>
+                <div className="metric-value">{dashboardStats.pendingKYC}</div>
+                <div className="metric-change">0% from 13</div>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <div className="metric-content">
+                <h3>This Month Transactions</h3>
+                <div className="metric-value">{dashboardStats.thisMonthTransactions}</div>
+                <div className="metric-change">0% from 5</div>
+                <div className="mini-chart">
+                  <svg width="60" height="20" viewBox="0 0 60 20">
+                    <path d="M0,15 L15,10 L30,12 L45,8 L60,5" stroke="#ef4444" strokeWidth="1.5" fill="none"/>
+                    <path d="M0,15 L15,10 L30,12 L45,8 L60,5 L60,20 L0,20 Z" fill="#ef4444" fillOpacity="0.1"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V19C17 19.6 16.6 20 16 20H8C7.4 20 7 19.6 7 19V13M17 13H7" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <div className="metric-content">
+                <h3>Total Orders</h3>
+                <div className="metric-value">{dashboardStats.totalOrders}</div>
+                <div className="metric-change">0% from {dashboardStats.totalOrders - 1}</div>
+                <div className="mini-chart">
+                  <svg width="60" height="20" viewBox="0 0 60 20">
+                    <path d="M0,15 L15,10 L30,12 L45,8 L60,5" stroke="#ef4444" strokeWidth="1.5" fill="none"/>
+                    <path d="M0,15 L15,10 L30,12 L45,8 L60,5 L60,20 L0,20 Z" fill="#ef4444" fillOpacity="0.1"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <div className="metric-content">
+                <h3>Pending Orders</h3>
+                <div className="metric-value">{dashboardStats.pendingOrders}</div>
+                <div className="metric-change">0% from {dashboardStats.totalOrders}</div>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <div className="metric-content">
+                <h3>Completed Orders</h3>
+                <div className="metric-value">{dashboardStats.completedOrders}</div>
+                <div className="metric-change">0% from {dashboardStats.totalOrders}</div>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+              <div className="metric-content">
+                <h3>Cancel Orders</h3>
+                <div className="metric-value">{dashboardStats.cancelledOrders}</div>
+                <div className="metric-change">0% from {dashboardStats.totalOrders}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Orders History Section */}
+          <div className="orders-history-section">
+            <div className="orders-history-header">
+              <h2>Orders History</h2>
+              <div className="orders-filters">
+                <select className="category-filter">
+                  <option>All Category</option>
+                  <option>Social Media</option>
+                  <option>Marketing</option>
+                  <option>Content</option>
+                </select>
+                <div className="date-range-picker">
+                  <span>Aug 29 - Sep 4, 2025</span>
+                </div>
+              </div>
+            </div>
+            <div className="order-status-labels">
+              <div className="status-label order">ORDER</div>
+              <div className="status-label pending">ORDER PENDING</div>
+              <div className="status-label withdraw">ORDER WITHDRAW</div>
+            </div>
+          </div>
+        </div>
+      )}
 
   {activeTab === 'users' && (
         <div className="users-section">
