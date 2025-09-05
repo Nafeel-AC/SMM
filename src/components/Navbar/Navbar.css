@@ -1,12 +1,16 @@
 .navbar {
-  background-color: #9665fd;
+  /* background-color: #9665fd; */
+  background: #9665fd;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #9733EE, #9665fd);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #9665fd, #823392); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   padding: 0.75rem 0;
   transition: all 0.3s ease;
   height: 60px;
 }
 
 .navbar.transparent {
-  background-color: rgba(150, 101, 253, 0.95);
+  /* background-color: rgba(150, 101, 253, 0.95); */
+  background-color: unset;
 }
 
 .navbar.scrolled {
