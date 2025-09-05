@@ -15,9 +15,6 @@ const pricingData = {
                 '24/7 Live Support',
                 'Instagram Audit',
                 'Cancel Anytime',
-                'VPN Login Support',
-                'Account Management',
-                'Monthly Review'
             ],
             popular: false
         },
@@ -33,11 +30,6 @@ const pricingData = {
                 'Cancel Anytime',
                 'Target by Hashtag',
                 'Target by Influencer & competitor',
-                'Targeting Optimization',
-                'Gender',
-                'VPN Login Support',
-                'Account Management',
-                'Monthly Review'
             ],
             popular: true
         },
@@ -53,16 +45,7 @@ const pricingData = {
                 'Cancel Anytime',
                 'Target by Hashtag',
                 'Target by Influencer & competitor',
-                'Targeting Optimization',
                 'Gender',
-                'Comments',
-                'Likes Posts',
-                'VPN Login Support',
-                'Like After Follow',
-                'Tiktok Service',
-                'Welcome DM',
-                'Account Management',
-                'Monthly Review'
             ],
             popular: false
         }
