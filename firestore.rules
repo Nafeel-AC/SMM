@@ -21,11 +21,14 @@ service cloud.firestore {
          request.resource.data.user_id == request.auth.uid);
     }
     
-    // Allow users to read and write their own user requirements
+    // Allow users to read and write their own user requirements, and allow staff to read/write any
     match /user_requirements/{requirementId} {
-      allow read, write: if request.auth != null && 
-        (resource.data.user_id == request.auth.uid || 
-         request.resource.data.user_id == request.auth.uid);
+      allow read, write: if request.auth != null && (
+        resource.data.user_id == request.auth.uid ||
+        request.resource.data.user_id == request.auth.uid ||
+        exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'staff'
+      );
     }
     
     // Allow users to read and write their own support chats

@@ -5,6 +5,10 @@ import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import './StaffPanel.css';
 
 const StaffPanel = () => {
+  const [pendingOrders, setPendingOrders] = useState([]);
+  const [completedOrders, setCompletedOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [orderError, setOrderError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -12,7 +16,46 @@ const StaffPanel = () => {
   const { user } = useFirebaseAuth();
 
   useEffect(() => {
-    fetchUsers();
+  fetchUsers();
+  fetchAssignedOrders();
+  // Fetch orders assigned to this staff
+  const fetchAssignedOrders = async () => {
+    setOrdersLoading(true);
+    setOrderError(null);
+    try {
+      // Get all assignments for this staff
+      const assignmentsSnap = await getDocs(query(collection(db, 'staff_assignments'), where('staff_id', '==', user.uid)));
+      const userIds = assignmentsSnap.docs.map(doc => doc.data().user_id);
+      if (userIds.length === 0) {
+        setPendingOrders([]);
+        setCompletedOrders([]);
+        setOrdersLoading(false);
+        return;
+      }
+      // Get all requirements for these users
+      const requirementsSnap = await getDocs(collection(db, 'user_requirements'));
+      const orders = requirementsSnap.docs
+        .filter(doc => userIds.includes(doc.data().user_id))
+        .map(doc => ({ id: doc.id, ...doc.data() }));
+      setPendingOrders(orders.filter(o => o.order_completed === false));
+      setCompletedOrders(orders.filter(o => o.order_completed === true));
+    } catch (err) {
+      setOrderError('Failed to load assigned orders.');
+      setPendingOrders([]);
+      setCompletedOrders([]);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+  // Update order state
+  const handleOrderStateChange = async (orderId, completed) => {
+    try {
+      await db.collection('user_requirements').doc(orderId).update({ order_completed: completed });
+      fetchAssignedOrders();
+    } catch (err) {
+      alert('Failed to update order state.');
+    }
+  };
   }, []);
 
   const fetchUsers = async () => {
@@ -74,6 +117,53 @@ const StaffPanel = () => {
           >
             Users ({users.length})
           </button>
+          <button
+            className={`tab-btn ${activeTab === 'pendingOrders' ? 'active' : ''}`}
+            onClick={() => setActiveTab('pendingOrders')}
+          >
+            Pending Orders ({pendingOrders.length})
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'completedOrders' ? 'active' : ''}`}
+            onClick={() => setActiveTab('completedOrders')}
+          >
+            Completed Orders ({completedOrders.length})
+          </button>
+        {activeTab === 'pendingOrders' && (
+          <div className="orders-section">
+            <h2>Pending Orders</h2>
+            {ordersLoading ? <p>Loading...</p> : orderError ? <p style={{ color: 'red' }}>{orderError}</p> : (
+              <div className="orders-grid">
+                {pendingOrders.length === 0 ? <p>No pending orders.</p> : pendingOrders.map(order => (
+                  <div key={order.id} className="order-card">
+                    <div><strong>User ID:</strong> {order.user_id}</div>
+                    <div><strong>Business Type:</strong> {order.business_type}</div>
+                    <div><strong>Created:</strong> {order.created_at && order.created_at.seconds ? new Date(order.created_at.seconds * 1000).toLocaleString() : ''}</div>
+                    <button style={{ marginTop: 8 }} onClick={() => handleOrderStateChange(order.id, true)}>Mark as Completed</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'completedOrders' && (
+          <div className="orders-section">
+            <h2>Completed Orders</h2>
+            {ordersLoading ? <p>Loading...</p> : orderError ? <p style={{ color: 'red' }}>{orderError}</p> : (
+              <div className="orders-grid">
+                {completedOrders.length === 0 ? <p>No completed orders.</p> : completedOrders.map(order => (
+                  <div key={order.id} className="order-card">
+                    <div><strong>User ID:</strong> {order.user_id}</div>
+                    <div><strong>Business Type:</strong> {order.business_type}</div>
+                    <div><strong>Created:</strong> {order.created_at && order.created_at.seconds ? new Date(order.created_at.seconds * 1000).toLocaleString() : ''}</div>
+                    <button style={{ marginTop: 8 }} onClick={() => handleOrderStateChange(order.id, false)}>Mark as Pending</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
           <button 
             className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
             onClick={() => setActiveTab('analytics')}

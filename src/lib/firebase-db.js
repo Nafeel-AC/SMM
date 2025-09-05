@@ -17,6 +17,37 @@ import {
 import { db } from './firebase';
 
 class FirebaseDatabaseService {
+  // Get all staff profiles
+  async getAllStaff() {
+    try {
+      const querySnapshot = await getDocs(collection(this.db, 'profiles'));
+      const staff = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.role === 'staff' || data.role === 'admin') {
+          staff.push({ id: doc.id, ...data });
+        }
+      });
+      return { data: staff, error: null };
+    } catch (error) {
+      console.error('Error getting all staff:', error);
+      return { data: null, error };
+    }
+  }
+  // Generic method to get all documents in a collection
+  async getAllDocuments(collectionName) {
+    try {
+      const querySnapshot = await getDocs(collection(this.db, collectionName));
+      const documents = [];
+      querySnapshot.forEach((doc) => {
+        documents.push({ id: doc.id, ...doc.data() });
+      });
+      return { data: documents, error: null };
+    } catch (error) {
+      console.error(`Error getting all documents from ${collectionName}:`, error);
+      return { data: null, error };
+    }
+  }
   constructor() {
     this.db = db;
   }
@@ -261,7 +292,12 @@ class FirebaseDatabaseService {
   }
 
   async saveUserRequirements(requirementsData) {
-    return this.addDocument('user_requirements', requirementsData);
+    // Add 'order_completed' field as false when saving user requirements
+    const dataWithOrderCompleted = {
+      ...requirementsData,
+      order_completed: false
+    };
+    return this.addDocument('user_requirements', dataWithOrderCompleted);
   }
 
   async updateUserRequirements(requirementsId, updates) {

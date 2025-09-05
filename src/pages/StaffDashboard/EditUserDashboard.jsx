@@ -135,31 +135,33 @@ const EditUserDashboard = () => {
             <div className="editable-section" style={{ marginTop: 48 }}>
               <h3>All User Fields</h3>
               <div className="editable-fields">
-                {requirements && Object.keys(requirements).map((key) => (
-                  <div key={key} style={{ marginBottom: '16px' }}>
-                    <label style={{ fontWeight: 600 }}>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</label>
-                    {editMode ? (
-                      <input
-                        type="text"
-                        value={typeof editedRequirements[key] === 'object' && editedRequirements[key] !== null
-                          ? editedRequirements[key].seconds !== undefined
-                            ? new Date(editedRequirements[key].seconds * 1000).toISOString()
-                            : JSON.stringify(editedRequirements[key])
-                          : editedRequirements[key] || ''}
-                        onChange={e => handleFieldChange(key, e.target.value)}
-                        style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
-                      />
-                    ) : (
-                      <span style={{ marginLeft: 8 }}>
-                        {typeof requirements[key] === 'object' && requirements[key] !== null
-                          ? requirements[key].seconds !== undefined
-                            ? new Date(requirements[key].seconds * 1000).toLocaleString()
-                            : JSON.stringify(requirements[key])
-                          : requirements[key]}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                {requirements && Object.keys(requirements)
+                  .filter(key => key !== 'order_completed')
+                  .map((key) => (
+                    <div key={key} style={{ marginBottom: '16px' }}>
+                      <label style={{ fontWeight: 600 }}>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</label>
+                      {editMode ? (
+                        <input
+                          type="text"
+                          value={typeof editedRequirements[key] === 'object' && editedRequirements[key] !== null
+                            ? editedRequirements[key].seconds !== undefined
+                              ? new Date(editedRequirements[key].seconds * 1000).toISOString()
+                              : JSON.stringify(editedRequirements[key])
+                            : editedRequirements[key] || ''}
+                          onChange={e => handleFieldChange(key, e.target.value)}
+                          style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                        />
+                      ) : (
+                        <span style={{ marginLeft: 8 }}>
+                          {typeof requirements[key] === 'object' && requirements[key] !== null
+                            ? requirements[key].seconds !== undefined
+                              ? new Date(requirements[key].seconds * 1000).toLocaleString()
+                              : JSON.stringify(requirements[key])
+                            : requirements[key]}
+                        </span>
+                      )}
+                    </div>
+                  ))}
               </div>
             </div>
             {/* Edit/Save buttons at the end of the page */}
