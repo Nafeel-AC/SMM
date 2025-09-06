@@ -193,22 +193,6 @@ const RequirementsFormPage = () => {
         <div className="form-header">
           <h1>Niche Data Collection</h1>
           <p>Help us understand your Instagram niche and targeting preferences for optimal growth strategy.</p>
-          
-          {/* Debug info - remove in production */}
-          {process.env.NODE_ENV === 'development' && (
-            <div style={{ 
-              background: '#f0f0f0', 
-              padding: '10px', 
-              margin: '10px 0', 
-              borderRadius: '5px',
-              fontSize: '12px',
-              border: '1px solid #ccc'
-            }}>
-              <strong>Debug Info:</strong><br/>
-              User: {user ? `${user.email} (${user.id})` : 'Not logged in'}<br/>
-              Form Data: {JSON.stringify(formData, null, 2)}
-            </div>
-          )}
         </div>
 
         <form onSubmit={handleSubmit} className="requirements-form">
@@ -217,7 +201,7 @@ const RequirementsFormPage = () => {
             <div className="form-group">
               <label>Niche (Target Audience) *</label>
               {formData.niche.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <div key={idx} className="form-item-container">
                   <select
                     value={item}
                     onChange={e => handleArrayChange('niche', idx, e.target.value)}
@@ -229,39 +213,41 @@ const RequirementsFormPage = () => {
                     ))}
                   </select>
                   {formData.niche.length > 1 && (
-                    <button type="button" onClick={() => handleRemoveItem('niche', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                    <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('niche', idx)}>Remove</button>
                   )}
                 </div>
               ))}
               {formData.niche.length < 5 && (
-                <button type="button" onClick={() => handleAddItem('niche', 5)}>Add item</button>
+                <button type="button" className="add-item-btn" onClick={() => handleAddItem('niche', 5)}>Add item</button>
               )}
             </div>
-            <label>Location *</label>
-            {formData.location.map((item, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
-                <input
-                  type="text"
-                  value={item}
-                  onChange={e => handleArrayChange('location', idx, e.target.value)}
-                  placeholder="e.g., New York, USA or Global"
-                  required
-                />
-                {formData.location.length > 1 && (
-                  <button type="button" onClick={() => handleRemoveItem('location', idx)} style={{ marginLeft: 8 }}>Remove</button>
-                )}
-              </div>
-            ))}
-            {formData.location.length < 3 && (
-              <button type="button" onClick={() => handleAddItem('location', 3)}>Add item</button>
-            )}
+            <div className="form-group">
+              <label>Location *</label>
+              {formData.location.map((item, idx) => (
+                <div key={idx} className="form-item-container">
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={e => handleArrayChange('location', idx, e.target.value)}
+                    placeholder="e.g., New York, USA or Global"
+                    required
+                  />
+                  {formData.location.length > 1 && (
+                    <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('location', idx)}>Remove</button>
+                  )}
+                </div>
+              ))}
+              {formData.location.length < 3 && (
+                <button type="button" className="add-item-btn" onClick={() => handleAddItem('location', 3)}>Add item</button>
+              )}
+            </div>
           </div>
           <div className="form-section">
             <h3>Engagement Preferences</h3>
             <div className="form-group">
               <label>Comments (describe your comment strategy)</label>
               {formData.comments.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <div key={idx} className="form-item-container">
                   <textarea
                     value={item}
                     onChange={e => handleArrayChange('comments', idx, e.target.value)}
@@ -269,18 +255,18 @@ const RequirementsFormPage = () => {
                     rows="2"
                   />
                   {formData.comments.length > 1 && (
-                    <button type="button" onClick={() => handleRemoveItem('comments', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                    <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('comments', idx)}>Remove</button>
                   )}
                 </div>
               ))}
               {formData.comments.length < 5 && (
-                <button type="button" onClick={() => handleAddItem('comments', 5)}>Add item</button>
+                <button type="button" className="add-item-btn" onClick={() => handleAddItem('comments', 5)}>Add item</button>
               )}
             </div>
             <div className="form-group">
               <label>DMs (describe your DM strategy)</label>
               {formData.dms.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <div key={idx} className="form-item-container">
                   <textarea
                     value={item}
                     onChange={e => handleArrayChange('dms', idx, e.target.value)}
@@ -288,12 +274,12 @@ const RequirementsFormPage = () => {
                     rows="2"
                   />
                   {formData.dms.length > 1 && (
-                    <button type="button" onClick={() => handleRemoveItem('dms', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                    <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('dms', idx)}>Remove</button>
                   )}
                 </div>
               ))}
               {formData.dms.length < 3 && (
-                <button type="button" onClick={() => handleAddItem('dms', 3)}>Add item</button>
+                <button type="button" className="add-item-btn" onClick={() => handleAddItem('dms', 3)}>Add item</button>
               )}
             </div>
             <div className="form-group">
@@ -313,7 +299,7 @@ const RequirementsFormPage = () => {
             <div className="form-group">
               <label>Hashtags *</label>
               {formData.hashtags.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <div key={idx} className="form-item-container">
                   <input
                     type="text"
                     value={item}
@@ -322,18 +308,18 @@ const RequirementsFormPage = () => {
                     required
                   />
                   {formData.hashtags.length > 1 && (
-                    <button type="button" onClick={() => handleRemoveItem('hashtags', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                    <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('hashtags', idx)}>Remove</button>
                   )}
                 </div>
               ))}
               {formData.hashtags.length < 10 && (
-                <button type="button" onClick={() => handleAddItem('hashtags', 10)}>Add item</button>
+                <button type="button" className="add-item-btn" onClick={() => handleAddItem('hashtags', 10)}>Add item</button>
               )}
             </div>
             <div className="form-group">
               <label>Account Targets *</label>
               {formData.account_targets.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                <div key={idx} className="form-item-container">
                   <input
                     type="text"
                     value={item}
@@ -342,12 +328,12 @@ const RequirementsFormPage = () => {
                     required
                   />
                   {formData.account_targets.length > 1 && (
-                    <button type="button" onClick={() => handleRemoveItem('account_targets', idx)} style={{ marginLeft: 8 }}>Remove</button>
+                    <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('account_targets', idx)}>Remove</button>
                   )}
                 </div>
               ))}
               {formData.account_targets.length < 5 && (
-                <button type="button" onClick={() => handleAddItem('account_targets', 5)}>Add item</button>
+                <button type="button" className="add-item-btn" onClick={() => handleAddItem('account_targets', 5)}>Add item</button>
               )}
             </div>
           </div>
