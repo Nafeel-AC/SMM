@@ -55,7 +55,7 @@ const ClientReviews = () => {
             <div className="reviews-subtitle">REVIEWS</div>
             <h2 className="reviews-title">What do our customers say?</h2>
             <p className="reviews-description">
-              Social Boost helps 3,000+ active customers to build their audience servicing customers in over 140 countries in a variety of industries from individuals to Fortune 500 companies, and everything inbetween!
+              Glowup Agency helps 3,000+ active customers to build their audience servicing customers in over 140 countries in a variety of industries from individuals to Fortune 500 companies, and everything inbetween!
             </p>
             
             <div className="features-list">

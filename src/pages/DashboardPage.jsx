@@ -175,6 +175,17 @@ const DashboardPage = () => {
                 disabled={true}
               />
 
+              {/* Display Currently following From field (disabled input) */}
+              <div style={{ margin: '24px 0' }}>
+                <label style={{ fontWeight: 600 }}>Currently following From:</label>
+                <input
+                  type="text"
+                  value={requirements?.currently_following_from && requirements.currently_following_from.trim() !== '' ? requirements.currently_following_from : 'none'}
+                  disabled
+                  style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                />
+              </div>
+
               {/* Accounts Section */}
               <AccountsSection 
                 initialAccounts={Array.isArray(requirements?.account_targets)

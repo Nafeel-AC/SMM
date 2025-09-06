@@ -95,7 +95,7 @@ const Footer = () => {
         <div className="container">
           <div className="bottom-content">
             <div className="copyright">
-              © {currentYear} Social Boost. All rights reserved.
+              © {currentYear} Glowup Agency. All rights reserved.
             </div>
             <div className="location">
               London • New York
