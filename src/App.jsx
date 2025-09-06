@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ServicesPage from './pages/ServicesPage';
+import PrivacyPage from './pages/PrivacyPage';
 
 
 import SubscriptionPage from './pages/SubscriptionPage';
@@ -89,7 +90,8 @@ function App() {
     <Router>
       <FirebaseAuthProvider>
         <DebugExposer />
-        <Routes>
+  <Routes>
+          <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/about" element={<AboutPage />} />

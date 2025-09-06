@@ -1,0 +1,20 @@
+.privacy-page {
+  font-family: 'Inter', Arial, sans-serif;
+  color: #222;
+  background: #fff;
+}
+.privacy-page h1, .privacy-page h2 {
+  color: #1a1a1a;
+}
+.privacy-page ul {
+  margin-left: 1.5em;
+  margin-bottom: 1em;
+}
+.privacy-page li {
+  margin-bottom: 0.5em;
+}
+.privacy-page hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 32px 0;
+}
