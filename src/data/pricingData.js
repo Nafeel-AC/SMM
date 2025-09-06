@@ -7,45 +7,41 @@ const pricingData = {
     plans: [
         {
             id: 'starter',
-            name: 'Starter',
+            name: 'Basic Plan',
             description: 'Perfect for personal accounts seeking steady, organic growth and targeted global followers.',
             features: [
-                'Real Instagram Followers',
-                'Monthly growth Analytics',
-                '24/7 Live Support',
-                'Instagram Audit',
-                'Cancel Anytime',
+                'Instagram Growth Management',
+                'Basic Analytics Dashboard',
+                'Email Support',
+                'Up to 1 Instagram Account',
             ],
             popular: false
         },
         {
             id: 'premium',
-            name: 'Premium',
+            name: 'Pro Plan',
             description: 'Ideal for individuals and businesses looking to build a relevant local community with focused targeting.',
             features: [
-                'Real Instagram Followers',
-                'Monthly growth Analytics',
-                '24/7 Live Support',
-                'Instagram Audit',
-                'Cancel Anytime',
-                'Target by Hashtag',
-                'Target by Influencer & competitor',
+                'Advanced Growth Strategies',
+                'Detailed Analytics & Insights',
+                'Priority Support',
+                'Up to 3 Instagram Accounts',
+                'Custom Hashtag Research',
+                'Competitor Analysis',
             ],
             popular: true
         },
         {
             id: 'ultimate',
-            name: 'Ultimate',
+            name: 'Enterprise Plan',
             description: 'Designed for people building their brand with tailored engagement and advanced targeting capabilities.',
             features: [
-                'Real Instagram Followers',
-                'Monthly growth Analytics',
-                '24/7 Live Support',
-                'Instagram Audit',
-                'Cancel Anytime',
-                'Target by Hashtag',
-                'Target by Influencer & competitor',
-                'Gender',
+                'White-label Growth Service',
+                'Advanced Analytics & Reporting',
+                'Dedicated Account Manager',
+                'Unlimited Instagram Accounts',
+                'Custom Strategy Development',
+                '24/7 Phone Support',
             ],
             popular: false
         }
@@ -54,14 +50,14 @@ const pricingData = {
     // Pricing by billing cycle
     pricing: {
         monthly: {
-            starter: 59,
-            premium: 89,
-            ultimate: 249
+            starter: 29,
+            premium: 59,
+            ultimate: 99
         },
         yearly: {
-            starter: 579,
-            premium: 829,
-            ultimate: 1879
+            starter: 290,
+            premium: 590,
+            ultimate: 990
         }
     },
 
