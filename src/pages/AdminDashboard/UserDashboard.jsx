@@ -160,8 +160,28 @@ const UserDashboard = () => {
                 </div>
               )}
               <div className="editable-fields">
+                {/* Custom field: Currently following From */}
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontWeight: 600 }}>Currently following From:</label>
+                  {editMode ? (
+                    <input
+                      type="text"
+                      value={editedRequirements?.currently_following_from || ''}
+                      onChange={e => handleFieldChange('currently_following_from', e.target.value)}
+                      style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                      placeholder="none"
+                    />
+                  ) : (
+                    <span style={{ marginLeft: 8 }}>
+                      {requirements && requirements.currently_following_from && requirements.currently_following_from.trim() !== ''
+                        ? requirements.currently_following_from
+                        : 'none'}
+                    </span>
+                  )}
+                </div>
+                {/* Render all other fields except order_completed and currently_following_from */}
                 {requirements && Object.keys(requirements)
-                  .filter(key => key !== 'order_completed')
+                  .filter(key => key !== 'order_completed' && key !== 'currently_following_from')
                   .map((key) => (
                     <div key={key} style={{ marginBottom: '16px' }}>
                       <label style={{ fontWeight: 600 }}>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</label>
