@@ -206,7 +206,7 @@ const PaymentPage = () => {
                 {currentPlan.features.map((feature, index) => (
                   <li key={index}>
                     <span className="feature-icon">✓</span>
-                    {feature}
+                    <span className="feature-text">{feature}</span>
                   </li>
                 ))}
               </ul>

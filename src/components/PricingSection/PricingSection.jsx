@@ -101,6 +101,13 @@ const PricingSection = ({ onPlanSelect }) => {
                       </div>
                     ))}
                   </div>
+                  
+                  <button 
+                    className="get-started-btn"
+                    onClick={() => handleGetStarted(plan.name)}
+                  >
+                    Get Started
+                  </button>
                 </div>
               </div>
             ))}
