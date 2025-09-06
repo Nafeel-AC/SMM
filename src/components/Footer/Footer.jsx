@@ -93,9 +93,12 @@ const Footer = () => {
       {/* Bottom Bar: Copyright and Language Selector */}
       <div className="footer-bottom">
         <div className="container">
-          <div className="bottom-content">
+          <div className="bottom-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div className="copyright">
               © {currentYear} Glowup Agency. All rights reserved.
+            </div>
+            <div>
+              <Link to="/privacy" style={{ color: '#888', textDecoration: 'underline', fontSize: 14 }}>Privacy &amp; Policy</Link>
             </div>
             <div className="location">
               London • New York
