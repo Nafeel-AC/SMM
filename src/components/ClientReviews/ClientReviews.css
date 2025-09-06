@@ -25,16 +25,23 @@
   z-index: 2;
 }
 
-.reviews-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: start;
+/* Header Section */
+.reviews-header {
+  text-align: center;
+  margin-bottom: 60px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Left Column: Introduction and Features */
-.reviews-intro {
-  padding-right: 40px;
+/* Testimonials Grid */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .reviews-subtitle {
@@ -110,12 +117,7 @@
   font-weight: 500;
 }
 
-/* Right Column: Customer Testimonials */
-.testimonials-column {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
+/* Testimonial Cards */
 
 .testimonial-card {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
@@ -126,7 +128,9 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  margin-top: 80px;
+  margin-top: 0;
+  opacity: 1;
+  visibility: visible;
 }
 
 .testimonial-card:hover {
@@ -179,18 +183,13 @@
 
 /* Responsive Design */
 @media (max-width: 991px) {
-  .reviews-grid {
+  .testimonials-grid {
     grid-template-columns: 1fr;
-    gap: 60px;
+    gap: 25px;
   }
   
-  .reviews-intro {
-    padding-right: 0;
-    text-align: center;
-  }
-  
-  .features-list {
-    align-items: center;
+  .reviews-header {
+    margin-bottom: 40px;
   }
 }
 
@@ -207,8 +206,9 @@
     font-size: 15px;
   }
   
-  .feature-text {
-    font-size: 15px;
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
   
   .testimonial-card {
