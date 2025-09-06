@@ -171,10 +171,6 @@ const ServicesPage = () => {
           <div className="cta-content">
             <h2>Ready to Get Started?</h2>
             <p>Choose your platform and start growing your social media presence today</p>
-            <button className="cta-btn">
-              <i className="fas fa-rocket"></i>
-              Start Your Campaign
-            </button>
           </div>
         </div>
       </section>
