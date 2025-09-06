@@ -5,16 +5,28 @@ import './SubscriptionPage.css';
 
 const SubscriptionPage = () => {
   const [selectedPlan, setSelectedPlan] = useState('basic');
+  const [billingCycle, setBillingCycle] = useState('monthly');
   const [loading, setLoading] = useState(false);
   const { user } = useFirebaseAuth();
   const navigate = useNavigate();
+
+  const pricingData = {
+    monthly: {
+      basic: { price: 29, period: '/month' },
+      pro: { price: 59, period: '/month' },
+      enterprise: { price: 189, period: '/month' }
+    },
+    yearly: {
+      basic: { price: 290, period: '/year', monthlyEquivalent: 24.17 },
+      pro: { price: 590, period: '/year', monthlyEquivalent: 49.17 },
+      enterprise: { price: 1890, period: '/year', monthlyEquivalent: 157.50 }
+    }
+  };
 
   const plans = [
     {
       id: 'basic',
       name: 'Basic Plan',
-      price: '$29',
-      period: '/month',
       features: [
         'Instagram Growth Management',
         'Basic Analytics Dashboard',
@@ -26,8 +38,6 @@ const SubscriptionPage = () => {
     {
       id: 'pro',
       name: 'Pro Plan',
-      price: '$59',
-      period: '/month',
       features: [
         'Advanced Growth Strategies',
         'Detailed Analytics & Insights',
@@ -41,8 +51,6 @@ const SubscriptionPage = () => {
     {
       id: 'enterprise',
       name: 'Enterprise Plan',
-      price: '$189',
-      period: '/month',
       features: [
         'White-label Growth Service',
         'Advanced Analytics & Reporting',
@@ -77,47 +85,76 @@ const SubscriptionPage = () => {
           <p>Select the perfect plan for your Instagram growth needs</p>
         </div>
 
+        {/* Billing Toggle */}
+        <div className="billing-toggle">
+          <div className="toggle-container">
+            <span className={`toggle-label ${billingCycle === 'monthly' ? 'active' : ''}`}>
+              Monthly
+            </span>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={billingCycle === 'yearly'}
+                onChange={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+              />
+              <span className="slider"></span>
+            </label>
+            <span className={`toggle-label ${billingCycle === 'yearly' ? 'active' : ''}`}>
+              Yearly
+              <span className="discount-badge">Save 30%</span>
+            </span>
+          </div>
+        </div>
+
         <div className="plans-grid">
-          {plans.map((plan) => (
-            <div 
-              key={plan.id}
-              className={`plan-card ${selectedPlan === plan.id ? 'selected' : ''} ${plan.popular ? 'popular' : ''}`}
-              onClick={() => handleSelectPlan(plan.id)}
-            >
-              {plan.popular && (
-                <div className="popular-badge">Most Popular</div>
-              )}
-              
-              <div className="plan-header">
-                <h3>{plan.name}</h3>
-                <div className="plan-price">
-                  <span className="price">{plan.price}</span>
-                  <span className="period">{plan.period}</span>
-                </div>
-              </div>
-
-              <ul className="plan-features">
-                {plan.features.map((feature, index) => (
-                  <li key={index}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="plan-select">
-                <div className={`select-indicator ${selectedPlan === plan.id ? 'active' : ''}`}>
-                  {selectedPlan === plan.id && (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+          {plans.map((plan) => {
+            const currentPricing = pricingData[billingCycle][plan.id];
+            return (
+              <div 
+                key={plan.id}
+                className={`plan-card ${selectedPlan === plan.id ? 'selected' : ''} ${plan.popular ? 'popular' : ''}`}
+                onClick={() => handleSelectPlan(plan.id)}
+              >
+                {plan.popular && (
+                  <div className="popular-badge">Most Popular</div>
+                )}
+                
+                <div className="plan-header">
+                  <h3>{plan.name}</h3>
+                  <div className="plan-price">
+                    <span className="price">${currentPricing.price}</span>
+                    <span className="period">{currentPricing.period}</span>
+                  </div>
+                  {billingCycle === 'yearly' && (
+                    <div className="monthly-equivalent">
+                      (${currentPricing.monthlyEquivalent}/month)
+                    </div>
                   )}
                 </div>
+
+                <ul className="plan-features">
+                  {plan.features.map((feature, index) => (
+                    <li key={index}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="plan-select">
+                  <div className={`select-indicator ${selectedPlan === plan.id ? 'active' : ''}`}>
+                    {selectedPlan === plan.id && (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="subscription-actions">
