@@ -88,17 +88,6 @@ const PricingSection = ({ onPlanSelect }) => {
                     </div>
                   )}
                   
-                  <button
-                    className={`get-started-btn ${plan.popular ? '' : 'secondary'}`}
-                    onClick={() => handleGetStarted(plan.name)}
-                  >
-                    Get Started
-                    <span className="arrow-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z" fill="currentColor"/>
-                      </svg>
-                    </span>
-                  </button>
                   
                   <div className="features-list">
                     {plan.features.map((feature, index) => (
@@ -195,12 +184,6 @@ const PricingSection = ({ onPlanSelect }) => {
                 {/* <th scope="row" className="sr-only">Choose your plan</th> */}
 
                 {/* <td>
-                  <button 
-                    className="table-cta" 
-                    onClick={() => handleGetStarted('Starter')}
-                  >
-                    Get Started
-                  </button>
                 </td>
                 <td>
                   <button 
@@ -212,12 +195,6 @@ const PricingSection = ({ onPlanSelect }) => {
                 </td> */}
                 
                 <td>
-                  <button 
-                    className="table-cta"
-                    onClick={() => handleGetStarted('Ultimate')}
-                  >
-                    Get Started
-                  </button>
                 </td>
               </tr>
             </tfoot>

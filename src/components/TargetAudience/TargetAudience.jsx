@@ -185,12 +185,6 @@ const TargetAudience = () => {
             <div className="audience-tab-content">
               <h3>{activeTabData.title}</h3>
               <p>{activeTabData.description}</p>
-              <a href="/" className="audience-learn-more">
-                Learn More About {activeTabData.title}
-                <svg className="arrow-icon" viewBox="0 0 24 24">
-                  <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
-                </svg>
-              </a>
             </div>
           </div>
         </div>

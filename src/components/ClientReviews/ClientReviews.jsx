@@ -8,22 +8,17 @@ const ClientReviews = () => {
       name: "Gregg Lomas",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
       rating: 5,
-      review: "Service is really easy to use. They understand your target market and I saw growth and engagement immediately."
+      review: "The platform is incredibly user-friendly and their team truly understands our target market. We experienced significant growth and engagement within the first week of implementation."
     },
     {
       id: 2,
       name: "Veronika Bargaric",
       image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
       rating: 4.5,
-      review: "I'm really impressed! Especially with the fact that it wasn't all fake users adding me up! Hope to work with ya'll more!"
+      review: "I'm thoroughly impressed with the quality of service. The authentic engagement and genuine followers we received exceeded our expectations. We look forward to continuing our partnership."
     }
   ];
 
-  const features = [
-    "Real, Organic and Engaged Instagram Followers",
-    "24/7 Live Chat and Phone Support in UK & US",
-    "100% No-risk, all plans include our Instagram Growth Guarantee!"
-  ];
 
   const renderStars = (rating) => {
     const stars = [];
@@ -52,20 +47,11 @@ const ClientReviews = () => {
         <div className="reviews-grid">
           {/* Left Column: Introduction and Features */}
           <div className="reviews-intro">
-            <div className="reviews-subtitle">REVIEWS</div>
-            <h2 className="reviews-title">What do our customers say?</h2>
+            <div className="reviews-subtitle">TESTIMONIAL</div>
+            <h2 className="reviews-title">What Our Clients Say</h2>
             <p className="reviews-description">
-              Glowup Agency helps 3,000+ active customers to build their audience servicing customers in over 140 countries in a variety of industries from individuals to Fortune 500 companies, and everything inbetween!
+              Our clients praise our excellence, personalized approach, and exceptional results. They highlight our innovative solutions, responsiveness, and strategic thinking as key factors in their success.
             </p>
-            
-            <div className="features-list">
-              {features.map((feature, index) => (
-                <div key={index} className="feature-item">
-                  <i className="fas fa-check checkmark-icon"></i>
-                  <span className="feature-text">{feature}</span>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Right Column: Customer Testimonials */}
