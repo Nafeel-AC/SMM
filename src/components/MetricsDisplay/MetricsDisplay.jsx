@@ -1,7 +1,7 @@
 import React from 'react';
 import './MetricsDisplay.css';
 
-const MetricsDisplay = ({ followers = 1381, following = 676, onRealtimeToggle, isRealtime = false }) => {
+const MetricsDisplay = ({ followers = 1381, following = 676 }) => {
   const formatNumber = (num) => {
     if (num >= 1000000) {
       return (num / 1000000).toFixed(1) + 'M';
@@ -24,15 +24,6 @@ const MetricsDisplay = ({ followers = 1381, following = 676, onRealtimeToggle, i
         </div>
       </div>
       
-      <div className="realtime-toggle">
-        <span className="toggle-label">Realtime</span>
-        <button 
-          className={`toggle-switch ${isRealtime ? 'active' : ''}`}
-          onClick={onRealtimeToggle}
-        >
-          <div className="toggle-slider"></div>
-        </button>
-      </div>
     </div>
   );
 };
