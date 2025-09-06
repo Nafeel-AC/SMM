@@ -1,16 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './AnalyticsChart.css';
 
 const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
-  // Sample data for the chart - in real app this would come from props
-  const chartData = data || [
-    { month: 'March', followers: 150, following: 700 },
-    { month: 'April', followers: 300, following: 750 },
-    { month: 'May', followers: 500, following: 800 },
-    { month: 'June', followers: 750, following: 950 },
-    { month: 'July', followers: 950, following: 1100 },
-    { month: 'August', followers: 1200, following: 900 }
-  ];
+  const [currentData, setCurrentData] = useState(null);
+
+  // Generate data based on time range
+  const generateChartData = (range) => {
+    const baseData = [
+      { month: 'Jan', followers: 100, following: 600 },
+      { month: 'Feb', followers: 150, following: 650 },
+      { month: 'Mar', followers: 200, following: 700 },
+      { month: 'Apr', followers: 280, following: 750 },
+      { month: 'May', followers: 350, following: 800 },
+      { month: 'Jun', followers: 450, following: 850 },
+      { month: 'Jul', followers: 550, following: 900 },
+      { month: 'Aug', followers: 650, following: 950 },
+      { month: 'Sep', followers: 750, following: 1000 },
+      { month: 'Oct', followers: 850, following: 1050 },
+      { month: 'Nov', followers: 950, following: 1100 },
+      { month: 'Dec', followers: 1050, following: 1150 }
+    ];
+
+    switch (range) {
+      case '1month':
+        return baseData.slice(-1); // Last month only
+      case '6months':
+        return baseData.slice(-6); // Last 6 months
+      case '12months':
+        return baseData; // All 12 months
+      default:
+        return baseData.slice(-6); // Default to 6 months
+    }
+  };
+
+  // Update data when timeRange changes
+  useEffect(() => {
+    const newData = data || generateChartData(timeRange);
+    setCurrentData(newData);
+  }, [timeRange, data]);
+
+  // Use current data or fallback to generated data
+  const chartData = currentData || generateChartData(timeRange);
 
   const maxFollowers = Math.max(...chartData.map(d => d.followers));
   const maxFollowing = Math.max(...chartData.map(d => d.following));
@@ -21,18 +51,29 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
 
   const chartHeight = 200;
   const chartWidth = 600;
+  const padding = 40; // Add padding for better positioning
+  const plotWidth = chartWidth - (padding * 2);
+  const plotHeight = chartHeight - (padding * 2);
+
+  // Calculate X position for data points
+  const getXPosition = (index, totalPoints) => {
+    if (totalPoints === 1) {
+      return padding + (plotWidth / 2); // Center single point
+    }
+    return padding + (index / (totalPoints - 1)) * plotWidth;
+  };
 
   // Generate path for followers line
   const followersPath = chartData.map((point, index) => {
-    const x = (index / (chartData.length - 1)) * chartWidth;
-    const y = getYPosition(point.followers, maxFollowers, chartHeight);
+    const x = getXPosition(index, chartData.length);
+    const y = padding + getYPosition(point.followers, maxFollowers, plotHeight);
     return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
   }).join(' ');
 
   // Generate path for following line
   const followingPath = chartData.map((point, index) => {
-    const x = (index / (chartData.length - 1)) * chartWidth;
-    const y = getYPosition(point.following, maxFollowing, chartHeight);
+    const x = getXPosition(index, chartData.length);
+    const y = padding + getYPosition(point.following, maxFollowing, plotHeight);
     return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
   }).join(' ');
 
@@ -41,18 +82,18 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
       <div className="chart-header">
         <div className="chart-title">Growth Analytics</div>
         <div className="time-range-selector">
-          {/* <button 
-            className={`time-btn ${timeRange === '7days' ? 'active' : ''}`}
-            onClick={() => onTimeRangeChange('7days')}
+          <button 
+            className={`time-btn ${timeRange === '1month' ? 'active' : ''}`}
+            onClick={() => onTimeRangeChange('1month')}
           >
-            Last 7 Days
+            Last Month
           </button>
           <button 
-            className={`time-btn ${timeRange === '4weeks' ? 'active' : ''}`}
-            onClick={() => onTimeRangeChange('4weeks')}
+            className={`time-btn ${timeRange === '6months' ? 'active' : ''}`}
+            onClick={() => onTimeRangeChange('6months')}
           >
-            Last 4 Weeks
-          </button> */}
+            Last 6 Months
+          </button>
           <button 
             className={`time-btn ${timeRange === '12months' ? 'active' : ''}`}
             onClick={() => onTimeRangeChange('12months')}
@@ -68,16 +109,16 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
           {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => (
             <g key={index}>
               <line
-                x1={0}
-                y1={ratio * chartHeight}
-                x2={chartWidth}
-                y2={ratio * chartHeight}
+                x1={padding}
+                y1={padding + ratio * plotHeight}
+                x2={padding + plotWidth}
+                y2={padding + ratio * plotHeight}
                 stroke="#f3f4f6"
                 strokeWidth={1}
               />
               <text
-                x={-10}
-                y={ratio * chartHeight + 4}
+                x={padding - 10}
+                y={padding + ratio * plotHeight + 4}
                 textAnchor="end"
                 fontSize="12"
                 fill="#9ca3af"
@@ -91,8 +132,8 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
           {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => (
             <text
               key={`following-${index}`}
-              x={chartWidth + 10}
-              y={ratio * chartHeight + 4}
+              x={padding + plotWidth + 10}
+              y={padding + ratio * plotHeight + 4}
               textAnchor="start"
               fontSize="12"
               fill="#9ca3af"
@@ -102,18 +143,21 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
           ))}
 
           {/* X-axis labels */}
-          {chartData.map((point, index) => (
-            <text
-              key={index}
-              x={(index / (chartData.length - 1)) * chartWidth}
-              y={chartHeight + 20}
-              textAnchor="middle"
-              fontSize="12"
-              fill="#9ca3af"
-            >
-              {point.month}
-            </text>
-          ))}
+          {chartData.map((point, index) => {
+            const x = getXPosition(index, chartData.length);
+            return (
+              <text
+                key={index}
+                x={x}
+                y={chartHeight - 10}
+                textAnchor="middle"
+                fontSize="12"
+                fill="#9ca3af"
+              >
+                {point.month}
+              </text>
+            );
+          })}
 
           {/* Followers line */}
           <path
@@ -137,8 +181,8 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
 
           {/* Data points for followers */}
           {chartData.map((point, index) => {
-            const x = (index / (chartData.length - 1)) * chartWidth;
-            const y = getYPosition(point.followers, maxFollowers, chartHeight);
+            const x = getXPosition(index, chartData.length);
+            const y = padding + getYPosition(point.followers, maxFollowers, plotHeight);
             return (
               <circle
                 key={`followers-${index}`}
@@ -146,14 +190,16 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
                 cy={y}
                 r={4}
                 fill="#3b82f6"
+                stroke="white"
+                strokeWidth={2}
               />
             );
           })}
 
           {/* Data points for following */}
           {chartData.map((point, index) => {
-            const x = (index / (chartData.length - 1)) * chartWidth;
-            const y = getYPosition(point.following, maxFollowing, chartHeight);
+            const x = getXPosition(index, chartData.length);
+            const y = padding + getYPosition(point.following, maxFollowing, plotHeight);
             return (
               <circle
                 key={`following-${index}`}
@@ -161,6 +207,8 @@ const AnalyticsChart = ({ data, timeRange, onTimeRangeChange }) => {
                 cy={y}
                 r={4}
                 fill="#10b981"
+                stroke="white"
+                strokeWidth={2}
               />
             );
           })}

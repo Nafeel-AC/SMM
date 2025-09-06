@@ -22,6 +22,7 @@
 .time-range-selector {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .time-btn {
@@ -50,11 +51,15 @@
 .chart-container {
   position: relative;
   margin-bottom: 16px;
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 .chart-svg {
   width: 100%;
   height: auto;
+  max-width: 100%;
+  display: block;
 }
 
 .chart-legend {
@@ -95,10 +100,24 @@
   .time-range-selector {
     width: 100%;
     justify-content: space-between;
+    gap: 4px;
   }
   
   .time-btn {
     flex: 1;
     text-align: center;
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .time-range-selector {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .time-btn {
+    width: 100%;
   }
 }
