@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./PrivacyPage.css";
 
-const PrivacyPage = () => (
-  <div className="privacy-page" style={{ maxWidth: 800, margin: "40px auto", padding: 24, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
-    <h1 style={{ textAlign: "center", marginBottom: 32 }}>Privacy Policy</h1>
-    <p>At GlowUp Agency (“we”, “our”, or “us”), your privacy is very important to us. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website or use our marketing services (the “Service”).</p>
+const PrivacyPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  return (
+    <div className="privacy-page" style={{ maxWidth: 800, margin: "40px auto", padding: 24, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+      <h1 style={{ textAlign: "center", marginBottom: 32 }}>Privacy Policy</h1>
+      <p>At GlowUp Agency (“we”, “our”, or “us”), your privacy is very important to us. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website or use our marketing services (the “Service”).</p>
     <h2>1. Information We Collect</h2>
     <ul>
       <li><b>Personal Information:</b> such as your name, email address, phone number, and business details when you contact us or register for our services.</li>
@@ -114,7 +118,8 @@ const PrivacyPage = () => (
       <li>Please note that disabling cookies may affect some website features.</li>
     </ul>
     <p>By continuing to use our website, you consent to our use of cookies in accordance with this policy.</p>
-  </div>
-);
+    </div>
+  );
+};
 
 export default PrivacyPage;
