@@ -41,7 +41,7 @@ const SubscriptionPage = () => {
     {
       id: 'enterprise',
       name: 'Enterprise Plan',
-      price: '$99',
+      price: '$189',
       period: '/month',
       features: [
         'White-label Growth Service',
