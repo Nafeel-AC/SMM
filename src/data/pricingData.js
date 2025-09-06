@@ -8,7 +8,7 @@ const pricingData = {
         {
             id: 'starter',
             name: 'Starter',
-            description: 'Perfect for personal accounts seeking steady, organic growth and targeted global followers that align with your interests.',
+            description: 'Perfect for personal accounts seeking steady, organic growth and targeted global followers.',
             features: [
                 'Real Instagram Followers',
                 'Monthly growth Analytics',
@@ -21,7 +21,7 @@ const pricingData = {
         {
             id: 'premium',
             name: 'Premium',
-            description: 'Ideal for individuals and businesses looking to build a relevant local community with focused, location-based targeting and hands-on support.',
+            description: 'Ideal for individuals and businesses looking to build a relevant local community with focused targeting.',
             features: [
                 'Real Instagram Followers',
                 'Monthly growth Analytics',
@@ -36,7 +36,7 @@ const pricingData = {
         {
             id: 'ultimate',
             name: 'Ultimate',
-            description: 'Designed for people building their brand with tailored engagement and advanced targeting to reach a specific audience with guidance from our top performers.',
+            description: 'Designed for people building their brand with tailored engagement and advanced targeting capabilities.',
             features: [
                 'Real Instagram Followers',
                 'Monthly growth Analytics',

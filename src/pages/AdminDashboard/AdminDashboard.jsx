@@ -41,7 +41,7 @@ const AdminDashboard = () => {
   const { user } = useFirebaseAuth();
 
   useEffect(() => {
-  fetchData();
+    fetchData();
   fetchOrders();
   }, []);
 
@@ -585,8 +585,8 @@ const AdminDashboard = () => {
                 onClick={() => handleFilterChange('status', 'completed')}
               >
                 COMPLETED ({completedOrders.length})
-              </button>
-            </div>
+        </button>
+      </div>
             
             {/* Orders List */}
             <div className="orders-list">
@@ -664,7 +664,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
-  {activeTab === 'users' && (
+      {activeTab === 'users' && (
         <div className="users-section">
           <div className="section-header">
             <h2>User Management</h2>
@@ -701,7 +701,7 @@ const AdminDashboard = () => {
             ))}
           </div>
         </div>
-  )}
+      )}
 
   {activeTab === 'pendingOrders' && (
     <div className="orders-section">
@@ -758,54 +758,54 @@ const AdminDashboard = () => {
       </div>
     </div>
   )}
-  {activeTab === 'staff' && (
-    <div className="staff-section">
-      <div className="section-header">
-        <h2>Staff Management</h2>
-        <button 
+      {activeTab === 'staff' && (
+        <div className="staff-section">
+          <div className="section-header">
+            <h2>Staff Management</h2>
+            <button 
           type="button"
-          className="create-staff-btn"
+              className="create-staff-btn"
           onClick={() => navigate('/admin-dashboard/create-staff')}
-        >
-          Create Staff
-        </button>
-      </div>
-      <div className="staff-grid">
-        {staff.map((staffMember) => (
-          <div key={staffMember.id || staffMember.uid || staffMember.email} className="staff-card">
-            <div className="staff-info">
-              <h3>{staffMember.display_name || staffMember.email}</h3>
-              <p>{staffMember.email}</p>
-              <p className="staff-assigned">
-                Assigned Users: {staffMember.assigned_users?.length || 0}
-              </p>
-              <p className="staff-created">
-                Created: {new Date(staffMember.created_at).toLocaleDateString()}
-              </p>
-            </div>
-            <div className="staff-actions">
-              <button 
+            >
+              Create Staff
+            </button>
+          </div>
+          <div className="staff-grid">
+            {staff.map((staffMember) => (
+              <div key={staffMember.id || staffMember.uid || staffMember.email} className="staff-card">
+                <div className="staff-info">
+                  <h3>{staffMember.display_name || staffMember.email}</h3>
+                  <p>{staffMember.email}</p>
+                  <p className="staff-assigned">
+                    Assigned Users: {staffMember.assigned_users?.length || 0}
+                  </p>
+                  <p className="staff-created">
+                    Created: {new Date(staffMember.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="staff-actions">
+                  <button 
                 type="button"
-                className="assign-btn"
-                onClick={() => {
+                    className="assign-btn"
+                    onClick={() => {
                   const staffId = staffMember.id || staffMember.uid;
                   navigate(`/admin-dashboard/assign-users/${staffId}`, { state: { staff: staffMember } });
-                }}
-              >
-                Assign Users
-              </button>
-              <button 
-                className="delete-btn"
-                onClick={() => handleDeleteStaff(staffMember.id || staffMember.uid)}
-              >
-                Delete
-              </button>
-            </div>
+                    }}
+                  >
+                    Assign Users
+                  </button>
+                  <button 
+                    className="delete-btn"
+                    onClick={() => handleDeleteStaff(staffMember.id || staffMember.uid)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
-  )}
+        </div>
+      )}
 
       {/* Create Staff Modal removed - using dedicated page */}
 
