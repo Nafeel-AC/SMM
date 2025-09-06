@@ -16,7 +16,6 @@ const DashboardPage = () => {
   const [requirements, setRequirements] = useState(null);
   const [dashboardSettings, setDashboardSettings] = useState(null);
   const [timeRange, setTimeRange] = useState('6months');
-  const [isRealtime, setIsRealtime] = useState(false);
   const { user, signOut } = useFirebaseAuth();
   const navigate = useNavigate();
 
@@ -89,9 +88,6 @@ const DashboardPage = () => {
     setTimeRange(range);
   };
 
-  const handleRealtimeToggle = () => {
-    setIsRealtime(!isRealtime);
-  };
 
   const handleAddSampleData = async () => {
     try {
@@ -153,12 +149,10 @@ const DashboardPage = () => {
         {dashboardData ? (
           <div className="dashboard-layout">
             <div className="dashboard-main">
-              {/* Top Metrics and Realtime Toggle */}
+              {/* Top Metrics */}
               <MetricsDisplay 
                 followers={dashboardData.insights.followers_count}
                 following={dashboardData.insights.following_count}
-                onRealtimeToggle={handleRealtimeToggle}
-                isRealtime={isRealtime}
               />
 
               {/* Analytics Chart */}
