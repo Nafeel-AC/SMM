@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './PricingSection-modern.css';
 import pricingData from '../../data/pricingData';
 
 const PricingSection = ({ onPlanSelect }) => {
   const [billingCycle, setBillingCycle] = useState('monthly');
+  const navigate = useNavigate();
 
   const { plans, pricing, comparisonCategories } = pricingData;
 
   const handleGetStarted = (planName) => {
-    // Redirect to login page on plan selection
-    window.location.href = '/login';
+    // Navigate to login page using React Router
+    navigate('/login');
   };
 
   // Helper function to render checkmark or minus
