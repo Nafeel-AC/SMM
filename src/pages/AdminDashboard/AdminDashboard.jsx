@@ -8,6 +8,7 @@ import './AdminDashboard.css';
 const AdminDashboard = () => {
   const [pendingOrders, setPendingOrders] = useState([]);
   const [completedOrders, setCompletedOrders] = useState([]);
+  const [allOrders, setAllOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [users, setUsers] = useState([]);
@@ -24,6 +25,14 @@ const AdminDashboard = () => {
   });
   const [chartData, setChartData] = useState([]);
   const [selectedTimeframe, setSelectedTimeframe] = useState('thisMonth');
+  
+  // Orders History filtering state
+  const [orderFilter, setOrderFilter] = useState({
+    status: 'all', // 'all', 'pending', 'completed', 'cancelled'
+    category: 'all', // 'all', 'social_media', 'marketing', 'content'
+    dateRange: 'all' // 'all', 'today', 'week', 'month'
+  });
+  const [filteredOrders, setFilteredOrders] = useState([]);
   // Removed selectedUser modal usage in favor of dedicated page navigation
   // Assign users handled on a dedicated page now
   // Removed local form state for create staff
@@ -123,17 +132,33 @@ const AdminDashboard = () => {
       if (result.error || !result.data) {
         setPendingOrders([]);
         setCompletedOrders([]);
+        setAllOrders([]);
+        setFilteredOrders([]);
         return;
       }
-      const pending = result.data.filter(req => req.order_completed === false);
-      const completed = result.data.filter(req => req.order_completed === true);
+      
+      // Add order status and category to each order
+      const ordersWithStatus = result.data.map(order => ({
+        ...order,
+        order_status: order.order_completed ? 'completed' : 'pending',
+        category: order.business_type || 'social_media',
+        order_date: order.created_at ? (order.created_at.seconds ? new Date(order.created_at.seconds * 1000) : new Date(order.created_at)) : new Date()
+      }));
+      
+      const pending = ordersWithStatus.filter(req => req.order_completed === false);
+      const completed = ordersWithStatus.filter(req => req.order_completed === true);
+      
       setPendingOrders(pending);
       setCompletedOrders(completed);
+      setAllOrders(ordersWithStatus);
+      
+      // Apply current filters
+      applyOrderFilters(ordersWithStatus);
       
       // Update dashboard stats with real order data
       setDashboardStats(prev => ({
         ...prev,
-        totalOrders: pending.length + completed.length,
+        totalOrders: ordersWithStatus.length,
         pendingOrders: pending.length,
         completedOrders: completed.length
       }));
@@ -141,9 +166,58 @@ const AdminDashboard = () => {
       console.error('Error fetching orders:', error);
       setPendingOrders([]);
       setCompletedOrders([]);
+      setAllOrders([]);
+      setFilteredOrders([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Apply order filters
+  const applyOrderFilters = (orders = allOrders) => {
+    let filtered = [...orders];
+
+    // Filter by status
+    if (orderFilter.status !== 'all') {
+      filtered = filtered.filter(order => order.order_status === orderFilter.status);
+    }
+
+    // Filter by category
+    if (orderFilter.category !== 'all') {
+      filtered = filtered.filter(order => order.category === orderFilter.category);
+    }
+
+    // Filter by date range
+    if (orderFilter.dateRange !== 'all') {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      filtered = filtered.filter(order => {
+        const orderDate = new Date(order.order_date);
+        
+        switch (orderFilter.dateRange) {
+          case 'today':
+            return orderDate >= today;
+          case 'week':
+            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return orderDate >= weekAgo;
+          case 'month':
+            const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+            return orderDate >= monthAgo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    setFilteredOrders(filtered);
+  };
+
+  // Handle filter changes
+  const handleFilterChange = (filterType, value) => {
+    const newFilter = { ...orderFilter, [filterType]: value };
+    setOrderFilter(newFilter);
+    applyOrderFilters(allOrders);
   };
 
   // Create staff handled on separate page now
@@ -471,21 +545,120 @@ const AdminDashboard = () => {
             <div className="orders-history-header">
               <h2>Orders History</h2>
               <div className="orders-filters">
-                <select className="category-filter">
-                  <option>All Category</option>
-                  <option>Social Media</option>
-                  <option>Marketing</option>
-                  <option>Content</option>
+                <select 
+                  className="category-filter"
+                  value={orderFilter.category}
+                  onChange={(e) => handleFilterChange('category', e.target.value)}
+                >
+                  <option value="all">All Category</option>
+                  <option value="social_media">Social Media</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="content">Content</option>
                 </select>
-                <div className="date-range-picker">
-                  <span>Aug 29 - Sep 4, 2025</span>
-                </div>
+                <select 
+                  className="date-range-picker"
+                  value={orderFilter.dateRange}
+                  onChange={(e) => handleFilterChange('dateRange', e.target.value)}
+                >
+                  <option value="all">All Time</option>
+                  <option value="today">Today</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                </select>
               </div>
             </div>
             <div className="order-status-labels">
-              <div className="status-label order">ORDER</div>
-              <div className="status-label pending">ORDER PENDING</div>
-              <div className="status-label withdraw">ORDER WITHDRAW</div>
+              <button 
+                className={`status-label ${orderFilter.status === 'all' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('status', 'all')}
+              >
+                ALL ORDERS ({allOrders.length})
+              </button>
+              <button 
+                className={`status-label pending ${orderFilter.status === 'pending' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('status', 'pending')}
+              >
+                PENDING ({pendingOrders.length})
+              </button>
+              <button 
+                className={`status-label completed ${orderFilter.status === 'completed' ? 'active' : ''}`}
+                onClick={() => handleFilterChange('status', 'completed')}
+              >
+                COMPLETED ({completedOrders.length})
+              </button>
+            </div>
+            
+            {/* Orders List */}
+            <div className="orders-list">
+              {filteredOrders.length === 0 ? (
+                <div className="no-orders">
+                  <p>No orders found matching the current filters.</p>
+                </div>
+              ) : (
+                <div className="orders-grid">
+                  {filteredOrders.map((order) => (
+                    <div key={order.id} className="order-item">
+                      <div className="order-header">
+                        <div className="order-id">Order #{order.id.slice(-8)}</div>
+                        <div className={`order-status-badge ${order.order_status}`}>
+                          {order.order_status.toUpperCase()}
+                        </div>
+                      </div>
+                      <div className="order-details">
+                        <div className="order-info">
+                          <div className="info-row">
+                            <span className="label">User ID:</span>
+                            <span className="value">{order.user_id}</span>
+                          </div>
+                          <div className="info-row">
+                            <span className="label">Business Type:</span>
+                            <span className="value">{order.business_type || 'N/A'}</span>
+                          </div>
+                          <div className="info-row">
+                            <span className="label">Category:</span>
+                            <span className="value">{order.category.replace('_', ' ').toUpperCase()}</span>
+                          </div>
+                          <div className="info-row">
+                            <span className="label">Created:</span>
+                            <span className="value">
+                              {order.order_date ? order.order_date.toLocaleDateString() : 'N/A'}
+                            </span>
+                          </div>
+                          {order.niche && (
+                            <div className="info-row">
+                              <span className="label">Niche:</span>
+                              <span className="value">{order.niche}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="order-actions">
+                          <button 
+                            className="action-btn view-btn"
+                            onClick={() => navigate(`/admin-dashboard/user/${order.user_id}`)}
+                          >
+                            View User
+                          </button>
+                          {order.order_status === 'pending' && (
+                            <button 
+                              className="action-btn complete-btn"
+                              onClick={async () => {
+                                try {
+                                  await dashboardDataService.db.updateDocument('user_requirements', order.id, { order_completed: true });
+                                  fetchOrders(); // Refresh orders
+                                } catch (error) {
+                                  alert('Failed to mark order as completed');
+                                }
+                              }}
+                            >
+                              Mark Complete
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

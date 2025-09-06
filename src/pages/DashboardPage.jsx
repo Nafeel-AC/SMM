@@ -15,7 +15,7 @@ const DashboardPage = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [requirements, setRequirements] = useState(null);
   const [dashboardSettings, setDashboardSettings] = useState(null);
-  const [timeRange, setTimeRange] = useState('12months');
+  const [timeRange, setTimeRange] = useState('6months');
   const [isRealtime, setIsRealtime] = useState(false);
   const { user, signOut } = useFirebaseAuth();
   const navigate = useNavigate();
