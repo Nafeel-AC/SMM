@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
+import { HashLink } from 'react-router-hash-link';
+
+// Custom scroll function to ensure smooth scroll and scroll after route change
+const scrollWithOffset = (el) => {
+  const yCoordinate = el.getBoundingClientRect().top + window.pageYOffset;
+  const yOffset = -80; // adjust if you have a fixed header
+  window.scrollTo({ top: yCoordinate + yOffset, behavior: 'smooth' });
+};
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -45,11 +53,11 @@ const Footer = () => {
                 <div className="footer-section">
                   {/* <h4 className="section-title">Privacy and Policy</h4> */}
                   <ul className="footer-links">
-                    <li><Link to="">Api Docs</Link></li>
-                    <li><Link to="/privacy">Privacy &amp; Policy</Link></li>
-                    <li><Link to="/">Terms &amp; Conditions</Link></li>
-                    <li><Link to="/">Refubd Policy</Link></li>
-                    <li><Link to="/Cookie Policy">Cookie Policy</Link></li>
+                    {/* <li><HashLink to="/privacy#privacy-policy" scroll={el => scrollWithOffset(el)}>Api Docs</HashLink></li> */}
+                    <li><HashLink to="/privacy#privacy-policy" scroll={el => scrollWithOffset(el)}>Privacy Policy</HashLink></li>
+                    <li><HashLink to="/privacy#terms" scroll={el => scrollWithOffset(el)}>Terms &amp; Conditions</HashLink></li>
+                    <li><HashLink to="/privacy#refund" scroll={el => scrollWithOffset(el)}>Refund Policy</HashLink></li>
+                    <li><HashLink to="/privacy#cookie" scroll={el => scrollWithOffset(el)}>Cookie Policy</HashLink></li>
                   </ul>
                 </div>
               </div>
@@ -97,7 +105,7 @@ const Footer = () => {
               © {currentYear} Glowup Agency. All rights reserved.
             </div>
             <div>
-              <Link to="/privacy" style={{ color: '#888', textDecoration: 'underline', fontSize: 14 }}>Privacy &amp; Policy</Link>
+              <HashLink to="/privacy#privacy-policy" scroll={el => scrollWithOffset(el)} style={{ color: '#888', textDecoration: 'underline', fontSize: 14 }}>Privacy &amp; Policy</HashLink>
             </div>
             <div className="location">
               London • New York
