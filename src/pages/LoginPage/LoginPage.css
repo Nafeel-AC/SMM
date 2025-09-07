@@ -133,8 +133,8 @@
 .image-overlay {
   position: absolute;
   inset: 0;
-  /* lighten overlay so image shows clearly */
-  background: linear-gradient(135deg, rgba(26,32,44,0.16), rgba(150,101,253,0.10));
+  /* Updated overlay to match main purplish hue with lower opacity for better image visibility */
+  background: linear-gradient(135deg, rgba(150, 101, 253, 0.4) 0%, rgba(130, 51, 146, 0.5) 100%);
   display:flex; align-items:center; justify-content:center;
 }
 
@@ -248,7 +248,7 @@
   }
 
   .image-overlay {
-    background: linear-gradient(135deg, rgba(150, 101, 253, 0.8) 0%, rgba(125, 76, 219, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(150, 101, 253, 0.6) 0%, rgba(130, 51, 146, 0.7) 100%);
   }
 }
 
@@ -335,7 +335,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(150, 101, 253, 0.7) 0%, rgba(125, 76, 219, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(150, 101, 253, 0.4) 0%, rgba(130, 51, 146, 0.5) 100%);
   backdrop-filter: blur(1px);
 }
 
