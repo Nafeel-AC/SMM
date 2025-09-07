@@ -179,6 +179,24 @@ const DashboardPage = () => {
                   style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
                 />
               </div>
+              <div style={{ margin: '24px 0' }}>
+                <label style={{ fontWeight: 600 }}>Unfollowing:</label>
+                <input
+                  type="text"
+                  value={requirements?.unfollowing && requirements.unfollowing.trim() !== '' ? requirements.unfollowing : 'none'}
+                  disabled
+                  style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                />
+              </div>
+              <div style={{ margin: '24px 0' }}>
+                <label style={{ fontWeight: 600 }}>Target History:</label>
+                <input
+                  type="text"
+                  value={requirements?.target_history && requirements.target_history.trim() !== '' ? requirements.target_history : 'none'}
+                  disabled
+                  style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                />
+              </div>
 
               {/* Accounts Section */}
               <AccountsSection 
