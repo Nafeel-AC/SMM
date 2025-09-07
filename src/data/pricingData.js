@@ -50,14 +50,14 @@ const pricingData = {
     // Pricing by billing cycle
     pricing: {
         monthly: {
-            starter: 29,
-            premium: 59,
+            starter: 59,
+            premium: 89,
             ultimate: 189
         },
         yearly: {
-            starter: 290,
-            premium: 590,
-            ultimate: 1890
+            starter: 490,
+            premium: 790,
+            ultimate: 1690
         }
     },
 
