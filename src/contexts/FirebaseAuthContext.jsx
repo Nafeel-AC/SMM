@@ -118,13 +118,15 @@ export function FirebaseAuthProvider({ children }) {
   };
 
   // Create user profile
-  const createUserProfile = async (userId, fullName = null) => {
+  const createUserProfile = async (userId, firstName = null, lastName = null) => {
     try {
-      const resolvedFullName = fullName || user?.displayName || null;
+      const fullName = firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || user?.displayName || null);
       const profileData = {
         id: userId,
-        full_name: resolvedFullName,
-        display_name: resolvedFullName,
+        first_name: firstName || null,
+        last_name: lastName || null,
+        full_name: fullName,
+        display_name: fullName,
         email: user?.email || null,
         role: 'user',
         instagram_connected: false,
@@ -299,9 +301,12 @@ export function FirebaseAuthProvider({ children }) {
   };
 
   // Sign up with email and password
-  const signUpWithEmail = async (email, password, fullName = null) => {
+  const signUpWithEmail = async (email, password, firstName = null, lastName = null) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Create full name from first and last name
+      const fullName = firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || null);
       
       // Update the user's display name
       if (fullName) {
@@ -310,12 +315,14 @@ export function FirebaseAuthProvider({ children }) {
         });
       }
 
-      // Proactively create Firestore profile with provided full name to avoid null
+      // Proactively create Firestore profile with provided names
       try {
         await setDoc(doc(db, 'profiles', userCredential.user.uid), {
           id: userCredential.user.uid,
-          full_name: fullName || userCredential.user.displayName || null,
-          display_name: fullName || userCredential.user.displayName || null,
+          first_name: firstName || null,
+          last_name: lastName || null,
+          full_name: fullName,
+          display_name: fullName,
           email: email,
           role: 'user',
           instagram_connected: false,
