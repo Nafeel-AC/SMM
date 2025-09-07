@@ -48,12 +48,24 @@ const Footer = () => {
                 </div>
               </div>
 
-              {/* Second Column: Quick Links */}
+              {/* Second Column: Company Links */}
               <div className="footer-column">
                 <div className="footer-section">
-                  {/* <h4 className="section-title">Privacy and Policy</h4> */}
+                  <h4 className="section-title">Company</h4>
                   <ul className="footer-links">
-                    {/* <li><HashLink to="/privacy#privacy-policy" scroll={el => scrollWithOffset(el)}>Api Docs</HashLink></li> */}
+                    <li><HashLink to="/#about" scroll={el => scrollWithOffset(el)}>About Us</HashLink></li>
+                    <li><HashLink to="/#features" scroll={el => scrollWithOffset(el)}>Services</HashLink></li>
+                    <li><Link to="/contact">Contact Us</Link></li>
+                    <li><Link to="/blog">Blog</Link></li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Third Column: Quick Links / Legal */}
+              <div className="footer-column">
+                <div className="footer-section">
+                  <h4 className="section-title">Legal</h4>
+                  <ul className="footer-links">
                     <li><HashLink to="/privacy#privacy-policy" scroll={el => scrollWithOffset(el)}>Privacy Policy</HashLink></li>
                     <li><HashLink to="/privacy#terms" scroll={el => scrollWithOffset(el)}>Terms &amp; Conditions</HashLink></li>
                     <li><HashLink to="/privacy#refund" scroll={el => scrollWithOffset(el)}>Refund Policy</HashLink></li>
@@ -61,17 +73,6 @@ const Footer = () => {
                   </ul>
                 </div>
               </div>
-
-              {/* Third Column: Company Policy */}
-              {/* <div className="footer-column">
-                <div className="footer-section">
-                  <h4 className="section-title">Company Policy</h4>
-                  <ul className="footer-links">
-                    <li><Link to="/api-docs">Api Docs</Link></li>
-                    <li><Link to="/cookies">Cookie Policy</Link></li>
-                  </ul>
-                </div>
-              </div> */}
 
               {/* Fourth Column: Newsletter */}
               <div className="footer-column">
