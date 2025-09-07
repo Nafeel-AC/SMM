@@ -1,13 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./PrivacyPage.css";
 
 const PrivacyPage = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  // Removed scroll-to-top on mount to allow hash navigation to work
   return (
     <div className="privacy-page" style={{ maxWidth: 800, margin: "40px auto", padding: 24, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
-      <h1 style={{ textAlign: "center", marginBottom: 32 }}>Privacy Policy</h1>
+  <h1 id="privacy-policy" style={{ textAlign: "center", marginBottom: 32 }}>Privacy Policy</h1>
       <p>At GlowUp Agency (“we”, “our”, or “us”), your privacy is very important to us. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website or use our marketing services (the “Service”).</p>
     <h2>1. Information We Collect</h2>
     <ul>
@@ -44,8 +42,8 @@ const PrivacyPage = () => {
       <b>support@glowupagency.com</b>
     </p>
 
-    <hr style={{ margin: "40px 0" }} />
-    <h1 style={{ textAlign: "center", marginBottom: 32 }}>Terms and Conditions</h1>
+  <hr style={{ margin: "40px 0" }} />
+  <h1 id="terms" style={{ textAlign: "center", marginBottom: 32 }}>Terms and Conditions</h1>
     <p>Welcome to GlowUp Agency. By accessing or using our website and services (“Service”), you agree to be bound by the following Terms and Conditions. Please read them carefully before using our Service.</p>
     <h2>1. Use of Service</h2>
     <ul>
@@ -76,8 +74,8 @@ const PrivacyPage = () => {
       <li>GlowUp Agency may update these Terms at any time. Continued use of our services indicates acceptance of any modifications.</li>
     </ul>
 
-    <hr style={{ margin: "40px 0" }} />
-    <h1 style={{ textAlign: "center", marginBottom: 32 }}>Refund Policy</h1>
+  <hr style={{ margin: "40px 0" }} />
+  <h1 id="refund" style={{ textAlign: "center", marginBottom: 32 }}>Refund Policy</h1>
     <p>At GlowUp Agency, we aim to provide high-quality marketing services to every client. However, we understand that circumstances may change, and we have created the following Refund Policy to ensure clarity:</p>
     <h2>1. Eligibility for Refunds</h2>
     <ul>
@@ -95,8 +93,8 @@ const PrivacyPage = () => {
       <li>Approved refunds will be processed within 10 business days to the original payment method.</li>
     </ul>
 
-    <hr style={{ margin: "40px 0" }} />
-    <h1 style={{ textAlign: "center", marginBottom: 32 }}>Cookie Policy</h1>
+  <hr style={{ margin: "40px 0" }} />
+  <h1 id="cookie" style={{ textAlign: "center", marginBottom: 32 }}>Cookie Policy</h1>
     <p>GlowUp Agency uses cookies to improve your experience on our website. This Cookie Policy explains how and why we use them.</p>
     <h2>1. What Are Cookies?</h2>
     <p>Cookies are small text files stored on your device that help us provide a smoother and more personalized browsing experience.</p>
