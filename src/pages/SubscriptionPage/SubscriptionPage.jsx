@@ -69,12 +69,11 @@ const SubscriptionPage = () => {
 
   const handleContinue = async () => {
     setLoading(true);
-    
     // Simulate processing time
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Navigate to payment page
-    navigate('/payment', { state: { plan: selectedPlan } });
+    // Pass plan and price to payment page
+    const currentPricing = pricingData[billingCycle][selectedPlan];
+    navigate('/payment', { state: { plan: selectedPlan, price: currentPricing.price, billingCycle } });
   };
 
   return (

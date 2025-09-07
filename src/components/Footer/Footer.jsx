@@ -43,14 +43,13 @@ const Footer = () => {
               {/* Second Column: Quick Links */}
               <div className="footer-column">
                 <div className="footer-section">
-                  <h4 className="section-title">Quick Links</h4>
+                  {/* <h4 className="section-title">Privacy and Policy</h4> */}
                   <ul className="footer-links">
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/about">About</Link></li>
-                    <li><Link to="/faq">Faq</Link></li>
-                    <li><Link to="/blog">Blogs</Link></li>
-                    <li><Link to="/services">Services</Link></li>
-                    <li><Link to="/contact">Contact</Link></li>
+                    <li><Link to="">Api Docs</Link></li>
+                    <li><Link to="/privacy">Privacy &amp; Policy</Link></li>
+                    <li><Link to="/">Terms &amp; Conditions</Link></li>
+                    <li><Link to="/">Refubd Policy</Link></li>
+                    <li><Link to="/Cookie Policy">Cookie Policy</Link></li>
                   </ul>
                 </div>
               </div>
