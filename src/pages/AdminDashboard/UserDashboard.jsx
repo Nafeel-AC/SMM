@@ -160,7 +160,7 @@ const UserDashboard = () => {
                 </div>
               )}
               <div className="editable-fields">
-                {/* Custom field: Currently following From */}
+                {/* Custom fields: Currently following From, Unfollowing, Target History */}
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ fontWeight: 600 }}>Currently following From:</label>
                   {editMode ? (
@@ -175,6 +175,42 @@ const UserDashboard = () => {
                     <span style={{ marginLeft: 8 }}>
                       {requirements && requirements.currently_following_from && requirements.currently_following_from.trim() !== ''
                         ? requirements.currently_following_from
+                        : 'none'}
+                    </span>
+                  )}
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontWeight: 600 }}>Unfollowing:</label>
+                  {editMode ? (
+                    <input
+                      type="text"
+                      value={editedRequirements?.unfollowing || ''}
+                      onChange={e => handleFieldChange('unfollowing', e.target.value)}
+                      style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                      placeholder="none"
+                    />
+                  ) : (
+                    <span style={{ marginLeft: 8 }}>
+                      {requirements && requirements.unfollowing && requirements.unfollowing.trim() !== ''
+                        ? requirements.unfollowing
+                        : 'none'}
+                    </span>
+                  )}
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontWeight: 600 }}>Target History:</label>
+                  {editMode ? (
+                    <input
+                      type="text"
+                      value={editedRequirements?.target_history || ''}
+                      onChange={e => handleFieldChange('target_history', e.target.value)}
+                      style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                      placeholder="none"
+                    />
+                  ) : (
+                    <span style={{ marginLeft: 8 }}>
+                      {requirements && requirements.target_history && requirements.target_history.trim() !== ''
+                        ? requirements.target_history
                         : 'none'}
                     </span>
                   )}
