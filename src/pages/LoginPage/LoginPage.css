@@ -159,8 +159,159 @@
 @media (max-width: 991px) {
   .login-container {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 20px;
   }
-  .login-image-section { min-height: 280px; }
+  
+  .login-image-section { 
+    min-height: 280px; 
+  }
+  
+  .left-overlay h2 {
+    font-size: 28px !important;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 2rem 0;
+    min-height: 100vh;
+  }
+  
+  .login-container {
+    padding: 0 15px;
+    gap: 1rem;
+  }
+  
+  .form-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 2rem 1.5rem !important;
+    border-radius: 20px !important;
+  }
+  
+  .brand h1 {
+    font-size: 28px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .brand .muted {
+    font-size: 14px !important;
+    margin: 4px 0 0 0 !important;
+  }
+  
+  .input-group input {
+    padding: 14px 16px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+  
+  .primary-btn {
+    padding: 14px 16px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+  
+  .left-overlay {
+    padding: 24px !important;
+  }
+  
+  .left-overlay h2 {
+    font-size: 24px !important;
+    margin-bottom: 12px !important;
+  }
+  
+  .left-overlay p {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+  
+  .btn-area {
+    margin-top: 20px !important;
+  }
+  
+  .chat-btn {
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+  }
+  
+  .hero-section-subtitle {
+    font-size: 12px !important;
+    padding: 8px 16px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  /* Adjust floating shapes for mobile */
+  .shape-1, .shape-2, .shape-3, .shape-4, .shape-5, .shape-6 {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  .pulse-circle {
+    width: 150px !important;
+    height: 150px !important;
+  }
+  
+  .rotating-ring {
+    width: 120px !important;
+    height: 120px !important;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .login-page {
+    padding: 1rem 0;
+  }
+  
+  .login-container {
+    padding: 0 10px;
+  }
+  
+  .form-container {
+    padding: 1.5rem 1rem !important;
+    border-radius: 16px !important;
+  }
+  
+  .brand h1 {
+    font-size: 24px !important;
+  }
+  
+  .left-overlay {
+    padding: 20px !important;
+  }
+  
+  .left-overlay h2 {
+    font-size: 20px !important;
+  }
+  
+  .left-overlay p {
+    font-size: 13px !important;
+  }
+  
+  .chat-btn {
+    padding: 10px 20px !important;
+    font-size: 13px !important;
+  }
+  
+  .hero-section-subtitle {
+    font-size: 11px !important;
+    padding: 6px 12px !important;
+  }
+  
+  /* Ensure proper touch targets */
+  .alt-actions a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+  
+  .form-container {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  }
 }
 
 /* Unique Animated Background */
