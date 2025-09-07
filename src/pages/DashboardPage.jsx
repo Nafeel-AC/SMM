@@ -16,8 +16,13 @@ const DashboardPage = () => {
   const [requirements, setRequirements] = useState(null);
   const [dashboardSettings, setDashboardSettings] = useState(null);
   const [timeRange, setTimeRange] = useState('6months');
+  const [unfollowingValue, setUnfollowingValue] = useState('');
+  const [savingUnfollowing, setSavingUnfollowing] = useState(false);
   const { user, signOut } = useFirebaseAuth();
   const navigate = useNavigate();
+
+  // Check if unfollowing field has unsaved changes
+  const hasUnsavedChanges = unfollowingValue !== (requirements?.unfollowing || '');
 
   useEffect(() => {
     if (user) {
@@ -27,11 +32,19 @@ const DashboardPage = () => {
     }
   }, [user]);
 
+  // Sync unfollowingValue when requirements change
+  useEffect(() => {
+    if (requirements?.unfollowing !== undefined) {
+      setUnfollowingValue(requirements.unfollowing);
+    }
+  }, [requirements?.unfollowing]);
+
   const fetchRequirements = async () => {
     try {
       const result = await dashboardDataService.db.getUserRequirements(user.uid);
       if (!result.error && result.data) {
         setRequirements(result.data);
+        setUnfollowingValue(result.data.unfollowing || '');
       }
     } catch (error) {
       console.error('Error fetching requirements:', error);
@@ -86,6 +99,39 @@ const DashboardPage = () => {
 
   const handleTimeRangeChange = (range) => {
     setTimeRange(range);
+  };
+
+  const handleUnfollowingChange = async (newValue) => {
+    // Don't save if the value hasn't changed
+    if (newValue === requirements?.unfollowing) {
+      return;
+    }
+    
+    try {
+      setSavingUnfollowing(true);
+      const result = await dashboardDataService.updateUserRequirements(user.uid, {
+        unfollowing: newValue
+      });
+      
+      if (!result.error) {
+        // Update local state
+        setRequirements(prev => ({
+          ...prev,
+          unfollowing: newValue
+        }));
+        console.log('✅ Unfollowing field updated successfully');
+      } else {
+        console.error('❌ Error updating unfollowing field:', result.error);
+        // Revert the local state on error
+        setUnfollowingValue(requirements?.unfollowing || '');
+      }
+    } catch (error) {
+      console.error('❌ Error updating unfollowing field:', error);
+      // Revert the local state on error
+      setUnfollowingValue(requirements?.unfollowing || '');
+    } finally {
+      setSavingUnfollowing(false);
+    }
   };
 
 
@@ -180,23 +226,35 @@ const DashboardPage = () => {
                 />
               </div>
               <div style={{ margin: '24px 0' }}>
-                <label style={{ fontWeight: 600 }}>Unfollowing:</label>
+                <label style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  Unfollowing:
+                  {savingUnfollowing && <span style={{ fontSize: '12px', color: '#6b7280' }}>Saving...</span>}
+                  {hasUnsavedChanges && !savingUnfollowing && <span style={{ fontSize: '12px', color: '#f59e0b' }}>Unsaved changes</span>}
+                </label>
                 <input
                   type="text"
-                  value={requirements?.unfollowing && requirements.unfollowing.trim() !== '' ? requirements.unfollowing : 'none'}
-                  disabled
-                  style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
+                  value={unfollowingValue}
+                  onChange={(e) => setUnfollowingValue(e.target.value)}
+                  onBlur={() => handleUnfollowingChange(unfollowingValue)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleUnfollowingChange(unfollowingValue);
+                    }
+                  }}
+                  placeholder="Enter unfollowing details..."
+                  disabled={savingUnfollowing}
+                  style={{ 
+                    marginLeft: 8, 
+                    padding: '8px', 
+                    borderRadius: '6px', 
+                    border: `1px solid ${hasUnsavedChanges ? '#f59e0b' : '#e2e8f0'}`, 
+                    width: '100%',
+                    opacity: savingUnfollowing ? 0.6 : 1,
+                    cursor: savingUnfollowing ? 'not-allowed' : 'text'
+                  }}
                 />
               </div>
-              <div style={{ margin: '24px 0' }}>
-                <label style={{ fontWeight: 600 }}>Target History:</label>
-                <input
-                  type="text"
-                  value={requirements?.target_history && requirements.target_history.trim() !== '' ? requirements.target_history : 'none'}
-                  disabled
-                  style={{ marginLeft: 8, padding: '8px', borderRadius: '6px', border: '1px solid #e2e8f0', width: '100%' }}
-                />
-              </div>
+
 
               {/* Accounts Section */}
               <AccountsSection 
