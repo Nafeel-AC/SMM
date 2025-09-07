@@ -15,6 +15,22 @@ const LoginPage = () => {
   useEffect(() => {
     console.log('🔄 LoginPage: Loading state changed to:', loading);
   }, [loading]);
+
+  // Mobile-specific optimizations
+  useEffect(() => {
+    // Prevent zoom on input focus for iOS
+    const viewport = document.querySelector('meta[name=viewport]');
+    if (viewport) {
+      viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (viewport) {
+        viewport.content = 'width=device-width, initial-scale=1.0';
+      }
+    };
+  }, []);
   const [error, setError] = useState('');
   const { signInWithEmail, user, profile } = useFirebaseAuth();
   const navigate = useNavigate();
@@ -108,12 +124,36 @@ const LoginPage = () => {
               <div className="input-grid">
                 <div className="input-group" style={{ gridColumn: '1 / -1' }}>
                   <label htmlFor="email">Email</label>
-                  <input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required placeholder="you@company.com" />
+                  <input 
+                    id="email" 
+                    name="email" 
+                    type="email" 
+                    value={formData.email} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="you@company.com"
+                    autoComplete="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
+                  />
                 </div>
 
                 <div className="input-group" style={{ gridColumn: '1 / -1' }}>
                   <label htmlFor="password">Password</label>
-                  <input id="password" name="password" type="password" value={formData.password} onChange={handleInputChange} required placeholder="Your password" />
+                  <input 
+                    id="password" 
+                    name="password" 
+                    type="password" 
+                    value={formData.password} 
+                    onChange={handleInputChange} 
+                    required 
+                    placeholder="Your password"
+                    autoComplete="current-password"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
+                  />
                 </div>
               </div>
 
