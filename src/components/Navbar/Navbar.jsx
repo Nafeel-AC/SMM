@@ -272,9 +272,9 @@ const Navbar = () => {
             </ul>
             {/* <ul>
               <li className="nav-item">
-                <Link className="nav-link login-btn" to="/login">
+                <Link className="nav-link login-btn mobile-login-btn" to="/login">
                   <i className="login-icon fas fa-sign-in-alt"></i>
-                  <span className="d-md-none">Login</span>
+                  <span>Login</span>
                 </Link>
               </li>
             </ul> */}
