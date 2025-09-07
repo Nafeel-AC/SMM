@@ -1,5 +1,4 @@
-/* Register Page Styles - Matching Login Page Design */
-.signup-page {
+.register-page {
   min-height: 100vh;
   position: relative;
   display: flex;
@@ -14,7 +13,7 @@
   background-repeat: no-repeat;
 }
 
-.signup-page::before {
+.register-page::before {
   content: '';
   position: absolute;
   top: 0;
@@ -28,6 +27,429 @@
   /* Allow clicks to pass through overlay to underlying form */
   pointer-events: none;
   z-index: 1;
+}
+
+/* FIX: Ensure page content sits above the overlay */
+.register-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Left: form section */
+.register-form-section {
+  display: flex;
+  align-items: center;
+}
+
+.form-container {
+  /* use solid white for maximum readability */
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  color: #0f1724 !important;
+}
+
+.brand .muted {
+  margin: 6px 0 0 0;
+  color: #6b7280 !important;
+  font-size: 16px !important;
+}
+
+.register-form .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+.input-group input {
+  background: rgba(14, 165, 164, 0.06) !important;
+  border: 1px solid rgba(15, 23, 42, 0.04) !important;
+  color: #0f1724 !important;
+  padding: 12px 14px !important;
+  border-radius: 50px !important;
+  outline: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.input-group input:focus {
+  box-shadow: 0 6px 18px rgba(150, 101, 253, 0.08) !important;
+  border-color: rgba(150, 101, 253, 0.6) !important;
+}
+
+.primary-btn {
+  margin-top: 6px;
+  background: linear-gradient(90deg, #9665fd, #7d4cdb) !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 12px 14px !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 5px 15px rgba(110, 59, 218, 0.3) !important;
+}
+
+.primary-btn:hover {
+  background: linear-gradient(90deg, #7d4cdb, #6b3cc4) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(110, 59, 218, 0.4) !important;
+}
+
+.form-footer {
+  margin-top: 1rem;
+  color: #64748b;
+}
+
+/* Additional form elements */
+.error-message {
+  background-color: #fef2f2;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  margin-bottom: 1rem;
+  font-size: 14px;
+}
+
+.divider {
+  margin: 1.5rem 0;
+  position: relative;
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #ddd;
+  z-index: -1;
+}
+
+.divider span {
+  background: #ffffff;
+  padding: 0 16px;
+}
+
+.google-btn {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 12px 20px;
+  border-radius: 50px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.google-btn:hover {
+  background: #f8f9fa;
+  border-color: #ccc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.google-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.alt-actions {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.alt-actions p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.alt-actions a {
+  color: #9665fd;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.alt-actions a:hover {
+  text-decoration: underline;
+}
+
+/* Form grid layout */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.input-group input {
+  background: rgba(14, 165, 164, 0.06) !important;
+  border: 1px solid rgba(15, 23, 42, 0.04) !important;
+  color: #0f1724 !important;
+  padding: 12px 14px !important;
+  border-radius: 50px !important;
+  outline: none !important;
+  transition: all 0.3s ease !important;
+  font-size: 14px;
+}
+
+.input-group input:focus {
+  box-shadow: 0 6px 18px rgba(150, 101, 253, 0.08) !important;
+  border-color: rgba(150, 101, 253, 0.6) !important;
+}
+
+.input-group input::placeholder {
+  color: #9ca3af;
+}
+
+/* Responsive adjustments for input grid */
+@media (max-width: 768px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .input-group input {
+    padding: 14px 16px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+}
+
+/* Right: image section */
+.register-image-section {
+  border-radius: 16px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  /* lighten overlay so image shows clearly */
+  background: linear-gradient(135deg, rgba(26,32,44,0.16), rgba(150,101,253,0.10));
+  display:flex; align-items:center; justify-content:center;
+}
+
+.overlay-content {
+  color: #fff;
+  text-align: center;
+  padding: 2rem;
+}
+
+.overlay-content h2 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.overlay-content p {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .register-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 20px;
+  }
+
+  .register-image-section {
+    min-height: 280px;
+  }
+
+  .left-overlay h2 {
+    font-size: 28px !important;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .register-page {
+    padding: 2rem 0;
+    min-height: 100vh;
+  }
+
+  .register-container {
+    padding: 0 15px;
+    gap: 1rem;
+  }
+
+  .form-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 2rem 1.5rem !important;
+    border-radius: 20px !important;
+  }
+
+  .brand h1 {
+    font-size: 28px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .brand .muted {
+    font-size: 14px !important;
+    margin: 4px 0 0 0 !important;
+  }
+
+  .input-group input {
+    padding: 14px 16px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+
+  .primary-btn {
+    padding: 14px 16px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+
+  .left-overlay {
+    padding: 24px !important;
+  }
+
+  .left-overlay h2 {
+    font-size: 24px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .left-overlay p {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  .btn-area {
+    margin-top: 20px !important;
+  }
+
+  .chat-btn {
+    padding: 12px 24px !important;
+    font-size: 14px !important;
+  }
+
+  .hero-section-subtitle {
+    font-size: 12px !important;
+    padding: 8px 16px !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* Adjust floating shapes for mobile */
+  .shape-1, .shape-2, .shape-3, .shape-4, .shape-5, .shape-6 {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .pulse-circle {
+    width: 150px !important;
+    height: 150px !important;
+  }
+
+  .rotating-ring {
+    width: 120px !important;
+    height: 120px !important;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .register-page {
+    padding: 1rem 0;
+  }
+
+  .register-container {
+    padding: 0 10px;
+  }
+
+  .form-container {
+    padding: 1.5rem 1rem !important;
+    border-radius: 16px !important;
+  }
+
+  .brand h1 {
+    font-size: 24px !important;
+  }
+
+  .left-overlay {
+    padding: 20px !important;
+  }
+
+  .left-overlay h2 {
+    font-size: 20px !important;
+  }
+
+  .left-overlay p {
+    font-size: 13px !important;
+  }
+
+  .chat-btn {
+    padding: 10px 20px !important;
+    font-size: 13px !important;
+  }
+
+  .hero-section-subtitle {
+    font-size: 11px !important;
+    padding: 6px 12px !important;
+  }
+
+  /* Ensure proper touch targets */
+  .alt-actions a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+
+  .form-container {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  }
 }
 
 /* Unique Animated Background */
@@ -213,12 +635,6 @@
   }
 }
 
-/* Override AuthForms.css styles to match hero section */
-.left-overlay {
-  background: linear-gradient(180deg, rgba(150, 101, 253, 0.1), rgba(255, 255, 255, 0.02)) !important;
-  z-index: 2;
-}
-
 .hero-section-subtitle {
   color: #fff !important;
   padding: 10px 24px;
@@ -243,6 +659,10 @@
   color: rgba(255, 255, 255, 0.8) !important;
   font-size: 16px !important;
   line-height: 1.6 !important;
+}
+
+.left-overlay {
+  z-index: 2;
 }
 
 .btn-area {
@@ -272,65 +692,4 @@
   color: #fff;
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
-}
-
-/* Form styling overrides */
-.brand h1 {
-  margin: 0;
-  font-size: 32px !important;
-  font-weight: 800 !important;
-  color: #0f1724 !important;
-}
-
-.brand .muted {
-  margin: 6px 0 0 0;
-  color: #6b7280 !important;
-  font-size: 16px !important;
-}
-
-.input-group input {
-  background: rgba(14, 165, 164, 0.06) !important;
-  border: 1px solid rgba(15, 23, 42, 0.04) !important;
-  color: #0f1724 !important;
-  padding: 12px 14px !important;
-  border-radius: 50px !important;
-  outline: none !important;
-  transition: all 0.3s ease !important;
-}
-
-.input-group input:focus {
-  box-shadow: 0 6px 18px rgba(150, 101, 253, 0.08) !important;
-  border-color: rgba(150, 101, 253, 0.6) !important;
-}
-
-.primary-btn {
-  margin-top: 6px;
-  background: linear-gradient(90deg, #9665fd, #7d4cdb) !important;
-  color: #fff !important;
-  border: none !important;
-  padding: 12px 14px !important;
-  border-radius: 50px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 5px 15px rgba(110, 59, 218, 0.3) !important;
-}
-
-.primary-btn:hover {
-  background: linear-gradient(90deg, #7d4cdb, #6b3cc4) !important;
-  transform: translateY(-3px) !important;
-  box-shadow: 0 8px 20px rgba(110, 59, 218, 0.4) !important;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .signup-card {
-    flex-direction: column-reverse;
-  }
-  .left-overlay {
-    padding: 20px;
-  }
-  .input-grid {
-    grid-template-columns: 1fr;
-  }
 }
