@@ -7,7 +7,8 @@ import './RegisterPage.css';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -37,7 +38,7 @@ const RegisterPage = () => {
     setError('');
 
     try {
-      await signUpWithEmail(formData.email, formData.password, formData.name);
+      await signUpWithEmail(formData.email, formData.password, formData.firstName, formData.lastName);
       navigate('/login');
     } catch (err) {
       setError('Failed to create account. Please try again.');
@@ -92,8 +93,13 @@ const RegisterPage = () => {
             <form onSubmit={handleSubmit} className="signup-form">
               <div className="input-grid">
                 <div className="input-group">
-                  <label htmlFor="name">Full name</label>
-                  <input id="name" name="name" type="text" value={formData.name} onChange={handleInputChange} required placeholder="Your full name" />
+                  <label htmlFor="firstName">First name</label>
+                  <input id="firstName" name="firstName" type="text" value={formData.firstName} onChange={handleInputChange} required placeholder="Your first name" />
+                </div>
+
+                <div className="input-group">
+                  <label htmlFor="lastName">Last name</label>
+                  <input id="lastName" name="lastName" type="text" value={formData.lastName} onChange={handleInputChange} required placeholder="Your last name" />
                 </div>
 
                 <div className="input-group">

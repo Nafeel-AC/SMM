@@ -13,6 +13,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [users, setUsers] = useState([]);
   const [staff, setStaff] = useState([]);
+  const [usersWithoutPayments, setUsersWithoutPayments] = useState([]);
   const [dashboardStats, setDashboardStats] = useState({
     totalUsers: 0,
     pendingTickets: 0,
@@ -40,10 +41,41 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user } = useFirebaseAuth();
 
+  // Function to update users without pending payments
+  const updateUsersWithoutPayments = (allUsers, currentPendingOrders) => {
+    if (currentPendingOrders.length > 0) {
+      const usersWithPendingPayments = new Set(currentPendingOrders.map(order => order.user_id));
+      const usersWithoutPending = allUsers
+        .filter(user => !usersWithPendingPayments.has(user.id))
+        .sort((a, b) => {
+          // Sort by account creation date (newest first)
+          const aDate = a.createdAt?.seconds || 0;
+          const bDate = b.createdAt?.seconds || 0;
+          return bDate - aDate;
+        });
+      setUsersWithoutPayments(usersWithoutPending);
+    } else {
+      // If no pending orders, all users are without payments
+      const sortedUsers = allUsers.sort((a, b) => {
+        const aDate = a.createdAt?.seconds || 0;
+        const bDate = b.createdAt?.seconds || 0;
+        return bDate - aDate;
+      });
+      setUsersWithoutPayments(sortedUsers);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   fetchOrders();
   }, []);
+
+  // Update users without payments whenever users or pending orders change
+  useEffect(() => {
+    if (users.length > 0) {
+      updateUsersWithoutPayments(users, pendingOrders);
+    }
+  }, [users, pendingOrders]);
 
   const fetchData = async () => {
     try {
@@ -57,10 +89,29 @@ const AdminDashboard = () => {
 
       if (usersResult.success) {
         setUsers(usersResult.users);
+        // Run migration to ensure all user profiles have id field
+        try {
+          const migrationResult = await dashboardDataService.db.migrateUserProfiles();
+          if (migrationResult.success && migrationResult.migrated > 0) {
+            console.log(`Migrated ${migrationResult.migrated} user profiles`);
+            // Re-fetch users after migration
+            const updatedUsersResult = await roleAuthService.getAllUsers();
+            if (updatedUsersResult.success) {
+              setUsers(updatedUsersResult.users);
+            }
+          }
+        } catch (error) {
+          console.warn('Migration check failed:', error);
+        }
       }
 
       if (staffResult.success) {
         setStaff(staffResult.staff);
+      }
+
+      // Filter users without pending payments
+      if (usersResult.success) {
+        updateUsersWithoutPayments(usersResult.users, pendingOrders);
       }
 
       // Calculate dashboard statistics
@@ -321,6 +372,12 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('completedOrders')}
         >
           Completed Orders ({completedOrders.length})
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'usersWithoutPayments' ? 'active' : ''}`}
+          onClick={() => setActiveTab('usersWithoutPayments')}
+        >
+          Users Without Payments ({usersWithoutPayments.length})
         </button>
       </div>
 
@@ -707,27 +764,167 @@ const AdminDashboard = () => {
     <div className="orders-section">
       <div className="section-header">
         <h2>Pending Orders</h2>
+        <p>Orders awaiting payment completion and processing</p>
       </div>
       <div className="orders-grid">
         {pendingOrders.length === 0 && <p>No pending orders.</p>}
-        {pendingOrders.map((order) => (
-          <div key={order.id} className="order-card">
-            <div className="order-info">
-              <h3>User ID: {order.user_id}</h3>
-              <p>Business Type: {order.business_type}</p>
-              <p>Created: {order.created_at && order.created_at.seconds ? new Date(order.created_at.seconds * 1000).toLocaleString() : ''}</p>
-              {/* Add more fields as needed */}
+        {pendingOrders.map((order) => {
+          // Find user details for this order
+          const userDetails = users.find(user => user.id === order.user_id);
+          
+          return (
+            <div key={order.id} className="order-card">
+              <div className="order-info">
+                <div className="order-header">
+                  <h3 className="order-title">
+                    {userDetails?.first_name && userDetails?.last_name 
+                      ? `${userDetails.first_name} ${userDetails.last_name}`
+                      : userDetails?.full_name || userDetails?.displayName || userDetails?.email || 'Unknown User'}
+                  </h3>
+                  <span className="user-id-badge">ID: {userDetails?.id || order.user_id || 'N/A'}</span>
+                </div>
+                <div className="order-subheader">
+                  <span className="business-type">{order.business_type || 'Social Media'}</span>
+                  <span className="order-date">
+                    Created: {order.created_at && order.created_at.seconds ? 
+                      new Date(order.created_at.seconds * 1000).toLocaleDateString() : 'Unknown'}
+                  </span>
+                </div>
+                
+                <div className="order-details">
+                  <div className="detail-row">
+                    <span className="detail-label">Email:</span>
+                    <span className="detail-value">{userDetails?.email || 'Not available'}</span>
+                  </div>
+                  {userDetails?.first_name && (
+                    <div className="detail-row">
+                      <span className="detail-label">First Name:</span>
+                      <span className="detail-value">{userDetails.first_name}</span>
+                    </div>
+                  )}
+                  {userDetails?.last_name && (
+                    <div className="detail-row">
+                      <span className="detail-label">Last Name:</span>
+                      <span className="detail-value">{userDetails.last_name}</span>
+                    </div>
+                  )}
+                  <div className="detail-row">
+                    <span className="detail-label">Business Type:</span>
+                    <span className="detail-value">{order.business_type || 'Social Media'}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Order Status:</span>
+                    <span className="detail-value status-pending">Pending Payment</span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Created:</span>
+                    <span className="detail-value">
+                      {order.created_at && order.created_at.seconds ? 
+                        new Date(order.created_at.seconds * 1000).toLocaleString() : 'Unknown'}
+                    </span>
+                  </div>
+                  {order.target_audience && (
+                    <div className="detail-row">
+                      <span className="detail-label">Target Audience:</span>
+                      <span className="detail-value">{order.target_audience}</span>
+                    </div>
+                  )}
+                  {order.currently_following_from && (
+                    <div className="detail-row">
+                      <span className="detail-label">Following From:</span>
+                      <span className="detail-value">{order.currently_following_from}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="order-actions">
+                <button
+                  className="view-btn"
+                  onClick={() => navigate(`/admin-dashboard/user/${order.user_id}`)}
+                >
+                  View Dashboard
+                </button>
+                <button
+                  className="assign-btn"
+                  onClick={() => navigate(`/admin-dashboard/assign-users`, { state: { userId: order.user_id } })}
+                >
+                  Assign to Staff
+                </button>
+              </div>
             </div>
-            <div className="order-actions" style={{ marginTop: '12px', display: 'flex', gap: '8px' }}>
+          );
+        })}
+      </div>
+    </div>
+  )}
+
+  {activeTab === 'usersWithoutPayments' && (
+    <div className="orders-section">
+      <div className="section-header">
+        <h2>Users Without Pending Payments</h2>
+        <p>Users who haven't made any payments yet, sorted by account creation date (newest first)</p>
+      </div>
+      <div className="orders-grid">
+        {usersWithoutPayments.length === 0 && <p>No users found.</p>}
+        {usersWithoutPayments.map((user) => (
+          <div key={user.id} className="order-card">
+            <div className="order-info">
+              <div className="order-header">
+                <h3 className="order-title">
+                  {user.first_name && user.last_name 
+                    ? `${user.first_name} ${user.last_name}`
+                    : user.full_name || user.displayName || user.email || 'Unknown User'}
+                </h3>
+                <span className="user-id-badge">ID: {user.id || 'N/A'}</span>
+              </div>
+              <div className="order-subheader">
+                <span className="business-type">{user.role || 'User'}</span>
+                <span className="order-date">
+                  Created: {user.createdAt && user.createdAt.seconds ? 
+                    new Date(user.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown'}
+                </span>
+              </div>
+              
+              <div className="order-details">
+                <div className="detail-row">
+                  <span className="detail-label">Email:</span>
+                  <span className="detail-value">{user.email || 'Not available'}</span>
+                </div>
+                {user.first_name && (
+                  <div className="detail-row">
+                    <span className="detail-label">First Name:</span>
+                    <span className="detail-value">{user.first_name}</span>
+                  </div>
+                )}
+                {user.last_name && (
+                  <div className="detail-row">
+                    <span className="detail-label">Last Name:</span>
+                    <span className="detail-value">{user.last_name}</span>
+                  </div>
+                )}
+                <div className="detail-row">
+                  <span className="detail-label">Role:</span>
+                  <span className="detail-value">{user.role || 'user'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Last Login:</span>
+                  <span className="detail-value">
+                    {user.lastLoginAt && user.lastLoginAt.seconds ? 
+                      new Date(user.lastLoginAt.seconds * 1000).toLocaleDateString() : 'Never'}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="order-actions">
               <button
                 className="view-btn"
-                onClick={() => navigate(`/admin-dashboard/user/${order.user_id}`)}
+                onClick={() => navigate(`/admin-dashboard/user/${user.id}`)}
               >
                 View Dashboard
               </button>
               <button
                 className="assign-btn"
-                onClick={() => navigate(`/admin-dashboard/assign-users`, { state: { userId: order.user_id } })}
+                onClick={() => navigate(`/admin-dashboard/assign-users`, { state: { userId: user.id } })}
               >
                 Assign to Staff
               </button>

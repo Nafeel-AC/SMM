@@ -511,6 +511,34 @@ class FirebaseDatabaseService {
     }
   }
 
+  // Migration function to ensure all user profiles have id field
+  async migrateUserProfiles() {
+    try {
+      const querySnapshot = await getDocs(collection(this.db, 'profiles'));
+      const updates = [];
+      
+      querySnapshot.forEach((doc) => {
+        const userData = doc.data();
+        if (!userData.id) {
+          console.log(`Migrating user profile ${doc.id} - adding id field`);
+          updates.push(this.updateDocument('profiles', doc.id, { id: doc.id }));
+        }
+      });
+      
+      if (updates.length > 0) {
+        await Promise.all(updates);
+        console.log(`Migrated ${updates.length} user profiles`);
+      } else {
+        console.log('All user profiles already have id field');
+      }
+      
+      return { success: true, migrated: updates.length };
+    } catch (error) {
+      console.error('Error migrating user profiles:', error);
+      return { success: false, error };
+    }
+  }
+
   async getAllPayments() {
     try {
       const querySnapshot = await getDocs(collection(this.db, 'payments'));
