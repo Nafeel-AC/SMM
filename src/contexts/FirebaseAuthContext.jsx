@@ -6,7 +6,9 @@ import {
   sendPasswordResetEmail,
   updatePassword,
   onAuthStateChanged,
-  updateProfile as updateFirebaseProfile
+  updateProfile as updateFirebaseProfile,
+  GoogleAuthProvider,
+  signInWithPopup
 } from 'firebase/auth';
 import { 
   doc, 
@@ -300,6 +302,81 @@ export function FirebaseAuthProvider({ children }) {
     }
   };
 
+  // Sign in with Google
+  const signInWithGoogle = async () => {
+    try {
+      console.log('🔧 FirebaseAuthContext: signInWithGoogle called');
+      
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+      
+      // Add additional scopes if needed
+      provider.addScope('email');
+      provider.addScope('profile');
+      
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      console.log('✅ FirebaseAuthContext: Google sign in successful for user:', user.email);
+      
+      // Check if user profile exists, if not create it
+      const profileRef = doc(db, 'profiles', user.uid);
+      const profileSnap = await getDoc(profileRef);
+      
+      if (!profileSnap.exists()) {
+        console.log('📝 Creating new profile for Google user');
+        // Extract first and last name from display name if available
+        const displayName = user.displayName || '';
+        const nameParts = displayName.split(' ');
+        const firstName = nameParts[0] || null;
+        const lastName = nameParts.slice(1).join(' ') || null;
+        
+        await setDoc(profileRef, {
+          id: user.uid,
+          first_name: firstName,
+          last_name: lastName,
+          full_name: displayName,
+          display_name: displayName,
+          email: user.email,
+          role: 'user',
+          instagram_connected: false,
+          requirements_completed: false,
+          payment_completed: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          auth_provider: 'google'
+        });
+      } else {
+        // Update the profile with auth provider info if not present
+        const existingData = profileSnap.data();
+        if (!existingData.auth_provider) {
+          await updateDoc(profileRef, {
+            auth_provider: 'google',
+            updated_at: new Date().toISOString()
+          });
+        }
+      }
+      
+      return { data: user, error: null };
+    } catch (error) {
+      console.error('💥 FirebaseAuthContext: Google sign in error:', error);
+      
+      // Handle specific Google auth errors
+      let errorMessage = 'Failed to sign in with Google';
+      if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Sign in was cancelled';
+      } else if (error.code === 'auth/popup-blocked') {
+        errorMessage = 'Pop-up was blocked by browser. Please allow pop-ups and try again.';
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        errorMessage = 'Another sign in is in progress';
+      }
+      
+      return { data: null, error: { ...error, message: errorMessage } };
+    }
+  };
+
   // Sign up with email and password
   const signUpWithEmail = async (email, password, firstName = null, lastName = null) => {
     try {
@@ -390,6 +467,7 @@ export function FirebaseAuthProvider({ children }) {
     loading,
     error,
     signInWithEmail,
+    signInWithGoogle,
     signUpWithEmail,
     signOut: signOutUser,
     resetPassword,

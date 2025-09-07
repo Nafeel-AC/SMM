@@ -100,3 +100,79 @@ body{ background: var(--bg); }
     font-size: 22px;
   }
 }
+
+/* Google Sign-In Button Styles */
+.google-btn {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  color: #3c4043;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.google-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #c4c7c5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.google-btn:active:not(:disabled) {
+  background: #f1f3f4;
+  border-color: #c4c7c5;
+}
+
+.google-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.google-btn svg {
+  flex-shrink: 0;
+}
+
+/* Responsive Google Button */
+@media (max-width: 768px) {
+  .google-btn {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 14px 16px;
+  }
+  
+  .google-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Divider Styles */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #dadce0;
+}
+
+.divider span {
+  padding: 0 16px;
+  color: #5f6368;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
