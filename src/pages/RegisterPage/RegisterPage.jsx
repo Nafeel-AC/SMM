@@ -150,18 +150,9 @@ const RegisterPage = () => {
 
           {/* Image Section */}
           <div className="register-image-section">
-            <div className="animated-background">
-              <div className="floating-shapes">
-                <div className="shape shape-1"></div>
-                <div className="shape shape-2"></div>
-                <div className="shape shape-3"></div>
-                <div className="shape shape-4"></div>
-                <div className="shape shape-5"></div>
-                <div className="shape shape-6"></div>
-              </div>
-              <div className="gradient-overlay"></div>
-              <div className="pulse-circle"></div>
-              <div className="rotating-ring"></div>
+            <div className="image-background">
+              <img src="/assets/team-image.jpg" alt="Marketing Team" className="background-image" />
+              <div className="image-overlay"></div>
             </div>
             <div className="image-overlay">
               <div className="overlay-content">

@@ -178,6 +178,12 @@
   gap: 1rem;
 }
 
+.custom-nav .nav-item {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
 .language-box {
   display: flex;
   align-items: center;
@@ -210,22 +216,65 @@
 }
 
 .login-btn {
-  background-color: #152235;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid transparent;
+  border-radius: 25px;
   color: #ffffff !important;
   display: flex;
   align-items: center;
-  font-weight: 500;
+  font-weight: 600;
   padding: 0.5rem 1rem !important;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.875rem;
+  height: auto;
+  line-height: 1.2;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
 }
 
 .login-btn:hover {
-  background-color: #0d141f;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.login-btn:hover::before {
+  left: 100%;
+}
+
+.login-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+
+.login-btn:focus {
+  outline: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), 0 0 0 3px rgba(102, 126, 234, 0.4);
 }
 
 .login-icon {
   margin-right: 0.5rem;
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.login-btn:hover .login-icon {
+  transform: scale(1.1);
 }
 
 /* Ensure navbar content layout and tighter left padding for logo */
@@ -288,9 +337,40 @@
   }
 }
 
-/* Slightly raise the desktop login button for better alignment */
+/* Align the desktop login button with other navbar elements */
 @media (min-width: 992px) {
   .nav-right .login-btn {
-    transform: translateY(-8px);
+    transform: translateY(0);
+    align-self: center;
+  }
+}
+
+/* Mobile login button improvements */
+@media (max-width: 991.98px) {
+  .login-btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem;
+    border-radius: 20px;
+  }
+
+  .login-icon {
+    margin-right: 0.375rem;
+    font-size: 0.9rem;
+  }
+
+  /* Mobile offcanvas login button */
+  .mobile-login-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 0.75rem 1.5rem !important;
+    margin: 1rem 0;
+    justify-content: center;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .mobile-login-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
   }
 }

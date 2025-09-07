@@ -112,18 +112,9 @@ const LoginPage = () => {
       <div className="signup-wrapper">
         <div className="signup-card">
           <div className="signup-left" aria-hidden>
-            <div className="animated-background">
-              <div className="floating-shapes">
-                <div className="shape shape-1"></div>
-                <div className="shape shape-2"></div>
-                <div className="shape shape-3"></div>
-                <div className="shape shape-4"></div>
-                <div className="shape shape-5"></div>
-                <div className="shape shape-6"></div>
-              </div>
-              <div className="gradient-overlay"></div>
-              <div className="pulse-circle"></div>
-              <div className="rotating-ring"></div>
+            <div className="image-background">
+              <img src="/assets/hero-image.jpg" alt="Marketing Agency" className="background-image" />
+              <div className="image-overlay"></div>
             </div>
             <div className="left-overlay">
               <span className="hero-section-subtitle"> ✨ Welcome to Glowup Agency</span>
