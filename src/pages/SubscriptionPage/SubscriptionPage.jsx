@@ -26,7 +26,7 @@ const SubscriptionPage = () => {
   const plans = [
     {
       id: 'basic',
-      name: 'Basic Plan',
+      name: 'Starter',
       features: [
         'Instagram Growth Management',
         'Basic Analytics Dashboard',
@@ -37,7 +37,7 @@ const SubscriptionPage = () => {
     },
     {
       id: 'pro',
-      name: 'Pro Plan',
+      name: 'Premium',
       features: [
         'Advanced Growth Strategies',
         'Detailed Analytics & Insights',
@@ -50,7 +50,7 @@ const SubscriptionPage = () => {
     },
     {
       id: 'enterprise',
-      name: 'Enterprise Plan',
+      name: 'Ultimate',
       features: [
         'White-label Growth Service',
         'Advanced Analytics & Reporting',
