@@ -99,6 +99,54 @@
   gap: 8px;
 }
 
+.location-container {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.location-selects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.country-select,
+.state-select {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+  background: white;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.country-select:focus,
+.state-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.state-select {
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .form-item-container input,
 .form-item-container select,
 .form-item-container textarea {
@@ -284,5 +332,14 @@
   .submit-btn {
     width: 100%;
     justify-content: center;
+  }
+  
+  .location-selects {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .state-select {
+    margin-top: 0;
   }
 }
