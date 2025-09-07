@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
@@ -17,70 +18,40 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const selectedPlan = location.state?.plan || 'starter';
-  
-  const planDetails = {
-    starter: { 
-      name: 'Starter', 
-      price: 59,
-      features: [
-        'Real Instagram Followers',
-        'Monthly growth Analytics',
-        '24/7 Live Support',
-        'Instagram Audit',
-        'Cancel Anytime',
-        'VPN Login Support',
-        'Account Management',
-        'Monthly Review'
-      ]
-    },
-    premium: { 
-      name: 'Premium', 
-      price: 89,
-      features: [
-        'Real Instagram Followers',
-        'Monthly growth Analytics',
-        '24/7 Live Support',
-        'Instagram Audit',
-        'Cancel Anytime',
-        'Target by Hashtag',
-        'Target by Influencer & competitor',
-        'Targeting Optimization',
-        'Gender',
-        'VPN Login Support',
-        'Account Management',
-        'Monthly Review'
-      ]
-    },
-    ultimate: { 
-      name: 'Ultimate', 
-      price: 189,
-      features: [
-        'Real Instagram Followers',
-        'Monthly growth Analytics',
-        '24/7 Live Support',
-        'Instagram Audit',
-        'Cancel Anytime',
-        'Target by Hashtag',
-        'Target by Influencer & competitor',
-        'Targeting Optimization',
-        'Gender',
-        'Comments',
-        'Likes Posts',
-        'VPN Login Support',
-        'Like After Follow',
-        'Tiktok Service',
-        'Welcome DM',
-        'Account Management',
-        'Monthly Review'
-      ]
-    }
+
+  // Get plan and price from navigation state
+  const selectedPlan = location.state?.plan || 'basic';
+  const selectedPrice = location.state?.price || 29;
+  const billingCycle = location.state?.billingCycle || 'monthly';
+
+  // Plan features for display
+  const planFeatures = {
+    basic: [
+      'Instagram Growth Management',
+      'Basic Analytics Dashboard',
+      'Email Support',
+      'Up to 1 Instagram Account'
+    ],
+    pro: [
+      'Advanced Growth Strategies',
+      'Detailed Analytics & Insights',
+      'Priority Support',
+      'Up to 3 Instagram Accounts',
+      'Custom Hashtag Research',
+      'Competitor Analysis'
+    ],
+    enterprise: [
+      'White-label Growth Service',
+      'Advanced Analytics & Reporting',
+      'Dedicated Account Manager',
+      'Unlimited Instagram Accounts',
+      'Custom Strategy Development',
+      '24/7 Phone Support'
+    ]
   };
 
-  const currentPlan = planDetails[selectedPlan] || planDetails['starter'];
-  
-  // Safety check - if currentPlan is still undefined, show error
-  if (!currentPlan) {
+  // Safety check
+  if (!selectedPlan || !planFeatures[selectedPlan]) {
     return (
       <div className="payment-page">
         <div className="payment-container">
@@ -103,25 +74,22 @@ const PaymentPage = () => {
 
   const handlePayment = async () => {
     setLoading(true);
-    
     try {
-      console.log('💳 Processing payment for plan:', currentPlan.name);
-      
+      console.log('💳 Processing payment for plan:', selectedPlan, 'at price:', selectedPrice);
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
       // Save payment record to database
       const paymentData = {
         user_id: user.uid,
-        amount: currentPlan.price,
+        amount: selectedPrice,
         currency: 'USD',
         status: 'completed',
         payment_method: 'card',
-        plan_name: currentPlan.name,
+        plan_name: selectedPlan,
+        billing_cycle: billingCycle,
         created_at: new Date().toISOString(),
         completed_at: new Date().toISOString()
       };
-      
       console.log('💾 Saving payment record...');
       const paymentResult = await firebaseDb.savePayment(paymentData);
       if (paymentResult.error) {
@@ -129,30 +97,24 @@ const PaymentPage = () => {
         throw paymentResult.error;
       }
       console.log('✅ Payment record saved successfully');
-      
       // Update user profile to mark payment as completed
       console.log('👤 Updating user profile...');
       const profileResult = await firebaseDb.updateProfile(user.uid, {
         payment_completed: true,
-        selected_plan: currentPlan.name,
+        selected_plan: selectedPlan,
         updated_at: new Date().toISOString()
       });
-      
       if (profileResult.error) {
         console.error('❌ Error updating profile:', profileResult.error);
         throw profileResult.error;
       }
       console.log('✅ User profile updated successfully');
-      
       // Refresh the user profile in the auth context
       console.log('🔄 Refreshing user profile...');
       await fetchUserProfile(user.uid);
-      
       console.log('🎉 Payment completed successfully!');
-      
       // Navigate to Instagram connect page
       navigate('/instagram-connect');
-      
     } catch (error) {
       console.error('❌ Payment failed:', error);
       alert('Payment failed. Please try again.');
@@ -189,21 +151,20 @@ const PaymentPage = () => {
       <div className="payment-container">
         <div className="payment-header">
           <h1>Complete Your Payment</h1>
-          <p>Secure payment processing for your {currentPlan.name}</p>
+          <p>Secure payment processing for your {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan</p>
         </div>
 
         <div className="payment-content">
           <div className="order-summary">
             <h3>Order Summary</h3>
             <div className="plan-info">
-              <div className="plan-name">{currentPlan.name}</div>
-              <div className="plan-price">${currentPlan.price}/month</div>
+              <div className="plan-name">{selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} Plan</div>
+              <div className="plan-price">${selectedPrice}/{billingCycle === 'yearly' ? 'year' : 'month'}</div>
             </div>
-            
             <div className="plan-features">
               <h4>What's Included:</h4>
               <ul>
-                {currentPlan.features.map((feature, index) => (
+                {planFeatures[selectedPlan].map((feature, index) => (
                   <li key={index}>
                     <span className="feature-icon">✓</span>
                     <span className="feature-text">{feature}</span>
@@ -214,7 +175,7 @@ const PaymentPage = () => {
             <div className="billing-info">
               <div className="billing-item">
                 <span>Subtotal</span>
-                <span>${currentPlan.price}.00</span>
+                <span>${selectedPrice}.00</span>
               </div>
               <div className="billing-item">
                 <span>Tax</span>
@@ -222,7 +183,7 @@ const PaymentPage = () => {
               </div>
               <div className="billing-item total">
                 <span>Total</span>
-                <span>${currentPlan.price}.00</span>
+                <span>${selectedPrice}.00</span>
               </div>
             </div>
             <div className="trial-info">
@@ -314,7 +275,7 @@ const PaymentPage = () => {
                   Processing Payment...
                 </>
               ) : (
-                `Pay $${currentPlan.price}.00`
+                `Pay $${selectedPrice}.00`
               )}
             </button>
 
