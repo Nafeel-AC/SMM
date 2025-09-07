@@ -7,7 +7,7 @@ const pricingData = {
     plans: [
         {
             id: 'starter',
-            name: 'Basic Plan',
+            name: 'Starter',
             description: 'Perfect for personal accounts seeking steady, organic growth and targeted global followers.',
             features: [
                 'Instagram Growth Management',
@@ -19,7 +19,7 @@ const pricingData = {
         },
         {
             id: 'premium',
-            name: 'Pro Plan',
+            name: 'Premium',
             description: 'Ideal for individuals and businesses looking to build a relevant local community with focused targeting.',
             features: [
                 'Advanced Growth Strategies',
@@ -33,7 +33,7 @@ const pricingData = {
         },
         {
             id: 'ultimate',
-            name: 'Enterprise Plan',
+            name: 'Ultimate',
             description: 'Designed for people building their brand with tailored engagement and advanced targeting capabilities.',
             features: [
                 'White-label Growth Service',
