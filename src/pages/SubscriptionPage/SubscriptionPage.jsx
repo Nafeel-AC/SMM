@@ -12,14 +12,14 @@ const SubscriptionPage = () => {
 
   const pricingData = {
     monthly: {
-      basic: { price: 29, period: '/month' },
-      pro: { price: 59, period: '/month' },
+      basic: { price: 59, period: '/month' },
+      pro: { price: 89, period: '/month' },
       enterprise: { price: 189, period: '/month' }
     },
     yearly: {
-      basic: { price: 290, period: '/year', monthlyEquivalent: 24.17 },
-      pro: { price: 590, period: '/year', monthlyEquivalent: 49.17 },
-      enterprise: { price: 1890, period: '/year', monthlyEquivalent: 157.50 }
+      basic: { price: 590, period: '/year', monthlyEquivalent: 24.17 },
+      pro: { price: 790, period: '/year', monthlyEquivalent: 49.17 },
+      enterprise: { price: 1690, period: '/year', monthlyEquivalent: 157.50 }
     }
   };
 
