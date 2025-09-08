@@ -1,138 +1,106 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import { db } from '../../lib/firebase';
-import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import emailjs from '@emailjs/browser';
+import { EMAILJS_CONFIG, validateEmailJSConfig } from '../../lib/emailjs';
 import './SupportChat.css';
 
 const SupportChat = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailData, setEmailData] = useState({
+    title: '',
+    body: ''
+  });
   const { user, profile } = useFirebaseAuth();
-  const messagesEndRef = useRef(null);
 
+  // Initialize EmailJS
   useEffect(() => {
-    let unsubscribe = null;
-    
-    if (isOpen && user) {
-      unsubscribe = fetchMessages();
+    if (validateEmailJSConfig()) {
+      emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+      console.log('EmailJS initialized for SupportChat');
+    } else {
+      console.warn('EmailJS not configured for SupportChat');
     }
-    
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [isOpen, user]);
+  }, []);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const handleEmailInputChange = (e) => {
+    const { name, value } = e.target;
+    setEmailData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const fetchMessages = async () => {
-    try {
-      setLoading(true);
-      const messagesRef = collection(db, 'support_chats');
-      const q = query(
-        messagesRef,
-        where('user_id', '==', user.uid),
-        orderBy('sent_at', 'asc')
-      );
-      
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const messagesData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setMessages(messagesData);
-        setLoading(false);
-      });
-
-      return unsubscribe;
-    } catch (error) {
-      setError('Failed to load messages');
-      console.error('Error fetching messages:', error);
-      setLoading(false);
-    }
-  };
-
-  const subscribeToMessages = () => {
-    // Real-time updates are now handled by the onSnapshot in fetchMessages
-    // This function is kept for compatibility but doesn't need to do anything
-    return () => {};
-  };
-
-  const handleSendMessage = async (e) => {
+  const handleSendEmail = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!emailData.title.trim() || !emailData.body.trim()) return;
 
     try {
       setLoading(true);
+      setError('');
+
+      // Validate EmailJS configuration
+      if (!validateEmailJSConfig()) {
+        throw new Error('EmailJS is not properly configured. Please try again later.');
+      }
+
+      // Prepare template parameters with userId attached
+      const templateParams = {
+        from_name: profile?.full_name || user.displayName || 'Support User',
+        from_email: user.email,
+        subject: `Support Query: ${emailData.title}`,
+        message: `${emailData.body}\n\n--- User Details ---\nUser ID: ${user.uid}\nEmail: ${user.email}\nName: ${profile?.full_name || user.displayName || 'N/A'}\nSent at: ${new Date().toLocaleString()}`,
+        reply_to: user.email,
+        to_name: 'SMM Support Team',
+        user_id: user.uid,
+        sent_at: new Date().toLocaleString(),
+      };
+
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams
+      );
+
+      console.log('Support email sent successfully:', result);
+
+      // Also save to Firestore for internal tracking
       const messagesRef = collection(db, 'support_chats');
       await addDoc(messagesRef, {
         user_id: user.uid,
-        message: newMessage.trim(),
+        message: `📧 Email sent: ${emailData.title} - ${emailData.body.substring(0, 100)}...`,
         sent_by: 'user',
         sent_at: serverTimestamp(),
-        user_name: profile?.full_name || user.displayName || 'User'
+        user_name: profile?.full_name || user.displayName || 'User',
+        email_sent: true,
+        email_title: emailData.title,
+        email_body: emailData.body
       });
 
-      setNewMessage('');
-      
-      // Send email notification to admin
-      await sendEmailNotification(newMessage.trim());
-      
+      // Reset form
+      setEmailData({ title: '', body: '' });
+
+      // Show success message
+      alert('Your support query has been sent successfully! We\'ll get back to you soon.');
+
     } catch (error) {
-      setError('Failed to send message');
-      console.error('Error sending message:', error);
+      console.error('Error sending support email:', error);
+
+      let errorMessage = 'Failed to send your query. Please try again.';
+
+      if (error.message && error.message.includes('EmailJS')) {
+        errorMessage = 'Email service is not configured. Please try again later.';
+      } else if (error.text) {
+        errorMessage = `Failed to send: ${error.text}`;
+      }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const sendEmailNotification = async (message) => {
-    try {
-      // In a real implementation, you would call your email service
-      // For now, we'll just log it
-      console.log('Email notification sent to admin:', {
-        user: user.email,
-        message: message,
-        timestamp: new Date().toISOString()
-      });
-    } catch (error) {
-      console.error('Error sending email notification:', error);
-    }
-  };
-
-  const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-  };
-
-  const getSenderName = (message) => {
-    if (message.sent_by === 'user') {
-      return message.user_name || profile?.full_name || 'You';
-    } else if (message.sent_by === 'staff') {
-      return message.staff_name || 'Staff Member';
-    } else if (message.sent_by === 'admin') {
-      return 'Admin';
-    }
-    return 'Unknown';
-  };
-
-  const getMessageClass = (message) => {
-    if (message.sent_by === 'user') {
-      return 'message user-message';
-    } else {
-      return 'message staff-message';
     }
   };
 
@@ -157,74 +125,81 @@ const SupportChat = () => {
     <div className="support-chat">
       <div className="chat-header">
         <div className="chat-title">
-          <h3>Support Chat</h3>
-          <p>We're here to help!</p>
+          <h3>Email Support</h3>
+          <p>Send us your query and we'll get back to you!</p>
         </div>
-        <button 
-          className="close-btn"
-          onClick={() => setIsOpen(false)}
-        >
-          ×
-        </button>
-      </div>
-
-      <div className="chat-messages">
-        {loading && messages.length === 0 ? (
-          <div className="loading-messages">
-            <div className="spinner"></div>
-            <p>Loading messages...</p>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="no-messages">
-            <p>No messages yet. Start a conversation!</p>
-          </div>
-        ) : (
-          messages.map((message) => (
-            <div key={message.id} className={getMessageClass(message)}>
-              <div className="message-content">
-                <div className="message-header">
-                  <span className="sender-name">{getSenderName(message)}</span>
-                  <span className="message-time">{formatTime(message.sent_at)}</span>
-                </div>
-                <div className="message-text">{message.message}</div>
-              </div>
-            </div>
-          ))
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {error && (
-        <div className="chat-error">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSendMessage} className="chat-input-form">
-        <div className="input-group support-input-group">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-            disabled={loading}
-            className="message-input"
-          />
-          <button 
-            type="submit" 
-            disabled={loading || !newMessage.trim()}
-            className="send-btn"
+        <div className="chat-controls">
+          <button
+            className="close-btn"
+            onClick={() => setIsOpen(false)}
           >
-            {loading ? (
-              <div className="spinner small"></div>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
-              </svg>
-            )}
+            ×
           </button>
         </div>
-      </form>
+      </div>
+
+      <div className="email-form-container">
+        <div className="email-form-header">
+          <h4>Send Support Query</h4>
+          <p>We'll get back to you via email within 24 hours</p>
+        </div>
+
+        {error && (
+          <div className="chat-error">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSendEmail} className="email-form">
+          <div className="input-group">
+            <label htmlFor="email-title">Subject/Title</label>
+            <input
+              id="email-title"
+              name="title"
+              type="text"
+              value={emailData.title}
+              onChange={handleEmailInputChange}
+              placeholder="Brief description of your issue"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="email-body">Message</label>
+            <textarea
+              id="email-body"
+              name="body"
+              value={emailData.body}
+              onChange={handleEmailInputChange}
+              placeholder="Please describe your query in detail..."
+              rows="6"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || !emailData.title.trim() || !emailData.body.trim()}
+            className="send-email-btn"
+          >
+            {loading ? (
+              <>
+                <div className="spinner small"></div>
+                Sending...
+              </>
+            ) : (
+              <>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{marginRight: '8px'}}>
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+                </svg>
+                Send Query
+              </>
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
