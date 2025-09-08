@@ -34,14 +34,23 @@ export function FirebaseAuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [ignoreAuthState, setIgnoreAuthState] = useState(false);
 
   // Check for user on mount
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       console.log('🔄 Firebase auth state change:', { 
         user: !!firebaseUser, 
-        email: firebaseUser?.email 
+        email: firebaseUser?.email,
+        ignoreAuthState
       });
+      
+      // Skip processing if we're ignoring auth state changes (during registration)
+      if (ignoreAuthState) {
+        console.log('🚫 Ignoring auth state change during registration');
+        return;
+      }
+      
       setLoading(false);
       if (firebaseUser) {
         console.log('👤 Firebase user found:', firebaseUser.email);
@@ -55,7 +64,7 @@ export function FirebaseAuthProvider({ children }) {
     });
     // Clean up subscription when component unmounts
     return () => unsubscribe();
-  }, []);
+  }, [ignoreAuthState]);
 
   // Fetch user profile from Firestore
   const fetchUserProfile = async (userId) => {
@@ -341,9 +350,101 @@ export function FirebaseAuthProvider({ children }) {
     }
   };
 
+  // Sign up with Google (for registration, not login)
+  const signUpWithGoogle = async () => {
+    try {
+      console.log('🔧 FirebaseAuthContext: signUpWithGoogle called');
+      
+      // Set flag to ignore auth state changes during registration
+      setIgnoreAuthState(true);
+      
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+      
+      // Add additional scopes if needed
+      provider.addScope('email');
+      provider.addScope('profile');
+      
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      console.log('✅ FirebaseAuthContext: Google sign up successful for user:', user.email);
+      
+      // Check if user profile exists, if not create it
+      const profileRef = doc(db, 'profiles', user.uid);
+      const profileSnap = await getDoc(profileRef);
+      
+      if (!profileSnap.exists()) {
+        console.log('📝 Creating new profile for Google user');
+        // Extract first and last name from display name if available
+        const displayName = user.displayName || '';
+        const nameParts = displayName.split(' ');
+        const firstName = nameParts[0] || null;
+        const lastName = nameParts.slice(1).join(' ') || null;
+        
+        await setDoc(profileRef, {
+          id: user.uid,
+          first_name: firstName,
+          last_name: lastName,
+          full_name: displayName,
+          display_name: displayName,
+          email: user.email,
+          role: 'user',
+          instagram_connected: false,
+          requirements_completed: false,
+          payment_completed: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          auth_provider: 'google'
+        });
+      } else {
+        // Update the profile with auth provider info if not present
+        const existingData = profileSnap.data();
+        if (!existingData.auth_provider) {
+          await updateDoc(profileRef, {
+            auth_provider: 'google',
+            updated_at: new Date().toISOString()
+          });
+        }
+      }
+      
+      // Sign out immediately to prevent auto-login
+      await signOut(auth);
+      
+      // Reset the ignore flag after a short delay
+      setTimeout(() => {
+        setIgnoreAuthState(false);
+      }, 1000);
+      
+      return { data: user, error: null };
+    } catch (error) {
+      console.error('💥 FirebaseAuthContext: Google sign up error:', error);
+      
+      // Reset the ignore flag on error
+      setIgnoreAuthState(false);
+      
+      // Handle specific Google auth errors
+      let errorMessage = 'Failed to sign up with Google';
+      if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Sign up was cancelled';
+      } else if (error.code === 'auth/popup-blocked') {
+        errorMessage = 'Pop-up was blocked by browser. Please allow pop-ups and try again.';
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        errorMessage = 'Another sign up is in progress';
+      }
+      
+      return { data: null, error: { ...error, message: errorMessage } };
+    }
+  };
+
   // Sign up with email and password
   const signUpWithEmail = async (email, password, firstName = null, lastName = null) => {
     try {
+      // Set flag to ignore auth state changes during registration
+      setIgnoreAuthState(true);
+      
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
       // Create full name from first and last name
@@ -376,9 +477,19 @@ export function FirebaseAuthProvider({ children }) {
         console.warn('[signUpWithEmail] Could not proactively create profile, will rely on fetchUserProfile:', profileErr);
       }
 
+      // Sign out immediately to prevent auto-login
+      await signOut(auth);
+      
+      // Reset the ignore flag after a short delay
+      setTimeout(() => {
+        setIgnoreAuthState(false);
+      }, 1000);
+
       return { data: userCredential.user, error: null };
     } catch (error) {
       console.error('Sign up error:', error);
+      // Reset the ignore flag on error
+      setIgnoreAuthState(false);
       return { data: null, error };
     }
   };

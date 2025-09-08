@@ -15,18 +15,8 @@ const RegisterPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signUpWithEmail, signInWithGoogle, user, profile, getNextUserFlowStep } = useFirebaseAuth();
+  const { signUpWithEmail, signUpWithGoogle, signOutUser } = useFirebaseAuth();
   const navigate = useNavigate();
-
-  // Redirect user after successful Google signup with updated context
-  useEffect(() => {
-    if (user && profile) {
-      console.log('🚀 Google signup successful, redirecting to dashboard with updated context');
-      const dashboardUrl = getNextUserFlowStep();
-      console.log('📍 Redirecting to:', dashboardUrl);
-      navigate(dashboardUrl, { replace: true });
-    }
-  }, [user, profile, navigate, getNextUserFlowStep]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,7 +39,8 @@ const RegisterPage = () => {
 
     try {
       await signUpWithEmail(formData.email, formData.password, formData.firstName, formData.lastName);
-      navigate('/login');
+      console.log('✅ Email registration successful, redirecting to homepage...');
+      navigate('/');
     } catch (err) {
       setError('Failed to create account. Please try again.');
     } finally {
@@ -64,7 +55,7 @@ const RegisterPage = () => {
 
     try {
       console.log('📧 Attempting to sign up with Google');
-      const { data, error } = await signInWithGoogle();
+      const { data, error } = await signUpWithGoogle();
       
       console.log('🔍 Google sign up response:', { data, error });
       
@@ -74,9 +65,8 @@ const RegisterPage = () => {
         setLoading(false);
       } else {
         console.log('✅ Google sign up successful, data:', data);
-        // Success - useEffect will handle redirection with updated context
-        console.log('🚀 Google signup successful, waiting for profile update and redirection...');
-        // Keep loading state true until redirection happens
+        console.log('🚀 Google registration successful, redirecting to homepage...');
+        navigate('/');
       }
     } catch (error) {
       console.error('💥 Google sign up exception:', error);
