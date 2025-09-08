@@ -12,19 +12,25 @@ const SupportChat = () => {
   const [error, setError] = useState('');
   const [emailData, setEmailData] = useState({
     title: '',
-    body: ''
+    body: '',
+    replyEmail: ''
   });
   const { user, profile } = useFirebaseAuth();
 
-  // Initialize EmailJS
+  // Initialize EmailJS - always call this hook, but only initialize when user is authenticated
   useEffect(() => {
-    if (validateEmailJSConfig()) {
+    if (user && validateEmailJSConfig()) {
       emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
       console.log('EmailJS initialized for SupportChat');
-    } else {
+    } else if (user) {
       console.warn('EmailJS not configured for SupportChat');
     }
-  }, []);
+  }, [user]);
+
+  // Don't render anything if user is not signed in
+  if (!user) {
+    return null;
+  }
 
   const handleEmailInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,8 +58,8 @@ const SupportChat = () => {
         from_name: profile?.full_name || user.displayName || 'Support User',
         from_email: user.email,
         subject: `Support Query: ${emailData.title}`,
-        message: `${emailData.body}\n\n--- User Details ---\nUser ID: ${user.uid}\nEmail: ${user.email}\nName: ${profile?.full_name || user.displayName || 'N/A'}\nSent at: ${new Date().toLocaleString()}`,
-        reply_to: user.email,
+        message: `${emailData.body}\n\n--- User Details ---\nUser ID: ${user.uid}\nAccount Email: ${user.email}\nName: ${profile?.full_name || user.displayName || 'N/A'}\nPreferred Reply Email: ${emailData.replyEmail || user.email}\nSent at: ${new Date().toLocaleString()}`,
+        reply_to: emailData.replyEmail || user.email,
         to_name: 'SMM Support Team',
         user_id: user.uid,
         sent_at: new Date().toLocaleString(),
@@ -82,7 +88,7 @@ const SupportChat = () => {
       });
 
       // Reset form
-      setEmailData({ title: '', body: '' });
+      setEmailData({ title: '', body: '', replyEmail: '' });
 
       // Show success message
       alert('Your support query has been sent successfully! We\'ll get back to you soon.');
@@ -163,6 +169,22 @@ const SupportChat = () => {
               required
               disabled={loading}
             />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="email-reply">Reply Email (Optional)</label>
+            <input
+              id="email-reply"
+              name="replyEmail"
+              type="email"
+              value={emailData.replyEmail}
+              onChange={handleEmailInputChange}
+              placeholder="Email where you want to receive replies (leave empty to use account email)"
+              disabled={loading}
+            />
+            <small style={{color: '#6b7280', fontSize: '0.75rem', marginTop: '0.25rem', display: 'block'}}>
+              If different from your account email ({user.email})
+            </small>
           </div>
 
           <div className="input-group">

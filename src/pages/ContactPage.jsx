@@ -391,7 +391,7 @@ const ContactPage = () => {
             </div>
             <div className="faq-item">
               <h4>💰 What are your pricing options?</h4>
-              <p>We offer flexible packages starting from $299/month. Custom enterprise solutions available for larger businesses.</p>
+              <p>We offer flexible packages starting from $59/month. Custom Ultimate solutions available for larger businesses.</p>
             </div>
             <div className="faq-item">
               <h4>📈 Do you guarantee results?</h4>
