@@ -464,20 +464,34 @@ const RequirementsFormPage = () => {
               <label>Niche (Target Audience) *</label>
               {formData.niche.map((item, idx) => (
                 <div key={idx} className="form-item-container">
-                  <input
-                    type="text"
-                    value={item}
-                    onChange={e => handleArrayChange('niche', idx, e.target.value)}
-                    placeholder="e.g., Fashion & Beauty, Fitness & Health, Food & Cooking"
-                    required
-                  />
-                  {formData.niche.length > 1 && (
+                  {idx === 0 ? (
+                    <select
+                      value={item}
+                      onChange={e => handleArrayChange('niche', idx, e.target.value)}
+                      required
+                      className="niche-select"
+                    >
+                      <option value="">Select Primary Niche</option>
+                      {nicheOptions.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={item}
+                      onChange={e => handleArrayChange('niche', idx, e.target.value)}
+                      placeholder="Enter additional niche/target audience"
+                      required
+                    />
+                  )}
+                  {formData.niche.length > 1 && idx > 0 && (
                     <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('niche', idx)}>Remove</button>
                   )}
                 </div>
               ))}
               {formData.niche.length < 5 && (
-                <button type="button" className="add-item-btn" onClick={() => handleAddItem('niche', 5)}>Add item</button>
+                <button type="button" className="add-item-btn" onClick={() => handleAddItem('niche', 5)}>Add Additional Niche</button>
               )}
             </div>
             <div className="form-group">
