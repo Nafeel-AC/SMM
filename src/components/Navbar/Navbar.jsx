@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import './Navbar.css';
 import logo from '../../assets/logo.png';
 
@@ -9,6 +10,12 @@ const Navbar = () => {
   const [activeSection, setActiveSection] = useState('home');
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, profile, getNextUserFlowStep } = useFirebaseAuth();
+  
+  // Get dashboard URL based on user role and flow progress
+  const getDashboardUrl = () => {
+    return getNextUserFlowStep();
+  };
   
   // Enhanced smooth scroll function with better animation
   const smoothScrollTo = (elementId) => {
@@ -297,10 +304,17 @@ const Navbar = () => {
               </div>
             </li>
             <li className="nav-item">
-              <Link className="nav-link login-btn" to="/login">
-                <i className="login-icon fas fa-sign-in-alt"></i>
-                <span className="d-none d-md-block">Login</span>
-              </Link>
+              {user ? (
+                <Link className="nav-link login-btn" to={getDashboardUrl()}>
+                  <i className="login-icon fas fa-tachometer-alt"></i>
+                  <span className="d-none d-md-block">Dashboard</span>
+                </Link>
+              ) : (
+                <Link className="nav-link login-btn" to="/login">
+                  <i className="login-icon fas fa-sign-in-alt"></i>
+                  <span className="d-none d-md-block">Login</span>
+                </Link>
+              )}
             </li>
           </ul>
         </div>

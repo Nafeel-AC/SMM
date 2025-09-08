@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFirebaseAuth } from '../contexts/FirebaseAuthContext';
 import Navbar from '../components/Navbar';
@@ -15,16 +15,8 @@ import FAQSection from '../components/FAQSection';
 
 
 const HomePage = () => {
-  const { user, loading, getNextUserFlowStep } = useFirebaseAuth();
+    const { user, loading } = useFirebaseAuth();
   const navigate = useNavigate();
-
-  // Redirect to appropriate step if user is already logged in
-  useEffect(() => {
-    if (user && !loading) {
-      const nextStep = getNextUserFlowStep();
-      navigate(nextStep);
-    }
-  }, [user, loading, navigate, getNextUserFlowStep]);
 
   // If still loading or user is not logged in, show the homepage
   return (

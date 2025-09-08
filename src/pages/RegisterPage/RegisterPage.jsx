@@ -64,8 +64,8 @@ const RegisterPage = () => {
         setLoading(false);
       } else {
         console.log('✅ Google sign up successful, data:', data);
-        // Success - the useEffect will handle role-based redirection
-        console.log('🚀 Google sign up successful, waiting for role-based redirect...');
+        // Success - user can now navigate freely or use Dashboard button
+        console.log('🚀 Google sign up successful, user can navigate freely...');
         setLoading(false);
       }
     } catch (error) {
