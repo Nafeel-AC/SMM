@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import Navbar from '../../components/Navbar';
@@ -15,8 +15,18 @@ const RegisterPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signUpWithEmail, signInWithGoogle } = useFirebaseAuth();
+  const { signUpWithEmail, signInWithGoogle, user, profile, getNextUserFlowStep } = useFirebaseAuth();
   const navigate = useNavigate();
+
+  // Redirect user after successful Google signup with updated context
+  useEffect(() => {
+    if (user && profile) {
+      console.log('🚀 Google signup successful, redirecting to dashboard with updated context');
+      const dashboardUrl = getNextUserFlowStep();
+      console.log('📍 Redirecting to:', dashboardUrl);
+      navigate(dashboardUrl, { replace: true });
+    }
+  }, [user, profile, navigate, getNextUserFlowStep]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,9 +74,9 @@ const RegisterPage = () => {
         setLoading(false);
       } else {
         console.log('✅ Google sign up successful, data:', data);
-        // Success - user can now navigate freely or use Dashboard button
-        console.log('🚀 Google sign up successful, user can navigate freely...');
-        setLoading(false);
+        // Success - useEffect will handle redirection with updated context
+        console.log('🚀 Google signup successful, waiting for profile update and redirection...');
+        // Keep loading state true until redirection happens
       }
     } catch (error) {
       console.error('💥 Google sign up exception:', error);
