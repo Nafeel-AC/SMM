@@ -35,12 +35,12 @@ const HeroSection = () => {
 
                 <div className="btn-area">
                   <a href="/login" className="cmn-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginRight: '8px'}}>
+                    {/* <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginRight: '8px'}}>
                       <path d="M5 12l14 0"></path>
                       <path d="M13 18l6-6"></path>
                       <path d="M13 6l6 6"></path>
-                    </svg>
-                    &#128640; Get Started
+                    </svg> */}
+                    &#128640;Get Started
                   </a>
                   <a href="/contact" className="chat-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{marginRight: '8px'}}>
