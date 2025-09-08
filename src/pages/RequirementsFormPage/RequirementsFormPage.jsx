@@ -7,7 +7,7 @@ import './RequirementsFormPage.css';
 const RequirementsFormPage = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    niche: [''], // max 5
+    niche: ['', ''], // Fixed: [dropdown_value, text_input_value]
     location: [''], // max 3 - now stores as "Country, State" or "Country"
     comments: [''], // max 5
     dms: [''], // max 3
@@ -349,15 +349,15 @@ const RequirementsFormPage = () => {
 
     // Validate required fields
     const requiredArrays = [
-      { field: 'niche', max: 5 },
+      { field: 'niche', max: 5, minRequired: 1 }, // Only first niche is required
       { field: 'location', max: 3 },
       { field: 'comments', max: 5 },
       { field: 'dms', max: 3 },
       { field: 'hashtags', max: 10 },
       { field: 'account_targets', max: 5 }
     ];
-    for (const { field, max } of requiredArrays) {
-      if (!formData[field] || !formData[field].length || formData[field].some(v => !v.trim())) {
+    for (const { field, max, minRequired = 0 } of requiredArrays) {
+      if (!formData[field] || !formData[field].length || formData[field].slice(0, minRequired).some(v => !v.trim())) {
         alert(`Please fill in all required fields for ${field}.`);
         setLoading(false);
         return;
@@ -384,10 +384,10 @@ const RequirementsFormPage = () => {
     try {
       console.log('💾 Attempting to save to database...');
       
-      // Prepare data for insertion
+      // Prepare data for insertion - filter out empty niche entries
       const insertData = {
         user_id: user.uid,
-        niche: formData.niche,
+        niche: formData.niche.filter(n => n.trim() !== ''), // Remove empty entries
         location: formData.location,
         comments: formData.comments,
         dms: formData.dms,
@@ -462,37 +462,27 @@ const RequirementsFormPage = () => {
             <h3>Niche Information</h3>
             <div className="form-group">
               <label>Niche (Target Audience) *</label>
-              {formData.niche.map((item, idx) => (
-                <div key={idx} className="form-item-container">
-                  {idx === 0 ? (
-                    <select
-                      value={item}
-                      onChange={e => handleArrayChange('niche', idx, e.target.value)}
-                      required
-                      className="niche-select"
-                    >
-                      <option value="">Select Primary Niche</option>
-                      {nicheOptions.map(option => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      value={item}
-                      onChange={e => handleArrayChange('niche', idx, e.target.value)}
-                      placeholder="Enter additional niche/target audience"
-                      required
-                    />
-                  )}
-                  {formData.niche.length > 1 && idx > 0 && (
-                    <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('niche', idx)}>Remove</button>
-                  )}
-                </div>
-              ))}
-              {formData.niche.length < 5 && (
-                <button type="button" className="add-item-btn" onClick={() => handleAddItem('niche', 5)}>Add Additional Niche</button>
-              )}
+              <div className="form-item-container">
+                <select
+                  value={formData.niche[0] || ''}
+                  onChange={e => handleArrayChange('niche', 0, e.target.value)}
+                  required
+                  className="niche-select"
+                >
+                  <option value="">Select Primary Niche</option>
+                  {nicheOptions.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-item-container">
+                <input
+                  type="text"
+                  value={formData.niche[1] || ''}
+                  onChange={e => handleArrayChange('niche', 1, e.target.value)}
+                  placeholder="Add more information (optional)"
+                />
+              </div>
             </div>
             <div className="form-group">
               <label>Location *</label>
