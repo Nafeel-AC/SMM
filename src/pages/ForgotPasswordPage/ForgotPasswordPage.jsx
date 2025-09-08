@@ -12,7 +12,7 @@ const ForgotPasswordPage = () => {
   const [successMessage, setSuccessMessage] = useState(null);
 
   // Background image
-  const bgImage = '/src/assets/hero-image.jpg'; // Update this path to your actual image
+  const bgImage = '/assets/hero-image.jpg'; // Update this path to your actual image
 
   // Handle form submission for password reset
   const handleSubmit = async (e) => {

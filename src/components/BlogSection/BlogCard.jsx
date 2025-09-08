@@ -26,7 +26,7 @@ const BlogCard = ({ blog }) => {
       <div className="blog-image">
         <Link to={`/blog/${blog.id}`}>
           <img 
-            src={`/src/assets/${blog.image}`} 
+            src={`/assets/${blog.image}`} 
             alt={blog.title}
             onError={(e) => {
               e.target.onerror = null;
