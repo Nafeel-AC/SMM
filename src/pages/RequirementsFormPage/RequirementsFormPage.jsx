@@ -464,16 +464,13 @@ const RequirementsFormPage = () => {
               <label>Niche (Target Audience) *</label>
               {formData.niche.map((item, idx) => (
                 <div key={idx} className="form-item-container">
-                  <select
+                  <input
+                    type="text"
                     value={item}
                     onChange={e => handleArrayChange('niche', idx, e.target.value)}
+                    placeholder="e.g., Fashion & Beauty, Fitness & Health, Food & Cooking"
                     required
-                  >
-                    <option value="">Select your niche</option>
-                    {nicheOptions.map(niche => (
-                      <option key={niche} value={niche}>{niche}</option>
-                    ))}
-                  </select>
+                  />
                   {formData.niche.length > 1 && (
                     <button type="button" className="remove-item-btn" onClick={() => handleRemoveItem('niche', idx)}>Remove</button>
                   )}
