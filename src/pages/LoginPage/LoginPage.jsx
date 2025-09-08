@@ -35,8 +35,8 @@ const LoginPage = () => {
   const { signInWithEmail, signInWithGoogle, user, profile } = useFirebaseAuth();
   const navigate = useNavigate();
   
-  // Note: Redirect logic is handled by FirebaseAuthContext auth state listener
-  // No need to redirect here to avoid conflicts
+  // Note: No automatic redirect after login - users can navigate freely
+  // Dashboard button in navbar will take them to their appropriate dashboard
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,8 +64,8 @@ const LoginPage = () => {
         setLoading(false);
       } else {
         console.log('✅ Sign in successful, data:', data);
-        // Success - the useEffect will handle role-based redirection
-        console.log('🚀 Login successful, waiting for role-based redirect...');
+        // Success - user can now navigate freely or use Dashboard button
+        console.log('🚀 Login successful, user can navigate freely...');
         setLoading(false);
       }
     } catch (error) {
@@ -92,8 +92,8 @@ const LoginPage = () => {
         setLoading(false);
       } else {
         console.log('✅ Google sign in successful, data:', data);
-        // Success - the useEffect will handle role-based redirection
-        console.log('🚀 Google login successful, waiting for role-based redirect...');
+        // Success - user can now navigate freely or use Dashboard button
+        console.log('🚀 Google login successful, user can navigate freely...');
         setLoading(false);
       }
     } catch (error) {

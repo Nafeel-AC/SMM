@@ -21,7 +21,6 @@ import {
   getDocs 
 } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
-import { useNavigate } from 'react-router-dom';
 
 // Create the authentication context
 export const FirebaseAuthContext = createContext(null);
@@ -57,41 +56,6 @@ export function FirebaseAuthProvider({ children }) {
     // Clean up subscription when component unmounts
     return () => unsubscribe();
   }, []);
-
-  // Child component for redirect logic
-  function AuthRedirector() {
-    const navigate = useNavigate();
-    useEffect(() => {
-      if (!user || loading) return;
-      if (!profile) {
-        console.log('[User Type] Role not found in profile:', profile);
-        return;
-      }
-      console.log(`[User Type] Logged in as: ${profile.role}`);
-      const nextStep = getNextUserFlowStep();
-      const currentPath = window.location.pathname;
-      console.log('🚀 Current path:', currentPath);
-      console.log('🚀 Next step should be:', nextStep);
-      // Don't redirect if we're already on a role-specific dashboard (including sub-routes) or diagnostic page
-      if (currentPath.startsWith('/admin-dashboard') || currentPath.startsWith('/staff-dashboard') || currentPath === '/diagnostic') {
-        console.log('✅ Already on role-specific dashboard or diagnostic page:', currentPath);
-        return;
-      }
-      // Prevent redirect loop when user is navigating to /payment or /instagram-connect
-      if (currentPath === '/payment' || currentPath === '/instagram-connect') {
-        console.log(`✅ User is on ${currentPath} page, no redirect needed`);
-        return;
-      }
-      // Only redirect if we're not already on the correct page
-      if (currentPath !== nextStep) {
-        console.log('🚀 Redirecting from', currentPath, 'to', nextStep);
-        navigate(nextStep, { replace: true });
-      } else {
-        console.log('✅ Already on correct page:', currentPath);
-      }
-    }, [profile, user, loading, navigate]);
-    return null;
-  }
 
   // Fetch user profile from Firestore
   const fetchUserProfile = async (userId) => {
@@ -487,7 +451,6 @@ export function FirebaseAuthProvider({ children }) {
 
   return (
     <FirebaseAuthContext.Provider value={value}>
-      <AuthRedirector />
       {children}
     </FirebaseAuthContext.Provider>
   );

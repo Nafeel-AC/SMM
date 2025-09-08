@@ -8,6 +8,7 @@ import MetricsDisplay from '../components/MetricsDisplay';
 import StrategySection from '../components/StrategySection';
 import HashtagsSection from '../components/HashtagsSection';
 import AccountsSection from '../components/AccountsSection';
+import Navbar from '../components/Navbar';
 import './DashboardPage.css';
 
 const DashboardPage = () => {
@@ -163,19 +164,8 @@ const DashboardPage = () => {
 
   return (
     <div className="dashboard-page">
+      <Navbar />
       <div className="dashboard-container">
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 20 }}>
-          <button
-            className="logout-btn"
-            style={{ background: '#ef4444', color: 'white', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
-            onClick={async () => {
-              await signOut();
-              navigate('/login');
-            }}
-          >
-            Logout
-          </button>
-        </div>
         {/* Show order status at the top if requirements are loaded */}
         {requirements && typeof requirements.order_completed !== 'undefined' && (
           <div style={{
@@ -303,6 +293,20 @@ const DashboardPage = () => {
             </div>
           </div>
         )}
+        
+        {/* Logout button at the bottom as final step */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40, paddingTop: 20, borderTop: '1px solid #e2e8f0' }}>
+          <button
+            className="logout-btn"
+            style={{ background: '#ef4444', color: 'white', border: 'none', padding: '12px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontSize: '16px' }}
+            onClick={async () => {
+              await signOut();
+              navigate('/login');
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   );
