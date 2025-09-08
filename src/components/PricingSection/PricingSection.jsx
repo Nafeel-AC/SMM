@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import './PricingSection-modern.css';
 import pricingData from '../../data/pricingData';
 
 const PricingSection = ({ onPlanSelect }) => {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const navigate = useNavigate();
+  const { user, getNextUserFlowStep } = useFirebaseAuth();
 
   const { plans, pricing, comparisonCategories } = pricingData;
 
   const handleGetStarted = (planName) => {
-    // Navigate to login page using React Router
-    navigate('/login');
+    if (user) {
+      // User is logged in, navigate to their dashboard
+      const nextStep = getNextUserFlowStep();
+      navigate(nextStep);
+    } else {
+      // User is not logged in, navigate to login page
+      navigate('/login');
+    }
   };
 
   // Helper function to render checkmark or minus
