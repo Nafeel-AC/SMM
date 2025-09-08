@@ -112,7 +112,8 @@
 }
 
 .country-select,
-.state-select {
+.state-select,
+.niche-select {
   padding: 12px 16px;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
@@ -125,7 +126,8 @@
 }
 
 .country-select:focus,
-.state-select:focus {
+.state-select:focus,
+.niche-select:focus {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
