@@ -2,7 +2,7 @@
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  z-index: 1000;
+  z-index: 1050;
 }
 
 .chat-toggle-btn {
@@ -27,17 +27,18 @@
 
 .support-chat {
   position: fixed;
-  bottom: 2rem;
+  bottom: 5rem;
   right: 2rem;
   width: 400px;
-  height: 600px;
+  height: 550px;
   background: white;
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  z-index: 1000;
+  z-index: 1050;
   overflow: hidden;
+  max-height: calc(100vh - 120px);
 }
 
 .chat-header {
@@ -47,6 +48,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
 .chat-title h3 {
@@ -63,20 +66,25 @@
 .close-btn {
   background: rgba(255, 255, 255, 0.2);
   color: white;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   width: 30px;
   height: 30px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.2rem;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
 }
 
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
 }
 
 .chat-messages {
@@ -415,12 +423,35 @@
 }
 
 /* Responsive Design */
+@media (max-width: 768px) and (min-width: 481px) {
+  .support-chat {
+    width: calc(100vw - 3rem);
+    height: calc(100vh - 8rem);
+    bottom: 4rem;
+    right: 1.5rem;
+    max-height: calc(100vh - 100px);
+  }
+
+  .chat-controls {
+    gap: 0.25rem;
+  }
+
+  .email-form-container {
+    padding: 1rem;
+  }
+
+  .email-form textarea {
+    min-height: 100px;
+  }
+}
+
 @media (max-width: 480px) {
   .support-chat {
     width: calc(100vw - 2rem);
-    height: calc(100vh - 4rem);
-    bottom: 1rem;
+    height: calc(100vh - 8rem);
+    bottom: 4rem;
     right: 1rem;
+    max-height: calc(100vh - 100px);
   }
 
   .chat-controls {
