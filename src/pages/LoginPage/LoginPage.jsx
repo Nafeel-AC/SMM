@@ -32,11 +32,18 @@ const LoginPage = () => {
     };
   }, []);
   const [error, setError] = useState('');
-  const { signInWithEmail, signInWithGoogle, user, profile } = useFirebaseAuth();
+  const { signInWithEmail, signInWithGoogle, user, profile, getNextUserFlowStep } = useFirebaseAuth();
   const navigate = useNavigate();
   
-  // Note: No automatic redirect after login - users can navigate freely
-  // Dashboard button in navbar will take them to their appropriate dashboard
+  // Redirect user after successful login with updated context
+  useEffect(() => {
+    if (user && profile) {
+      console.log('🚀 Login successful, redirecting to dashboard with updated context');
+      const dashboardUrl = getNextUserFlowStep();
+      console.log('📍 Redirecting to:', dashboardUrl);
+      navigate(dashboardUrl, { replace: true });
+    }
+  }, [user, profile, navigate, getNextUserFlowStep]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,9 +71,9 @@ const LoginPage = () => {
         setLoading(false);
       } else {
         console.log('✅ Sign in successful, data:', data);
-        // Success - user can now navigate freely or use Dashboard button
-        console.log('🚀 Login successful, user can navigate freely...');
-        setLoading(false);
+        // Success - useEffect will handle redirection with updated context
+        console.log('🚀 Login successful, waiting for profile update and redirection...');
+        // Keep loading state true until redirection happens
       }
     } catch (error) {
       console.error('💥 Sign in exception:', error);
@@ -92,9 +99,9 @@ const LoginPage = () => {
         setLoading(false);
       } else {
         console.log('✅ Google sign in successful, data:', data);
-        // Success - user can now navigate freely or use Dashboard button
-        console.log('🚀 Google login successful, user can navigate freely...');
-        setLoading(false);
+        // Success - useEffect will handle redirection with updated context
+        console.log('🚀 Google login successful, waiting for profile update and redirection...');
+        // Keep loading state true until redirection happens
       }
     } catch (error) {
       console.error('💥 Google sign in exception:', error);
