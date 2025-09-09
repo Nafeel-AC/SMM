@@ -10,7 +10,7 @@ const Navbar = () => {
   const [activeSection, setActiveSection] = useState('home');
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, profile, getNextUserFlowStep } = useFirebaseAuth();
+  const { user, profile, getNextUserFlowStep, signOut } = useFirebaseAuth();
   
   // Get dashboard URL based on user role and flow progress
   const getDashboardUrl = () => {
@@ -305,10 +305,33 @@ const Navbar = () => {
             </li>
             <li className="nav-item">
               {user ? (
-                <Link className="nav-link login-btn" to={getDashboardUrl()}>
-                  <i className="login-icon fas fa-tachometer-alt"></i>
-                  <span className="d-none d-md-block">Dashboard</span>
-                </Link>
+                <div className="user-actions">
+                  <Link className="nav-link login-btn" to={getDashboardUrl()}>
+                    <i className="login-icon fas fa-tachometer-alt"></i>
+                    <span className="d-none d-md-block">Dashboard</span>
+                  </Link>
+                  <button 
+                    className="nav-link logout-btn" 
+                    onClick={async () => {
+                      await signOut();
+                      navigate('/login');
+                    }}
+                    style={{ 
+                      background: 'transparent', 
+                      border: 'none', 
+                      color: '#fff', 
+                      cursor: 'pointer',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
+                    onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                  >
+                    <i className="login-icon fas fa-sign-out-alt"></i>
+                    <span className="d-none d-md-block">Logout</span>
+                  </button>
+                </div>
               ) : (
                 <Link className="nav-link login-btn" to="/login">
                   <i className="login-icon fas fa-sign-in-alt"></i>

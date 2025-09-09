@@ -217,20 +217,6 @@ const DashboardPage = () => {
             </div>
           </div>
         )}
-        
-        {/* Logout button at the bottom as final step */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40, paddingTop: 20, borderTop: '1px solid #e2e8f0' }}>
-          <button
-            className="logout-btn"
-            style={{ background: '#ef4444', color: 'white', border: 'none', padding: '12px 24px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontSize: '16px' }}
-            onClick={async () => {
-              await signOut();
-              navigate('/login');
-            }}
-          >
-            Logout
-          </button>
-        </div>
       </div>
     </div>
   );
