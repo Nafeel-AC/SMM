@@ -64,7 +64,7 @@ const FeatureSection = () => {
       <div className="container">
         <div className="section-heading">
           <h6 className="wow fadeIn" data-wow-delay=".5s">Best Services</h6>
-          <h3 className="wow">We help to create <span className="color-font">strategies, design</span> & development.</h3>
+          <h3 className="wow">We help to create <span className="color-font">strategies, design</span> & Engagement.</h3>
         </div>
         <div className="feature-section-inner">
           {features.map((feature, index) => (
