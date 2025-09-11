@@ -93,17 +93,22 @@ const SubscriptionPage = () => {
         }),
       });
 
-      const { url } = await response.json();
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => 'Unknown error');
+        throw new Error(`Server error (${response.status}): ${errorText}`);
+      }
+
+      const data = await response.json();
       
-      if (url) {
+      if (data.url) {
         // Redirect to Stripe checkout
-        window.location.href = url;
+        window.location.href = data.url;
       } else {
-        throw new Error('Failed to create checkout session');
+        throw new Error('No checkout URL received from server');
       }
     } catch (error) {
       console.error('Error creating checkout session:', error);
-      alert('Failed to start checkout process. Please try again.');
+      alert(`Failed to start checkout process: ${error.message}`);
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 // Vercel serverless function for Stripe webhooks
 // Requires env vars: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
 
-const stripePkg = require('stripe');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Read and buffer raw request body for Stripe signature verification
 async function getRawBody(req) {
@@ -30,7 +30,7 @@ async function getRawBody(req) {
   }
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const stripe = stripePkg(stripeSecretKey);
+  // stripe is already initialized at the top
 
   let event;
   try {
@@ -84,5 +84,5 @@ module.exports = async (req, res) => {
     console.error('Webhook handler error:', e);
     res.status(500).json({ error: 'Webhook handler failed' });
   }
-};
+}
 
