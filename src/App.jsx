@@ -19,7 +19,6 @@ import PrivacyPage from './pages/PrivacyPage';
 
 
 import SubscriptionPage from './pages/SubscriptionPage';
-import PaymentPage from './pages/PaymentPage';
 import InstagramConnectPage from './pages/InstagramConnectPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage/PaymentSuccessPage';
 import PaymentCancelPage from './pages/PaymentCancelPage/PaymentCancelPage';
@@ -107,7 +106,6 @@ function App() {
           
           {/* User Flow Routes */}
           <Route path="/subscription" element={<ProtectedRoute><SubscriptionPage /></ProtectedRoute>} />
-          <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
           <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccessPage /></ProtectedRoute>} />
           <Route path="/payment-cancel" element={<ProtectedRoute><PaymentCancelPage /></ProtectedRoute>} />
           <Route path="/instagram-connect" element={<ProtectedRoute><InstagramConnectPage /></ProtectedRoute>} />

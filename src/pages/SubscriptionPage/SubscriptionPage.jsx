@@ -68,12 +68,45 @@ const SubscriptionPage = () => {
   };
 
   const handleContinue = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     setLoading(true);
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Pass plan and price to payment page
-    const currentPricing = pricingData[billingCycle][selectedPlan];
-    navigate('/payment', { state: { plan: selectedPlan, price: currentPricing.price, billingCycle } });
+    
+    try {
+      const currentPricing = pricingData[billingCycle][selectedPlan];
+      
+      // Create Stripe checkout session
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          plan: selectedPlan,
+          price: currentPricing.price,
+          billingCycle,
+          userId: user.uid,
+          userEmail: user.email,
+        }),
+      });
+
+      const { url } = await response.json();
+      
+      if (url) {
+        // Redirect to Stripe checkout
+        window.location.href = url;
+      } else {
+        throw new Error('Failed to create checkout session');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      alert('Failed to start checkout process. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
