@@ -21,6 +21,8 @@ import PrivacyPage from './pages/PrivacyPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import PaymentPage from './pages/PaymentPage';
 import InstagramConnectPage from './pages/InstagramConnectPage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage/PaymentSuccessPage';
+import PaymentCancelPage from './pages/PaymentCancelPage/PaymentCancelPage';
 // import InstagramCallbackPage from './pages/InstagramCallbackPage'; // Not needed in test mode
 import RequirementsFormPage from './pages/RequirementsFormPage';
 import DashboardPage from './pages/DashboardPage';
@@ -106,6 +108,8 @@ function App() {
           {/* User Flow Routes */}
           <Route path="/subscription" element={<ProtectedRoute><SubscriptionPage /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><PaymentPage /></ProtectedRoute>} />
+          <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccessPage /></ProtectedRoute>} />
+          <Route path="/payment-cancel" element={<ProtectedRoute><PaymentCancelPage /></ProtectedRoute>} />
           <Route path="/instagram-connect" element={<ProtectedRoute><InstagramConnectPage /></ProtectedRoute>} />
           {/* <Route path="/instagram/callback" element={<InstagramCallbackPage />} /> Not needed in test mode */}
           <Route path="/requirements-form" element={<ProtectedRoute><RequirementsFormPage /></ProtectedRoute>} />

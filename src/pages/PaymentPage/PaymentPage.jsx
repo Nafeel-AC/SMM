@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import { firebaseDb } from '../../lib/firebase-db';
+import { loadStripe } from '@stripe/stripe-js';
 import './PaymentPage.css';
 
 const PaymentPage = () => {
@@ -75,46 +76,30 @@ const PaymentPage = () => {
   const handlePayment = async () => {
     setLoading(true);
     try {
-      console.log('💳 Processing payment for plan:', selectedPlan, 'at price:', selectedPrice);
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      // Save payment record to database
-      const paymentData = {
-        user_id: user.uid,
-        amount: selectedPrice,
-        currency: 'USD',
-        status: 'completed',
-        payment_method: 'card',
-        plan_name: selectedPlan,
-        billing_cycle: billingCycle,
-        created_at: new Date().toISOString(),
-        completed_at: new Date().toISOString()
-      };
-      console.log('💾 Saving payment record...');
-      const paymentResult = await firebaseDb.savePayment(paymentData);
-      if (paymentResult.error) {
-        console.error('❌ Error saving payment:', paymentResult.error);
-        throw paymentResult.error;
-      }
-      console.log('✅ Payment record saved successfully');
-      // Update user profile to mark payment as completed
-      console.log('👤 Updating user profile...');
-      const profileResult = await firebaseDb.updateProfile(user.uid, {
-        payment_completed: true,
-        selected_plan: selectedPlan,
-        updated_at: new Date().toISOString()
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: selectedPlan,
+          price: selectedPrice,
+          billingCycle,
+          userId: user.uid,
+          userEmail: user.email,
+        }),
       });
-      if (profileResult.error) {
-        console.error('❌ Error updating profile:', profileResult.error);
-        throw profileResult.error;
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
       }
-      console.log('✅ User profile updated successfully');
-      // Refresh the user profile in the auth context
-      console.log('🔄 Refreshing user profile...');
-      await fetchUserProfile(user.uid);
-      console.log('🎉 Payment completed successfully!');
-      // Navigate to Instagram connect page
-      navigate('/instagram-connect');
+      const data = await response.json();
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+      if (!stripe) {
+        throw new Error('Stripe failed to initialize');
+      }
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      await stripe.redirectToCheckout({ sessionId: data.id });
     } catch (error) {
       console.error('❌ Payment failed:', error);
       alert('Payment failed. Please try again.');
