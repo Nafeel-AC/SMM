@@ -79,8 +79,8 @@ const SubscriptionPage = () => {
       const currentPricing = pricingData[billingCycle][selectedPlan];
       
       // Create Stripe checkout session
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://your-functions-project.vercel.app';
-      const response = await fetch(`${apiUrl}/api/create-checkout-session`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://dainty-hummingbird-842c50.netlify.app/.netlify/functions';
+      const response = await fetch(`${apiUrl}/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
