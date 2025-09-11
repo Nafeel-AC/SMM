@@ -5,7 +5,7 @@ This project has been migrated from Supabase to Firebase. Follow these steps to 
 ## 1. Create a Firebase Project
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Click "Create a project" or "Add project"
+2. Click "Create a pect" or "Add project"
 3. Enter your project name (e.g., "smm-marketing")
 4. Choose whether to enable Google Analytics (optional)
 5. Click "Create project"
