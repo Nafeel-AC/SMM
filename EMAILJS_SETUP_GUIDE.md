@@ -8,7 +8,7 @@ The contact form has been updated to use EmailJS for sending emails. Follow thes
 2. Sign up for a free account (allows 200 emails/month)
 3. Verify your email address
 
-## Step 2: Set Up Email Service
+## Step 2: Set Up Eml Service
 
 1. **Go to Email Services**:
 
