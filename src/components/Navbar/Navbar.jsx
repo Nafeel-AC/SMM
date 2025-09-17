@@ -225,7 +225,7 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="nav-item">
-                {location.pathname === '/' ? (
+                {/* {location.pathname === '/' ? (
                   <a
                     href="/#faq"
                     className={`nav-link text-uppercase ${
@@ -242,7 +242,16 @@ const Navbar = () => {
                   >
                     FAQ
                   </Link>
-                )}
+                )} */}
+                <a
+                  href="/#faq"
+                  className={`nav-link text-uppercase ${
+                    location.pathname === '/' && activeSection === 'faq' ? 'active' : ''
+                  }`}
+                  onClick={(e) => handleNavigation(e, 'faq')}
+                >
+                  FAQ
+                </a>
               </li>
               <li className="nav-item">
                 <Link 

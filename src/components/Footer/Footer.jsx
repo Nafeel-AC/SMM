@@ -35,13 +35,13 @@ const Footer = () => {
                     <a href="#" className="social-btn">
                       <i className="fab fa-facebook-f"></i>
                     </a>
-                    <a href="#" className="social-btn">
+                    <a href="http://www.tiktok.com/@myglowupagency" className="social-btn">
                       <i className="fab fa-tiktok"></i>
                     </a>
-                    <a href="#" className="social-btn">
+                    <a href="https://www.linkedin.com/in/glowup-agency-ba4968384/" className="social-btn">
                       <i className="fab fa-linkedin-in"></i>
                     </a>
-                    <a href="#" className="social-btn">
+                    <a href="https://www.instagram.com/glowupagency__/" className="social-btn">
                       <i className="fab fa-instagram"></i>
                     </a>
                   </div>

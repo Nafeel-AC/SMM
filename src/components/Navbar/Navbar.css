@@ -19,13 +19,13 @@
 }
 
 .navbar-brand {
-  padding: 0;
+  padding: 10px;
   flex-shrink: 0;
   margin-right: 0;
 }
 
 .navbar-brand img {
-  height: 40px;
+  height: 60px;
   max-width: 200px;
   object-fit: contain;
   width: auto;
@@ -342,7 +342,8 @@
   }
   
   .navbar-brand img {
-    height: 30px;
+    margin-top: -18px;
+    height: 60px;
   }
   
   .offcanvas-header img {

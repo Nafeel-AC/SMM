@@ -208,7 +208,7 @@ const ContactPage = () => {
                   </div>
                   <div className="contact-text">
                     <span className="contact-label">Email Us</span>
-                    <span className="contact-value">hello@smmmatrix.com</span>
+                    <span className="contact-value">myglowupagency@gmail.com</span>
                     <span className="contact-note">We reply within 2 hours</span>
                   </div>
                 </div>
