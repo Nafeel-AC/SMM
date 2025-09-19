@@ -50,7 +50,7 @@ export function parseInstagramCallback() {
 export async function exchangeCodeForToken(code) {
   try {
     // Use Netlify function endpoint
-    const response = await fetch('https://smm-netlify-functions.netlify.app/api/instagram/token-exchange', {
+    const response = await fetch('https://dainty-hummingbird-842c50.netlify.app/.netlify/functions/instagram-token-exchange', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
