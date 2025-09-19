@@ -22,7 +22,7 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import InstagramConnectPage from './pages/InstagramConnectPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage/PaymentSuccessPage';
 import PaymentCancelPage from './pages/PaymentCancelPage/PaymentCancelPage';
-// import InstagramCallbackPage from './pages/InstagramCallbackPage'; // Not needed in test mode
+import InstagramCallbackPage from './pages/InstagramCallbackPage'; // Enable real callback
 import RequirementsFormPage from './pages/RequirementsFormPage';
 import DashboardPage from './pages/DashboardPage';
 import StaffPanel from './pages/StaffPanel';
@@ -37,6 +37,7 @@ import StaffEditUserPage from './pages/StaffEditUserPage';
 import DiagnosticPage from './pages/DiagnosticPage';
 import UserDashboard from './pages/AdminDashboard/UserDashboard';
 import EditUserDashboard from './pages/StaffDashboard/EditUserDashboard';
+import WebhookPage from './pages/WebhookPage';
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -109,7 +110,7 @@ function App() {
           <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccessPage /></ProtectedRoute>} />
           <Route path="/payment-cancel" element={<ProtectedRoute><PaymentCancelPage /></ProtectedRoute>} />
           <Route path="/instagram-connect" element={<ProtectedRoute><InstagramConnectPage /></ProtectedRoute>} />
-          {/* <Route path="/instagram/callback" element={<InstagramCallbackPage />} /> Not needed in test mode */}
+          <Route path="/instagram/callback" element={<ProtectedRoute><InstagramCallbackPage /></ProtectedRoute>} />
           <Route path="/requirements-form" element={<ProtectedRoute><RequirementsFormPage /></ProtectedRoute>} />
           
           {/* Dashboard */}
@@ -128,6 +129,9 @@ function App() {
           <Route path="/admin-dashboard/assign-users/:staffId" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminAssignUsersPage /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard/assign-users" element={<RoleProtectedRoute allowedRoles={['admin']}><AssignUsers /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard/user/:userId" element={<RoleProtectedRoute allowedRoles={['admin']}><UserDashboard /></RoleProtectedRoute>} />
+          
+          {/* Webhook endpoint */}
+          <Route path="/webhook/instagram" element={<WebhookPage />} />
         </Routes>
         <Footer />
         <SupportChat />

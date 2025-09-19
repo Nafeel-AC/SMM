@@ -10,21 +10,36 @@ import HashtagsSection from '../components/HashtagsSection';
 import AccountsSection from '../components/AccountsSection';
 import Navbar from '../components/Navbar';
 import './DashboardPage.css';
+import { firebaseInstagramService } from '../lib/firebase-instagram';
 
 const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
   const [requirements, setRequirements] = useState(null);
   const [dashboardSettings, setDashboardSettings] = useState(null);
+  const [instagramAccount, setInstagramAccount] = useState(null);
   const [timeRange, setTimeRange] = useState('6months');
   const { user, signOut, isStaff } = useFirebaseAuth();
 
   useEffect(() => {
-    if (user) {
-      fetchDashboardData();
-      fetchRequirements();
-      fetchDashboardSettings();
-    }
+    if (!user) return;
+    
+    // Fetch initial data
+    fetchInstagramAccount();
+    fetchRequirements();
+    fetchDashboardSettings();
+    fetchDashboardData();
+    
+    const intervalMs = 6 * 60 * 60 * 1000; // 6 hours
+    const id = setInterval(async () => {
+      try {
+        await firebaseInstagramService.fetchAndSaveRealInsights(user.uid);
+        await fetchDashboardData();
+      } catch (e) {
+        // ignore transient failures
+      }
+    }, intervalMs);
+    return () => clearInterval(id);
   }, [user]);
 
   const fetchRequirements = async () => {
@@ -49,19 +64,45 @@ const DashboardPage = () => {
     }
   };
 
+  const isStale = (iso) => {
+    if (!iso) return true;
+    const updated = new Date(iso).getTime();
+    const now = Date.now();
+    return (now - updated) > 24 * 60 * 60 * 1000;
+  };
+
+  const fetchInstagramAccount = async () => {
+    try {
+      const result = await firebaseDb.getInstagramAccount(user.uid);
+      if (!result.error && result.data) {
+        setInstagramAccount(result.data);
+      }
+    } catch (error) {
+      console.error('Error fetching Instagram account:', error);
+    }
+  };
+
   const fetchDashboardData = async () => {
     try {
       console.log('🔍 Fetching comprehensive dashboard data for user:', user.uid);
-      
       const result = await dashboardDataService.getDashboardData(user.uid);
-      
       if (result.error) {
         console.error('❌ Error fetching dashboard data:', result.error);
       } else {
         console.log('✅ Dashboard data loaded successfully:', result.data);
         setDashboardData(result.data);
-      }
 
+        // Auto-refresh insights if stale (>24h)
+        const lastUpdated = result.data?.insights?.last_updated;
+        if (isStale(lastUpdated)) {
+          console.log('⏱️ Insights stale or missing, refreshing from Instagram Graph API...');
+          await firebaseInstagramService.fetchAndSaveRealInsights(user.uid);
+          const refreshed = await dashboardDataService.getDashboardData(user.uid);
+          if (!refreshed.error) {
+            setDashboardData(refreshed.data);
+          }
+        }
+      }
     } catch (error) {
       console.error('❌ Error fetching dashboard data:', error);
     } finally {
@@ -88,7 +129,6 @@ const DashboardPage = () => {
     setTimeRange(range);
   };
 
-
   const handleAddSampleData = async () => {
     try {
       setLoading(true);
@@ -99,6 +139,18 @@ const DashboardPage = () => {
       }
     } catch (error) {
       console.error('Error adding sample data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefreshInsights = async () => {
+    try {
+      setLoading(true);
+      await firebaseInstagramService.fetchAndSaveRealInsights(user.uid);
+      await fetchDashboardData();
+    } catch (e) {
+      console.error('Error refreshing insights:', e);
     } finally {
       setLoading(false);
     }
@@ -138,11 +190,66 @@ const DashboardPage = () => {
         {dashboardData ? (
           <div className="dashboard-layout">
             <div className="dashboard-main">
+              {/* Instagram Account Info */}
+              {instagramAccount && (
+                <div style={{
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  marginBottom: '24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px'
+                }}>
+                  <div style={{
+                    width: '60px',
+                    height: '60px',
+                    background: 'linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '24px'
+                  }}>
+                    📸
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ margin: '0 0 8px 0', color: '#1a202c' }}>
+                      @{instagramAccount.username}
+                    </h3>
+                    <p style={{ margin: '0 0 4px 0', color: '#4a5568', fontSize: '14px' }}>
+                      Instagram Account Connected
+                    </p>
+                    <p style={{ margin: '0', color: '#718096', fontSize: '12px' }}>
+                      Connected on {new Date(instagramAccount.connected_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div style={{
+                    background: '#10b981',
+                    color: 'white',
+                    padding: '6px 12px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    ✓ Connected
+                  </div>
+                </div>
+              )}
+
               {/* Top Metrics */}
               <MetricsDisplay 
                 followers={dashboardData.insights.followers_count}
                 following={dashboardData.insights.following_count}
               />
+
+              {/* Add manual refresh insights button */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+                <button className="sample-data-btn" onClick={handleRefreshInsights}>
+                  Refresh Insights
+                </button>
+              </div>
 
               {/* Analytics Chart */}
               <AnalyticsChart 

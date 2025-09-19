@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import { firebaseDb } from '../../lib/firebase-db';
 import './InstagramConnectPage.css';
+import { buildInstagramLoginUrl } from '../../lib/instagram-login-client';
 
 const InstagramConnectPage = () => {
   const [loading, setLoading] = useState(false);
@@ -11,100 +12,14 @@ const InstagramConnectPage = () => {
   const navigate = useNavigate();
 
   const handleConnectInstagram = async () => {
-    setLoading(true);
-    
     try {
-      console.log('🧪 Starting Instagram connection with sample data...');
-      
-      // Simulate connection delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Generate random sample data for variety
-      const randomFollowers = Math.floor(Math.random() * 2000) + 500; // 500-2500 followers
-      const randomEngagement = (Math.random() * 3 + 2).toFixed(1); // 2.0-5.0% engagement
-      const randomLikes = Math.floor(Math.random() * 100) + 50; // 50-150 avg likes
-      const randomComments = Math.floor(Math.random() * 20) + 5; // 5-25 avg comments
-      
-      // Insert sample Instagram account data
-      const accountData = {
-        user_id: user.uid,
-        instagram_user_id: 'sample_instagram_' + Date.now(),
-        username: 'sample_business_' + Math.floor(Math.random() * 1000),
-        access_token: 'sample_access_token_' + Date.now(),
-        connected_at: new Date().toISOString(),
-        last_sync: new Date().toISOString()
-      };
-
-      console.log('📱 Saving Instagram account data...');
-      const accountResult = await firebaseDb.saveInstagramAccount(accountData);
-      if (accountResult.error) {
-        console.error('❌ Error saving Instagram account:', accountResult.error);
-        throw accountResult.error;
-      }
-      console.log('✅ Instagram account saved successfully');
-
-      // Insert sample Instagram insights data
-      const insightsData = {
-        user_id: user.uid,
-        followers_count: randomFollowers,
-        following_count: Math.floor(randomFollowers * 0.3),
-        media_count: Math.floor(Math.random() * 50) + 10,
-        engagement_rate: parseFloat(randomEngagement),
-        avg_likes: randomLikes,
-        avg_comments: randomComments,
-        reach: Math.floor(randomFollowers * 0.8),
-        impressions: Math.floor(randomFollowers * 1.2),
-        profile_views: Math.floor(Math.random() * 100) + 20,
-        website_clicks: Math.floor(Math.random() * 30) + 5,
-        email_contacts: Math.floor(Math.random() * 10) + 1,
-        phone_contacts: Math.floor(Math.random() * 5),
-        get_directions: Math.floor(Math.random() * 3),
-        text_message: Math.floor(Math.random() * 2),
-        last_updated: new Date().toISOString()
-      };
-
-      console.log('📊 Saving Instagram insights data...');
-      const insightsResult = await firebaseDb.saveInstagramInsights(insightsData);
-      if (insightsResult.error) {
-        console.error('❌ Error saving Instagram insights:', insightsResult.error);
-        // Don't throw error, continue anyway
-      } else {
-        console.log('✅ Instagram insights saved successfully');
-      }
-
-      // Update user profile to mark Instagram as connected
-      console.log('👤 Updating user profile...');
-      await firebaseDb.updateProfile(user.uid, { 
-        instagram_connected: true,
-        updated_at: new Date().toISOString()
-      });
-      // Debug: log user context before and after
-      console.log('[InstagramConnect] User context before:', user);
-      if (user && typeof user === 'object') {
-        user.instagram_connected = true;
-      }
-      console.log('[InstagramConnect] User context after:', user);
-      // Force profile refresh in context
-      if (fetchUserProfile && typeof fetchUserProfile === 'function') {
-        console.log('[InstagramConnect] Forcing profile refresh in context...');
-        await fetchUserProfile(user.uid);
-      }
-      console.log('✅ User profile updated');
-
-      // Sample data is now only for the current user
-
-      console.log('✅ Instagram connected successfully with sample data');
-      setConnected(true);
-      
-      // Auto-redirect after 2 seconds
-      setTimeout(() => {
-        navigate('/requirements-form');
-      }, 2000);
-      
-    } catch (error) {
-      console.error('❌ Error connecting Instagram:', error);
-      alert('Failed to connect Instagram. Please try again.');
-    } finally {
+      setLoading(true);
+      const state = JSON.stringify({ uid: user.uid, ts: Date.now() });
+      const url = buildInstagramLoginUrl({ state });
+      window.location.href = url;
+    } catch (e) {
+      console.error('Unable to start Instagram Login:', e);
+      alert('Instagram login is not fully configured. Please set VITE_IG_CLIENT_ID and VITE_IG_REDIRECT_URI.');
       setLoading(false);
     }
   };
@@ -113,20 +28,18 @@ const InstagramConnectPage = () => {
 
   if (connected) {
     return (
-      <div className="instagram-connect-page">
-        <div className="connect-container">
-          <div className="success-section">
-            <div className="success-icon">
-              <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#10b981"/>
-              </svg>
-            </div>
-            <h2>Instagram Connected Successfully!</h2>
-            <p>Your Instagram account has been connected with sample data for testing. Your personalized analytics and insights are now available in your dashboard.</p>
-            <div className="redirect-info">
-              <p>Redirecting to requirements form...</p>
-              <div className="spinner"></div>
-            </div>
+      <div className="connect-container">
+        <div className="success-section">
+          <div className="success-icon">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#10b981"/>
+            </svg>
+          </div>
+          <h2>Instagram Connected Successfully!</h2>
+          <p>Your Instagram account has been connected. Your personalized analytics and insights are now available in your dashboard.</p>
+          <div className="redirect-info">
+            <p>Redirecting to requirements form...</p>
+            <div className="spinner"></div>
           </div>
         </div>
       </div>
