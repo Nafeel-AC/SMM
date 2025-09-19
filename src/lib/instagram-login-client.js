@@ -12,7 +12,7 @@ export function getInstagramLoginEnv() {
 }
 
 // Build Instagram Login URL using authorization code flow
-export function buildInstagramLoginUrl({ scopes = ['instagram_business_basic', 'instagram_business_content_publish', 'instagram_business_manage_comments', 'instagram_business_manage_messages'], state = '' } = {}) {
+export function buildInstagramLoginUrl({ scopes = ['instagram_business_basic'], state = '' } = {}) {
   const { clientId, redirectUri } = getInstagramLoginEnv();
   if (!clientId || !redirectUri) {
     throw new Error('Missing VITE_IG_CLIENT_ID or VITE_IG_REDIRECT_URI');
