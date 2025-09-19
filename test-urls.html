@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test URLs for Meta App Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .url-test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .url { font-family: monospace; background: #f5f5f5; padding: 5px; }
+        .status { margin-left: 10px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Meta App Dashboard URL Test</h1>
+    <p>Test these URLs to ensure they're accessible for your Meta App Dashboard:</p>
+    
+    <div class="url-test">
+        <h3>Privacy Policy URL</h3>
+        <div class="url">https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/privacy</div>
+        <div class="status" id="privacy-status">Testing...</div>
+    </div>
+    
+    <div class="url-test">
+        <h3>Terms of Service URL</h3>
+        <div class="url">https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/terms</div>
+        <div class="status" id="terms-status">Testing...</div>
+    </div>
+    
+    <div class="url-test">
+        <h3>Data Deletion URL</h3>
+        <div class="url">https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/data-deletion</div>
+        <div class="status" id="deletion-status">Testing...</div>
+    </div>
+    
+    <div class="url-test">
+        <h3>Instagram Connect URL</h3>
+        <div class="url">https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram-connect</div>
+        <div class="status" id="connect-status">Testing...</div>
+    </div>
+
+    <script>
+        async function testUrl(url, statusId) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                const statusElement = document.getElementById(statusId);
+                if (response.ok) {
+                    statusElement.innerHTML = '<span class="success">✅ Accessible (Status: ' + response.status + ')</span>';
+                } else {
+                    statusElement.innerHTML = '<span class="error">❌ Error (Status: ' + response.status + ')</span>';
+                }
+            } catch (error) {
+                document.getElementById(statusId).innerHTML = '<span class="error">❌ Error: ' + error.message + '</span>';
+            }
+        }
+
+        // Test all URLs
+        testUrl('https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/privacy', 'privacy-status');
+        testUrl('https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/terms', 'terms-status');
+        testUrl('https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/data-deletion', 'deletion-status');
+        testUrl('https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram-connect', 'connect-status');
+    </script>
+</body>
+</html>

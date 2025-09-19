@@ -4,7 +4,7 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!privacy|terms|data-deletion).*)",
       "destination": "/index.html"
     }
   ],
