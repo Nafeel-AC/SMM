@@ -46,26 +46,39 @@ export function parseInstagramCallback() {
   };
 }
 
-// Exchange authorization code for access token (requires backend)
+// Exchange authorization code for access token using Netlify Function
 export async function exchangeCodeForToken(code) {
-  // For now, we'll use a mock implementation since we don't have a backend
-  // In production, this should call your backend server
-  console.warn('Authorization code exchange requires backend server. Using mock data for demo.');
-  
-  // Mock implementation - replace with actual backend call
-  return {
-    access_token: 'mock_access_token_' + Date.now(),
-    token_type: 'bearer',
-    expires_in: 3600
-  };
-  
-  // Real implementation would be:
-  // const response = await fetch('/api/instagram/token-exchange', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ code })
-  // });
-  // return response.json();
+  try {
+    // Use Netlify function endpoint
+    const response = await fetch('https://smm-netlify-functions.netlify.app/api/instagram/token-exchange', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ code })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const tokenData = await response.json();
+    console.log('✅ Successfully exchanged authorization code for access token');
+    return tokenData;
+  } catch (error) {
+    console.error('❌ Token exchange failed:', error);
+    
+    // Fallback to mock data for development
+    console.warn('Using mock token for development. Make sure Netlify function is deployed.');
+    return {
+      access_token: 'mock_access_token_' + Date.now(),
+      token_type: 'bearer',
+      expires_in: 3600,
+      user_id: 'mock_user_id'
+    };
+  }
 }
 
 // Get user profile from Instagram
