@@ -16,6 +16,8 @@ import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ServicesPage from './pages/ServicesPage';
 import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import DataDeletionPage from './pages/DataDeletionPage';
 
 
 import SubscriptionPage from './pages/SubscriptionPage';
@@ -93,7 +95,6 @@ function App() {
       <FirebaseAuthProvider>
         <DebugExposer />
   <Routes>
-          <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -104,6 +105,9 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/diagnostic" element={<DiagnosticPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/data-deletion" element={<DataDeletionPage />} />
           
           {/* User Flow Routes */}
           <Route path="/subscription" element={<ProtectedRoute><SubscriptionPage /></ProtectedRoute>} />
