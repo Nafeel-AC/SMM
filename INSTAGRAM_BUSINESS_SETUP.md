@@ -26,7 +26,7 @@ Since Instagram Basic Display API has been removed by Meta, we're using the **In
 3. **Go to "Settings"** tab
 4. **Add Valid OAuth Redirect URIs**:
    - `http://localhost:5173/instagram/callback` (development)
-   - `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback` (production)
+   - `https://smm-roan.vercel.app/instagram/callback` (production)
    - `https://yourdomain.com/instagram/callback` (production)
 
 ### 2. Configure Instagram Business API
@@ -52,7 +52,7 @@ VITE_FB_APP_ID=31610354805244877
 VITE_FB_REDIRECT_URI=http://localhost:5173/instagram/callback
 
 # For production (Vercel):
-VITE_FB_REDIRECT_URI=https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback
+VITE_FB_REDIRECT_URI=https://smm-roan.vercel.app/instagram/callback
 ```
 
 ## User Requirements

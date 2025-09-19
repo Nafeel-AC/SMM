@@ -21,7 +21,7 @@ We're using **Instagram Login API** with **implicit flow** for frontend-only aut
 4. **Configure the following**:
    - **Valid OAuth Redirect URIs**: 
      - `http://localhost:5173/instagram/callback` (development)
-     - `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback` (production)
+     - `https://smm-roan.vercel.app/instagram/callback` (production)
      - `https://yourdomain.com/instagram/callback` (production)
    - **Deauthorize Callback URL**: Optional
    - **Data Deletion Request URL**: Optional
@@ -57,7 +57,7 @@ VITE_IG_CLIENT_ID=1095837746065727
 VITE_IG_REDIRECT_URI=http://localhost:5173/instagram/callback
 
 # For production (Vercel):
-VITE_IG_REDIRECT_URI=https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback
+VITE_IG_REDIRECT_URI=https://smm-roan.vercel.app/instagram/callback
 ```
 
 ## How the Flow Works

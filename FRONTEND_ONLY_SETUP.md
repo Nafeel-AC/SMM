@@ -37,7 +37,7 @@ This setup uses **Instagram Basic Display API** which allows frontend-only authe
 
 1. In Instagram Basic Display settings, add your redirect URI:
    - **Development**: `http://localhost:5173/instagram/callback`
-   - **Production**: `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback`
+   - **Production**: `https://smm-roan.vercel.app/instagram/callback`
    - **Production**: `https://yourdomain.com/instagram/callback`
 
 ### 4. Add Instagram Testers
@@ -57,7 +57,7 @@ VITE_IG_CLIENT_ID=your_instagram_app_id_here
 VITE_IG_REDIRECT_URI=http://localhost:5173/instagram/callback
 
 # For production (Vercel):
-VITE_IG_REDIRECT_URI=https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback
+VITE_IG_REDIRECT_URI=https://smm-roan.vercel.app/instagram/callback
 
 # For production:
 # VITE_IG_REDIRECT_URI=https://yourdomain.com/instagram/callback
