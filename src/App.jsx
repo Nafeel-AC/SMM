@@ -105,6 +105,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/diagnostic" element={<DiagnosticPage />} />
+          <Route path="/debug-instagram-url" element={<div style={{padding: '20px'}}><iframe src="/debug-instagram-url.html" width="100%" height="600px" style={{border: 'none'}} /></div>} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/data-deletion" element={<DataDeletionPage />} />
