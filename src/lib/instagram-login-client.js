@@ -11,8 +11,8 @@ export function getInstagramLoginEnv() {
   return { clientId, redirectUri };
 }
 
-// Build Instagram Login URL using authorization code flow
-export function buildInstagramLoginUrl({ scopes = ['instagram_business_basic'], state = '' } = {}) {
+// Build Instagram Login URL using implicit flow (frontend-only)
+export function buildInstagramLoginUrl({ scopes = ['instagram_basic'], state = '' } = {}) {
   const { clientId, redirectUri } = getInstagramLoginEnv();
   if (!clientId || !redirectUri) {
     throw new Error('Missing VITE_IG_CLIENT_ID or VITE_IG_REDIRECT_URI');
@@ -22,44 +22,30 @@ export function buildInstagramLoginUrl({ scopes = ['instagram_business_basic'], 
     client_id: clientId,
     redirect_uri: redirectUri,
     scope: scopes.join(','),
-    response_type: 'code', // Use authorization code flow
+    response_type: 'token', // Use implicit flow for frontend-only
     state
   });
   
   return `${INSTAGRAM_OAUTH_BASE}/authorize?${params.toString()}`;
 }
 
-// Parse callback parameters from URL query params (authorization code flow)
+// Parse callback parameters from URL hash (implicit flow)
 export function parseInstagramCallback() {
   const url = new URL(window.location.href);
-  const params = new URLSearchParams(url.search);
+  const hash = url.hash.substring(1); // Remove # from hash
+  const params = new URLSearchParams(hash);
   
   return {
-    code: params.get('code'),
+    access_token: params.get('access_token'),
+    token_type: params.get('token_type'),
+    expires_in: params.get('expires_in'),
     state: params.get('state'),
     error: params.get('error'),
     error_description: params.get('error_description')
   };
 }
 
-// Exchange authorization code for access token (requires backend)
-export async function exchangeCodeForToken(code) {
-  // NOTE: This requires a backend server with your app secret
-  // For frontend-only implementation, we'll use mock data
-  console.warn('Authorization code exchange requires backend server. Using mock data for demo.');
-  
-  // In a real implementation, you would:
-  // 1. Send the code to your backend
-  // 2. Backend exchanges code for token using app secret
-  // 3. Backend returns access token to frontend
-  
-  // For demo purposes, return a mock token
-  return {
-    access_token: 'mock_access_token_' + Date.now(),
-    token_type: 'bearer',
-    expires_in: 3600
-  };
-}
+// No longer needed with implicit flow - access token comes directly in callback
 
 // Get user profile from Instagram
 export async function getInstagramProfile(accessToken) {
