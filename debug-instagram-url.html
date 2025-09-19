@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Instagram URL</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug { background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Instagram OAuth URL Debug</h1>
+    
+    <div class="debug">
+        <h3>Environment Variables:</h3>
+        <p><strong>VITE_IG_CLIENT_ID:</strong> <span id="clientId">Loading...</span></p>
+        <p><strong>VITE_IG_REDIRECT_URI:</strong> <span id="redirectUri">Loading...</span></p>
+    </div>
+
+    <div class="debug">
+        <h3>Generated Instagram OAuth URL:</h3>
+        <p id="oauthUrl">Generating...</p>
+        <button onclick="generateUrl()">Regenerate URL</button>
+    </div>
+
+    <div class="debug">
+        <h3>Test the URL:</h3>
+        <p><a href="#" id="testLink" onclick="testUrl()">Click to test Instagram OAuth</a></p>
+    </div>
+
+    <div class="debug">
+        <h3>Expected Meta App Dashboard Configuration:</h3>
+        <p><strong>Valid OAuth Redirect URIs:</strong> <code>https://smm-roan.vercel.app/instagram/callback</code></p>
+        <p><strong>Response Type:</strong> <code>Authorization Code</code></p>
+        <p><strong>Scopes:</strong> <code>instagram_basic</code></p>
+    </div>
+
+    <script type="module">
+        // Simulate Vite environment
+        const env = {
+            VITE_IG_CLIENT_ID: '1095837746065727',
+            VITE_IG_REDIRECT_URI: 'https://smm-roan.vercel.app/instagram/callback'
+        };
+
+        function updateDisplay() {
+            document.getElementById('clientId').textContent = env.VITE_IG_CLIENT_ID;
+            document.getElementById('redirectUri').textContent = env.VITE_IG_REDIRECT_URI;
+            
+            if (env.VITE_IG_CLIENT_ID && env.VITE_IG_REDIRECT_URI) {
+                document.getElementById('clientId').className = 'success';
+                document.getElementById('redirectUri').className = 'success';
+                generateUrl();
+            } else {
+                document.getElementById('clientId').className = 'error';
+                document.getElementById('redirectUri').className = 'error';
+            }
+        }
+
+        function generateUrl() {
+            const clientId = env.VITE_IG_CLIENT_ID;
+            const redirectUri = env.VITE_IG_REDIRECT_URI;
+            
+            if (!clientId || !redirectUri) {
+                document.getElementById('oauthUrl').innerHTML = '<span class="error">Missing environment variables</span>';
+                return;
+            }
+
+            const params = new URLSearchParams({
+                client_id: clientId,
+                redirect_uri: redirectUri,
+                response_type: 'code',
+                scope: 'instagram_basic',
+                state: JSON.stringify({ uid: 'debug_user', ts: Date.now() })
+            });
+
+            const url = `https://api.instagram.com/oauth/authorize?${params.toString()}`;
+            document.getElementById('oauthUrl').innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
+            document.getElementById('testLink').href = url;
+        }
+
+        window.generateUrl = generateUrl;
+        window.testUrl = function() {
+            generateUrl();
+            const url = document.getElementById('testLink').href;
+            if (url !== '#') {
+                window.open(url, '_blank');
+            }
+        };
+
+        updateDisplay();
+    </script>
+</body>
+</html>
