@@ -21,6 +21,7 @@ We're using **Instagram Login API** with **implicit flow** for frontend-only aut
 4. **Configure the following**:
    - **Valid OAuth Redirect URIs**: 
      - `http://localhost:5173/instagram/callback` (development)
+     - `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback` (production)
      - `https://yourdomain.com/instagram/callback` (production)
    - **Deauthorize Callback URL**: Optional
    - **Data Deletion Request URL**: Optional
@@ -52,7 +53,11 @@ The app requests these Instagram permissions:
 Update your `.env` file:
 ```bash
 VITE_IG_CLIENT_ID=1095837746065727
+# For development:
 VITE_IG_REDIRECT_URI=http://localhost:5173/instagram/callback
+
+# For production (Vercel):
+VITE_IG_REDIRECT_URI=https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback
 ```
 
 ## How the Flow Works
@@ -80,7 +85,9 @@ User clicks "Connect Instagram"
 ## Testing the Integration
 
 1. **Start your app**: `npm run dev`
-2. **Go to**: `http://localhost:5173/instagram-connect`
+2. **Go to**: 
+   - Development: `http://localhost:5173/instagram-connect`
+   - Production: `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram-connect`
 3. **Click**: "Connect Instagram Account"
 4. **Complete**: Instagram OAuth flow
 5. **Check**: Dashboard shows connected account with basic metrics

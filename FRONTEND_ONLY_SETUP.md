@@ -37,6 +37,7 @@ This setup uses **Instagram Basic Display API** which allows frontend-only authe
 
 1. In Instagram Basic Display settings, add your redirect URI:
    - **Development**: `http://localhost:5173/instagram/callback`
+   - **Production**: `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback`
    - **Production**: `https://yourdomain.com/instagram/callback`
 
 ### 4. Add Instagram Testers
@@ -52,7 +53,11 @@ Update your `.env` file with the Instagram Basic Display configuration:
 ```bash
 # Instagram Basic Display API (Frontend-Only)
 VITE_IG_CLIENT_ID=your_instagram_app_id_here
+# For development:
 VITE_IG_REDIRECT_URI=http://localhost:5173/instagram/callback
+
+# For production (Vercel):
+VITE_IG_REDIRECT_URI=https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback
 
 # For production:
 # VITE_IG_REDIRECT_URI=https://yourdomain.com/instagram/callback
@@ -108,7 +113,9 @@ calculateBasicMetrics(mediaData)
 ## Testing the Integration
 
 1. **Start the app**: `npm run dev`
-2. **Go to**: `http://localhost:5173/instagram-connect`
+2. **Go to**: 
+   - Development: `http://localhost:5173/instagram-connect`
+   - Production: `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram-connect`
 3. **Click**: "Connect Instagram Account"
 4. **Complete**: Instagram OAuth flow
 5. **Check**: Dashboard shows connected account with basic metrics

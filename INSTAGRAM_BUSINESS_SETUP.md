@@ -26,6 +26,7 @@ Since Instagram Basic Display API has been removed by Meta, we're using the **In
 3. **Go to "Settings"** tab
 4. **Add Valid OAuth Redirect URIs**:
    - `http://localhost:5173/instagram/callback` (development)
+   - `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback` (production)
    - `https://yourdomain.com/instagram/callback` (production)
 
 ### 2. Configure Instagram Business API
@@ -47,7 +48,11 @@ Since Instagram Basic Display API has been removed by Meta, we're using the **In
 Your `.env` file should have:
 ```bash
 VITE_FB_APP_ID=31610354805244877
+# For development:
 VITE_FB_REDIRECT_URI=http://localhost:5173/instagram/callback
+
+# For production (Vercel):
+VITE_FB_REDIRECT_URI=https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram/callback
 ```
 
 ## User Requirements
@@ -84,7 +89,9 @@ User clicks "Connect Instagram"
 ## Testing the Integration
 
 1. **Start your app**: `npm run dev`
-2. **Go to**: `http://localhost:5173/instagram-connect`
+2. **Go to**: 
+   - Development: `http://localhost:5173/instagram-connect`
+   - Production: `https://smm-git-instagram-integration-nafeelmannan-gmailcoms-projects.vercel.app/instagram-connect`
 3. **Click**: "Connect Instagram Account"
 4. **Complete**: Facebook OAuth flow
 5. **Check**: Dashboard shows connected account
