@@ -84,15 +84,39 @@ export async function exchangeCodeForToken(code) {
 // Get user profile from Instagram
 export async function getInstagramProfile(accessToken) {
   try {
-    // Use the correct Instagram API endpoint for Business Login
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/me?fields=id,username,account_type,media_count&access_token=${accessToken}`);
+    // First, get the user's Instagram Business Account ID
+    // The access token from Instagram Login gives us access to the user's business accounts
+    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/accounts?fields=instagram_business_account&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Failed to fetch Instagram profile: ${errorData.error?.message || response.statusText}`);
+      throw new Error(`Failed to fetch Instagram accounts: ${errorData.error?.message || response.statusText}`);
     }
     
-    return response.json();
+    const accountsData = await response.json();
+    console.log('Instagram accounts data:', accountsData);
+    
+    // Find the Instagram Business Account
+    const instagramAccount = accountsData.data?.find(account => account.instagram_business_account);
+    
+    if (!instagramAccount?.instagram_business_account) {
+      throw new Error('No Instagram Business Account found');
+    }
+    
+    const businessAccountId = instagramAccount.instagram_business_account.id;
+    
+    // Now get the business account details
+    const businessResponse = await fetch(`${INSTAGRAM_GRAPH_BASE}/${businessAccountId}?fields=id,username,account_type,media_count&access_token=${accessToken}`);
+    
+    if (!businessResponse.ok) {
+      const errorData = await businessResponse.json().catch(() => ({}));
+      throw new Error(`Failed to fetch Instagram business profile: ${errorData.error?.message || businessResponse.statusText}`);
+    }
+    
+    const businessData = await businessResponse.json();
+    console.log('Instagram business profile:', businessData);
+    
+    return businessData;
   } catch (error) {
     console.warn('Instagram profile fetch failed, using mock data:', error);
     return {
@@ -107,8 +131,24 @@ export async function getInstagramProfile(accessToken) {
 // Get user media from Instagram
 export async function getInstagramMedia(accessToken, limit = 25) {
   try {
-    // Use the correct Instagram API endpoint for Business Login
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
+    // First, get the user's Instagram Business Account ID
+    const accountsResponse = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/accounts?fields=instagram_business_account&access_token=${accessToken}`);
+    
+    if (!accountsResponse.ok) {
+      throw new Error('Failed to fetch Instagram accounts');
+    }
+    
+    const accountsData = await accountsResponse.json();
+    const instagramAccount = accountsData.data?.find(account => account.instagram_business_account);
+    
+    if (!instagramAccount?.instagram_business_account) {
+      throw new Error('No Instagram Business Account found');
+    }
+    
+    const businessAccountId = instagramAccount.instagram_business_account.id;
+    
+    // Now get the media from the business account
+    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/${businessAccountId}/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -144,9 +184,25 @@ export async function getInstagramMedia(accessToken, limit = 25) {
 // Get basic insights from Instagram Graph API
 export async function getBasicInsights(accessToken) {
   try {
-    // Try to get account insights from Instagram Graph API
+    // First, get the user's Instagram Business Account ID
+    const accountsResponse = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/accounts?fields=instagram_business_account&access_token=${accessToken}`);
+    
+    if (!accountsResponse.ok) {
+      throw new Error('Failed to fetch Instagram accounts');
+    }
+    
+    const accountsData = await accountsResponse.json();
+    const instagramAccount = accountsData.data?.find(account => account.instagram_business_account);
+    
+    if (!instagramAccount?.instagram_business_account) {
+      throw new Error('No Instagram Business Account found');
+    }
+    
+    const businessAccountId = instagramAccount.instagram_business_account.id;
+    
+    // Now get the insights from the business account
     // Note: Insights may require additional permissions and app review
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/insights?metric=impressions,reach,profile_views&period=day&access_token=${accessToken}`);
+    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/${businessAccountId}/insights?metric=impressions,reach,profile_views&period=day&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
