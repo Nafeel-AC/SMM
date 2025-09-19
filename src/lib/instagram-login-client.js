@@ -84,7 +84,8 @@ export async function exchangeCodeForToken(code) {
 // Get user profile from Instagram
 export async function getInstagramProfile(accessToken) {
   try {
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/v19.0/me?fields=id,username,account_type,media_count&access_token=${accessToken}`);
+    // Use the correct Instagram API endpoint for Business Login
+    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/me?fields=id,username,account_type,media_count&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -106,7 +107,8 @@ export async function getInstagramProfile(accessToken) {
 // Get user media from Instagram
 export async function getInstagramMedia(accessToken, limit = 25) {
   try {
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/v19.0/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
+    // Use the correct Instagram API endpoint for Business Login
+    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -143,7 +145,8 @@ export async function getInstagramMedia(accessToken, limit = 25) {
 export async function getBasicInsights(accessToken) {
   try {
     // Try to get account insights from Instagram Graph API
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/v19.0/me/insights?metric=impressions,reach,profile_views&period=day&access_token=${accessToken}`);
+    // Note: Insights may require additional permissions and app review
+    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/insights?metric=impressions,reach,profile_views&period=day&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
