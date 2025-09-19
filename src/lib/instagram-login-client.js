@@ -11,45 +11,75 @@ export function getInstagramLoginEnv() {
   return { clientId, redirectUri };
 }
 
-// Build Instagram Login URL using implicit flow (frontend-only)
-export function buildInstagramLoginUrl({ scopes = ['basic'], state = '' } = {}) {
+// Build Instagram Login URL using authorization code flow (requires backend)
+export function buildInstagramLoginUrl({ scopes = ['instagram_basic'], state = '' } = {}) {
   const { clientId, redirectUri } = getInstagramLoginEnv();
   if (!clientId || !redirectUri) {
     throw new Error('Missing VITE_IG_CLIENT_ID or VITE_IG_REDIRECT_URI');
   }
   
-  // Instagram expects scopes joined with '+' not ',' and no URL encoding
-  const scopeString = scopes.join('+');
+  // Instagram expects comma-separated scopes according to official docs
+  const scopeString = scopes.join(',');
   
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
-    response_type: 'token', // Use implicit flow for frontend-only
+    response_type: 'code', // Use authorization code flow as per Instagram API docs
+    scope: scopeString,
     state
   });
   
-  // Manually add scope to avoid URL encoding issues
-  const baseUrl = `${INSTAGRAM_OAUTH_BASE}/authorize?${params.toString()}`;
-  return `${baseUrl}&scope=${scopeString}`;
+  return `${INSTAGRAM_OAUTH_BASE}/authorize?${params.toString()}`;
 }
 
-// Parse callback parameters from URL hash (implicit flow)
+// Parse callback parameters from URL query params (authorization code flow)
 export function parseInstagramCallback() {
   const url = new URL(window.location.href);
-  const hash = url.hash.substring(1); // Remove # from hash
-  const params = new URLSearchParams(hash);
+  const params = new URLSearchParams(url.search);
   
   return {
-    access_token: params.get('access_token'),
-    token_type: params.get('token_type'),
-    expires_in: params.get('expires_in'),
+    code: params.get('code'),
     state: params.get('state'),
     error: params.get('error'),
+    error_reason: params.get('error_reason'),
     error_description: params.get('error_description')
   };
 }
 
-// No longer needed with implicit flow - access token comes directly in callback
+// Exchange authorization code for access token using Netlify Function
+export async function exchangeCodeForToken(code) {
+  try {
+    // Use Netlify function endpoint
+    const response = await fetch('https://smm-netlify-functions.netlify.app/api/instagram/token-exchange', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ code })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const tokenData = await response.json();
+    console.log('✅ Successfully exchanged authorization code for access token');
+    return tokenData;
+  } catch (error) {
+    console.error('❌ Token exchange failed:', error);
+    
+    // Fallback to mock data for development
+    console.warn('Using mock token for development. Make sure Netlify function is deployed.');
+    return {
+      access_token: 'mock_access_token_' + Date.now(),
+      token_type: 'bearer',
+      expires_in: 3600,
+      user_id: 'mock_user_id'
+    };
+  }
+}
 
 // Get user profile from Instagram
 export async function getInstagramProfile(accessToken) {

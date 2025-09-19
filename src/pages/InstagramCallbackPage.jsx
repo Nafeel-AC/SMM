@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { parseInstagramCallback, getInstagramProfile, getInstagramMedia, getBasicInsights, calculateInstagramInsights } from '../lib/instagram-login-client';
+import { parseInstagramCallback, exchangeCodeForToken, getInstagramProfile, getInstagramMedia, getBasicInsights, calculateInstagramInsights } from '../lib/instagram-login-client';
 import { useFirebaseAuth } from '../contexts/FirebaseAuthContext';
 import { firebaseDb } from '../lib/firebase-db';
 
@@ -12,9 +12,13 @@ const InstagramCallbackPage = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const { access_token, error, error_description } = parseInstagramCallback();
+        const { code, error, error_description } = parseInstagramCallback();
         if (error) throw new Error(error_description || error);
-        if (!access_token) throw new Error('No access token received');
+        if (!code) throw new Error('No authorization code received');
+
+        setStatus('Exchanging code for access token...');
+        const tokenData = await exchangeCodeForToken(code);
+        const { access_token } = tokenData;
 
         setStatus('Fetching Instagram profile...');
         const profile = await getInstagramProfile(access_token);

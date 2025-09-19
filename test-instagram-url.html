@@ -115,19 +115,16 @@
         <div class="form-group">
             <label for="responseType">Response Type:</label>
             <select id="responseType">
-                <option value="token" selected>token (Implicit Flow)</option>
-                <option value="code">code (Authorization Code Flow)</option>
+                <option value="code" selected>code (Authorization Code Flow - Required by Instagram)</option>
+                <option value="token">token (Implicit Flow - Not supported by Instagram)</option>
             </select>
         </div>
 
         <div class="form-group">
             <label for="scope">Scope:</label>
             <select id="scope">
-                <option value="basic" selected>basic (Recommended for new clients)</option>
-                <option value="basic+likes">basic+likes (May not work for new clients)</option>
-                <option value="basic+comments">basic+comments (May not work for new clients)</option>
-                <option value="basic+relationships">basic+relationships (May not work for new clients)</option>
-                <option value="basic+likes+comments+relationships">basic+likes+comments+relationships (May not work for new clients)</option>
+                <option value="instagram_basic" selected>instagram_basic (Required by Instagram API)</option>
+                <option value="instagram_business_basic">instagram_business_basic (For business accounts)</option>
             </select>
         </div>
 

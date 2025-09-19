@@ -54,7 +54,7 @@ const InstagramConnectPage = () => {
     try {
       setLoading(true);
       const state = JSON.stringify({ uid: user.uid, ts: Date.now() });
-      const url = buildInstagramLoginUrl({ scopes: ['basic'], state });
+      const url = buildInstagramLoginUrl({ scopes: ['instagram_basic'], state });
       console.log('🔗 Instagram Login URL:', url);
       window.location.href = url;
     } catch (e) {
