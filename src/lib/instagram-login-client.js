@@ -2,7 +2,7 @@
 // Frontend-only Instagram Login API client
 // Uses Instagram Login with implicit flow (no backend required)
 
-const INSTAGRAM_OAUTH_BASE = 'https://api.instagram.com/oauth';
+const INSTAGRAM_OAUTH_BASE = 'https://www.instagram.com/oauth';
 const INSTAGRAM_GRAPH_BASE = 'https://graph.instagram.com';
 
 export function getInstagramLoginEnv() {

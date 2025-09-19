@@ -74,11 +74,11 @@
                 client_id: clientId,
                 redirect_uri: redirectUri,
                 response_type: 'code',
-                scope: 'instagram_basic',
+                scope: 'instagram_business_basic',
                 state: JSON.stringify({ uid: 'debug_user', ts: Date.now() })
             });
 
-            const url = `https://api.instagram.com/oauth/authorize?${params.toString()}`;
+            const url = `https://www.instagram.com/oauth/authorize?${params.toString()}`;
             document.getElementById('oauthUrl').innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
             document.getElementById('testLink').href = url;
         }
