@@ -20,7 +20,7 @@ export function buildInstagramBasicLoginUrl({ state = '' } = {}) {
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
-    scope: 'instagram_business_basic', // Only basic scope
+    scope: 'instagram_basic', // Only basic scope
     response_type: 'code',
     state
   });
