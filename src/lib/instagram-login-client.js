@@ -12,21 +12,25 @@ export function getInstagramLoginEnv() {
 }
 
 // Build Instagram Login URL using implicit flow (frontend-only)
-export function buildInstagramLoginUrl({ scopes = ['instagram_basic'], state = '' } = {}) {
+export function buildInstagramLoginUrl({ scopes = ['basic'], state = '' } = {}) {
   const { clientId, redirectUri } = getInstagramLoginEnv();
   if (!clientId || !redirectUri) {
     throw new Error('Missing VITE_IG_CLIENT_ID or VITE_IG_REDIRECT_URI');
   }
   
+  // Instagram expects scopes joined with '+' not ',' and no URL encoding
+  const scopeString = scopes.join('+');
+  
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
-    scope: scopes.join(','),
     response_type: 'token', // Use implicit flow for frontend-only
     state
   });
   
-  return `${INSTAGRAM_OAUTH_BASE}/authorize?${params.toString()}`;
+  // Manually add scope to avoid URL encoding issues
+  const baseUrl = `${INSTAGRAM_OAUTH_BASE}/authorize?${params.toString()}`;
+  return `${baseUrl}&scope=${scopeString}`;
 }
 
 // Parse callback parameters from URL hash (implicit flow)
