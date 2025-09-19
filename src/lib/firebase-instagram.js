@@ -1,5 +1,6 @@
 // Firebase Instagram service - replaces Supabase Instagram service
 import { firebaseDb } from './firebase-db';
+import { instagramGraphClient } from './instagram-graph';
 
 class FirebaseInstagramService {
   constructor() {
@@ -196,32 +197,70 @@ class FirebaseInstagramService {
     }
   }
 
-  // Fetch and save Instagram insights using test data
-  async fetchAndSaveInsights(userId, accessToken) {
+  // Fetch and save Instagram insights using REAL Instagram Graph API
+  // Requires that the user's instagram account (with access_token) is already saved in Firestore
+  async fetchAndSaveRealInsights(userId) {
     try {
-      console.log('🧪 Test mode: Fetching and saving test insights');
-      
-      // Get test Instagram profile
-      const profile = await this.getInstagramProfile(accessToken);
-      
-      // Get test Instagram insights
-      const insights = await this.getInstagramInsights(accessToken);
-      
-      // Get test recent media
-      const media = await this.getInstagramMedia(accessToken, 25);
-      
-      // Process insights data
+      // Load saved instagram account to get instagram_user_id and access token
+      const accountResult = await firebaseDb.getInstagramAccount(userId);
+      if (accountResult.error || !accountResult.data) {
+        throw new Error('No Instagram account found for user');
+      }
+
+      const account = accountResult.data;
+      const accessToken = account.access_token;
+      const instagramUserId = account.instagram_user_id;
+
+      if (!accessToken || !instagramUserId) {
+        throw new Error('Instagram access token or user id missing');
+      }
+
+      // 1) Account insights (impressions, reach, profile_views)
+      const accountInsightsJson = await instagramGraphClient.getAccountInsights({
+        instagramUserId,
+        accessToken,
+        metrics: ['impressions','reach','profile_views'],
+        period: 'day'
+      });
+
+      // 2) Recent media and media insights (engagement, impressions, reach)
+      const { ids: mediaIds } = await instagramGraphClient.getRecentMediaIds({
+        instagramUserId,
+        accessToken,
+        limit: 10
+      });
+
+      const mediaInsights = [];
+      for (const id of mediaIds) {
+        try {
+          const mi = await instagramGraphClient.getMediaInsights({ mediaId: id, accessToken });
+          mediaInsights.push(mi);
+        } catch (e) {
+          // Skip media without insights
+        }
+      }
+
+      // Compute a simple engagement average across recent media
+      const avgEngagement = instagramGraphClient.computeAverageEngagement(mediaInsights);
+
+      // Map account insights response to flat fields
+      const mapMetric = (json, name) => {
+        const m = Array.isArray(json?.data) ? json.data.find(d => d.name === name) : null;
+        const v = m?.values?.[0]?.value;
+        return typeof v === 'number' ? v : 0;
+      };
+
       const processedInsights = {
         user_id: userId,
-        followers_count: 1250, // Test data
-        following_count: 320,  // Test data
-        media_count: profile.media_count || 0,
-        engagement_rate: 4.2,  // Test data
-        avg_likes: 85,         // Test data
-        avg_comments: 12,      // Test data
-        reach: 0,
-        impressions: 0,
-        profile_views: 0,
+        followers_count: typeof account.followers_count === 'number' ? account.followers_count : 0,
+        following_count: typeof account.following_count === 'number' ? account.following_count : 0,
+        media_count: typeof account.media_count === 'number' ? account.media_count : 0,
+        engagement_rate: avgEngagement,
+        avg_likes: 0, // Optional: compute via media edges if needed
+        avg_comments: 0, // Optional: compute via media edges if needed
+        reach: mapMetric(accountInsightsJson, 'reach'),
+        impressions: mapMetric(accountInsightsJson, 'impressions'),
+        profile_views: mapMetric(accountInsightsJson, 'profile_views'),
         website_clicks: 0,
         email_contacts: 0,
         phone_contacts: 0,
@@ -230,79 +269,12 @@ class FirebaseInstagramService {
         last_updated: new Date().toISOString()
       };
 
-      // Process insights data if available
-      if (insights && insights.data) {
-        insights.data.forEach(metric => {
-          switch (metric.name) {
-            case 'impressions':
-              processedInsights.impressions = metric.values[0]?.value || 0;
-              break;
-            case 'reach':
-              processedInsights.reach = metric.values[0]?.value || 0;
-              break;
-            case 'profile_views':
-              processedInsights.profile_views = metric.values[0]?.value || 0;
-              break;
-            case 'website_clicks':
-              processedInsights.website_clicks = metric.values[0]?.value || 0;
-              break;
-            case 'email_contacts':
-              processedInsights.email_contacts = metric.values[0]?.value || 0;
-              break;
-            case 'phone_call_clicks':
-              processedInsights.phone_contacts = metric.values[0]?.value || 0;
-              break;
-            case 'get_directions_clicks':
-              processedInsights.get_directions = metric.values[0]?.value || 0;
-              break;
-            case 'text_message_clicks':
-              processedInsights.text_message = metric.values[0]?.value || 0;
-              break;
-          }
-        });
-      }
-
-      // Calculate engagement rate from media insights
-      if (media.data) {
-        let totalEngagement = 0;
-        let mediaWithInsights = 0;
-        
-        for (const mediaItem of media.data) {
-          try {
-            const mediaInsights = await this.getMediaInsights(mediaItem.id, accessToken);
-            if (mediaInsights.data) {
-              const engagement = mediaInsights.data.find(metric => metric.name === 'engagement');
-              if (engagement) {
-                totalEngagement += engagement.values[0]?.value || 0;
-                mediaWithInsights++;
-              }
-            }
-          } catch (error) {
-            console.log(`No insights available for media ${mediaItem.id}`);
-          }
-        }
-        
-        if (mediaWithInsights > 0) {
-          processedInsights.engagement_rate = (totalEngagement / mediaWithInsights).toFixed(2);
-        }
-      }
-
-      // Save insights to Firestore
-      console.log('🧪 Saving insights to Firestore:', processedInsights);
       const result = await firebaseDb.saveInstagramInsights(processedInsights);
-
-      if (result.error) {
-        console.error('❌ Firebase error saving insights:', result.error);
-        // In test mode, we can continue even if insights save fails
-        console.log('🧪 Test mode: Continuing despite insights save failure');
-        return { id: 'test_insights_' + Date.now(), user_id: userId };
-      }
-
-      console.log('✅ Test insights saved successfully:', result.data);
-      return result.data;
+      if (result.error) throw result.error;
+      return { data: result.data, error: null };
     } catch (error) {
-      console.error('Error fetching and saving insights:', error);
-      throw error;
+      console.error('❌ Error fetching/saving real Instagram insights:', error);
+      return { data: null, error };
     }
   }
 

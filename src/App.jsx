@@ -16,13 +16,15 @@ import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ServicesPage from './pages/ServicesPage';
 import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import DataDeletionPage from './pages/DataDeletionPage';
 
 
 import SubscriptionPage from './pages/SubscriptionPage';
 import InstagramConnectPage from './pages/InstagramConnectPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage/PaymentSuccessPage';
 import PaymentCancelPage from './pages/PaymentCancelPage/PaymentCancelPage';
-// import InstagramCallbackPage from './pages/InstagramCallbackPage'; // Not needed in test mode
+import InstagramCallbackPage from './pages/InstagramCallbackPage'; // Enable real callback
 import RequirementsFormPage from './pages/RequirementsFormPage';
 import DashboardPage from './pages/DashboardPage';
 import StaffPanel from './pages/StaffPanel';
@@ -37,6 +39,7 @@ import StaffEditUserPage from './pages/StaffEditUserPage';
 import DiagnosticPage from './pages/DiagnosticPage';
 import UserDashboard from './pages/AdminDashboard/UserDashboard';
 import EditUserDashboard from './pages/StaffDashboard/EditUserDashboard';
+import WebhookPage from './pages/WebhookPage';
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -92,7 +95,6 @@ function App() {
       <FirebaseAuthProvider>
         <DebugExposer />
   <Routes>
-          <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -103,13 +105,16 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/diagnostic" element={<DiagnosticPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/data-deletion" element={<DataDeletionPage />} />
           
           {/* User Flow Routes */}
           <Route path="/subscription" element={<ProtectedRoute><SubscriptionPage /></ProtectedRoute>} />
           <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccessPage /></ProtectedRoute>} />
           <Route path="/payment-cancel" element={<ProtectedRoute><PaymentCancelPage /></ProtectedRoute>} />
           <Route path="/instagram-connect" element={<ProtectedRoute><InstagramConnectPage /></ProtectedRoute>} />
-          {/* <Route path="/instagram/callback" element={<InstagramCallbackPage />} /> Not needed in test mode */}
+          <Route path="/instagram/callback" element={<ProtectedRoute><InstagramCallbackPage /></ProtectedRoute>} />
           <Route path="/requirements-form" element={<ProtectedRoute><RequirementsFormPage /></ProtectedRoute>} />
           
           {/* Dashboard */}
@@ -128,6 +133,9 @@ function App() {
           <Route path="/admin-dashboard/assign-users/:staffId" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminAssignUsersPage /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard/assign-users" element={<RoleProtectedRoute allowedRoles={['admin']}><AssignUsers /></RoleProtectedRoute>} />
           <Route path="/admin-dashboard/user/:userId" element={<RoleProtectedRoute allowedRoles={['admin']}><UserDashboard /></RoleProtectedRoute>} />
+          
+          {/* Webhook endpoint */}
+          <Route path="/webhook/instagram" element={<WebhookPage />} />
         </Routes>
         <Footer />
         <SupportChat />
