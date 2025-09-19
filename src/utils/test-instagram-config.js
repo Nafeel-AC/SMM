@@ -43,7 +43,7 @@ export function testInstagramConfig() {
   }
   
   // Generate test URL
-  const testUrl = `https://api.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=instagram_basic&response_type=code`;
+  const testUrl = `https://api.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=instagram_business_basic&response_type=code`;
   
   console.log('🔗 Generated Instagram OAuth URL:');
   console.log(testUrl);

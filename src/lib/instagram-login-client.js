@@ -11,14 +11,14 @@ export function getInstagramLoginEnv() {
   return { clientId, redirectUri };
 }
 
-// Build Instagram Login URL using authorization code flow (requires backend)
-export function buildInstagramLoginUrl({ scopes = ['instagram_basic'], state = '' } = {}) {
+// Build Instagram Business Login URL using authorization code flow
+export function buildInstagramLoginUrl({ scopes = ['instagram_business_basic'], state = '' } = {}) {
   const { clientId, redirectUri } = getInstagramLoginEnv();
   if (!clientId || !redirectUri) {
     throw new Error('Missing VITE_IG_CLIENT_ID or VITE_IG_REDIRECT_URI');
   }
   
-  // Instagram expects comma-separated scopes according to official docs
+  // Instagram Business Login expects comma-separated scopes
   const scopeString = scopes.join(',');
   
   const params = new URLSearchParams({
