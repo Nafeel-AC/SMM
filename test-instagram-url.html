@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Login URL Tester</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            line-height: 1.6;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #333; 
+            border-bottom: 2px solid #007bff; 
+            padding-bottom: 10px; 
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .url-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Instagram Login URL Tester</h1>
+        
+        <div class="info-box">
+            <strong>ℹ️ Based on Stack Overflow Research:</strong>
+            <ul>
+                <li>Instagram implicit OAuth works with scopes</li>
+                <li>Use <code>+</code> between scopes, not <code>,</code> or <code>%2B</code></li>
+                <li>New clients (since April 2015) can only use <code>basic</code> scope</li>
+                <li>Check if "Disable Implicit OAuth" is unchecked in your app settings</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <strong>⚠️ Important:</strong> Make sure your Meta App Dashboard has:
+            <ul>
+                <li>Response Type: <strong>Implicit</strong> (not Authorization Code)</li>
+                <li>Redirect URI: <code>https://smm-roan.vercel.app/instagram/callback</code></li>
+                <li>Implicit OAuth: <strong>Enabled</strong> (not disabled)</li>
+            </ul>
+        </div>
+
+        <div class="form-group">
+            <label for="clientId">Instagram Client ID:</label>
+            <input type="text" id="clientId" value="1095837746065727" placeholder="Your Instagram App Client ID">
+        </div>
+
+        <div class="form-group">
+            <label for="redirectUri">Redirect URI:</label>
+            <input type="text" id="redirectUri" value="https://smm-roan.vercel.app/instagram/callback" placeholder="Your redirect URI">
+        </div>
+
+        <div class="form-group">
+            <label for="responseType">Response Type:</label>
+            <select id="responseType">
+                <option value="token" selected>token (Implicit Flow)</option>
+                <option value="code">code (Authorization Code Flow)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="scope">Scope:</label>
+            <select id="scope">
+                <option value="basic" selected>basic (Recommended for new clients)</option>
+                <option value="basic+likes">basic+likes (May not work for new clients)</option>
+                <option value="basic+comments">basic+comments (May not work for new clients)</option>
+                <option value="basic+relationships">basic+relationships (May not work for new clients)</option>
+                <option value="basic+likes+comments+relationships">basic+likes+comments+relationships (May not work for new clients)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="state">State (Optional):</label>
+            <input type="text" id="state" value='{"uid":"test_user","ts":' + Date.now() + '}' placeholder="State parameter">
+        </div>
+
+        <button onclick="generateUrl()">Generate Instagram Login URL</button>
+        <button onclick="testUrl()">Test URL (Open in New Tab)</button>
+        <button onclick="copyUrl()">Copy URL</button>
+
+        <div id="urlOutput" class="url-output" style="display: none;">
+            <strong>Generated URL:</strong><br>
+            <span id="generatedUrl"></span>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 4px;">
+            <h3>📋 Meta App Dashboard Checklist:</h3>
+            <ul>
+                <li>✅ Go to <a href="https://developers.facebook.com" target="_blank">Meta for Developers</a></li>
+                <li>✅ Select your app → Instagram Login</li>
+                <li>✅ Set Response Type to <strong>"Implicit"</strong></li>
+                <li>✅ Add Redirect URI: <code>https://smm-roan.vercel.app/instagram/callback</code></li>
+                <li>✅ Check that "Disable Implicit OAuth" is <strong>unchecked</strong></li>
+                <li>✅ Save your changes</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function generateUrl() {
+            const clientId = document.getElementById('clientId').value;
+            const redirectUri = document.getElementById('redirectUri').value;
+            const responseType = document.getElementById('responseType').value;
+            const scope = document.getElementById('scope').value;
+            const state = document.getElementById('state').value;
+
+            if (!clientId || !redirectUri) {
+                alert('Please fill in Client ID and Redirect URI');
+                return;
+            }
+
+            // Build URL manually to avoid URL encoding issues with scope
+            const baseUrl = `https://api.instagram.com/oauth/authorize`;
+            const params = new URLSearchParams({
+                client_id: clientId,
+                redirect_uri: redirectUri,
+                response_type: responseType,
+                state: state
+            });
+
+            // Add scope manually to avoid encoding issues
+            const url = `${baseUrl}?${params.toString()}&scope=${scope}`;
+
+            document.getElementById('generatedUrl').textContent = url;
+            document.getElementById('urlOutput').style.display = 'block';
+        }
+
+        function testUrl() {
+            const url = document.getElementById('generatedUrl').textContent;
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                alert('Please generate a URL first');
+            }
+        }
+
+        function copyUrl() {
+            const url = document.getElementById('generatedUrl').textContent;
+            if (url) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('URL copied to clipboard!');
+                });
+            } else {
+                alert('Please generate a URL first');
+            }
+        }
+
+        // Generate URL on page load
+        window.onload = function() {
+            generateUrl();
+        };
+    </script>
+</body>
+</html>
