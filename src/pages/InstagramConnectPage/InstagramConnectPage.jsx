@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFirebaseAuth } from '../../contexts/FirebaseAuthContext';
 import { firebaseDb } from '../../lib/firebase-db';
 import './InstagramConnectPage.css';
-import { buildInstagramLoginUrl } from '../../lib/instagram-login-client';
+import { buildInstagramLoginUrl, getInstagramLoginEnv } from '../../lib/instagram-login-client';
+import { testInstagramConfig } from '../../utils/test-instagram-config';
 
 const InstagramConnectPage = () => {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [config, setConfig] = useState(null);
   const { user, fetchUserProfile } = useFirebaseAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Test configuration on component mount
+    const config = getInstagramLoginEnv();
+    setConfig(config);
+    testInstagramConfig();
+  }, []);
 
   const handleConnectInstagram = async () => {
     try {
@@ -58,6 +67,41 @@ const InstagramConnectPage = () => {
           <h1>Connect Your Instagram Account</h1>
           <p>Connect your Instagram account to access personalized growth insights and analytics.</p>
         </div>
+
+        {/* Debug Information */}
+        {config && (
+          <div style={{ 
+            background: '#f8f9fa', 
+            border: '1px solid #dee2e6', 
+            borderRadius: '8px', 
+            padding: '16px', 
+            marginBottom: '24px',
+            fontSize: '14px'
+          }}>
+            <h4 style={{ margin: '0 0 12px 0', color: '#495057' }}>🔧 Configuration Debug</h4>
+            <div style={{ marginBottom: '8px' }}>
+              <strong>Client ID:</strong> {config.clientId ? '✅ Set' : '❌ Missing'}
+            </div>
+            <div style={{ marginBottom: '8px' }}>
+              <strong>Redirect URI:</strong> {config.redirectUri ? '✅ Set' : '❌ Missing'}
+            </div>
+            {config.redirectUri && (
+              <div style={{ 
+                background: '#e9ecef', 
+                padding: '8px', 
+                borderRadius: '4px', 
+                fontFamily: 'monospace',
+                fontSize: '12px',
+                wordBreak: 'break-all'
+              }}>
+                {config.redirectUri}
+              </div>
+            )}
+            <div style={{ marginTop: '8px', fontSize: '12px', color: '#6c757d' }}>
+              Make sure this redirect URI is added to your Meta App Dashboard
+            </div>
+          </div>
+        )}
 
         <div className="benefits-section">
           <h3>What you'll get:</h3>
