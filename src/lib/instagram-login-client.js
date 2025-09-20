@@ -81,74 +81,68 @@ export async function exchangeCodeForToken(code) {
   }
 }
 
-// Get user profile from Instagram
+// Get user profile from Instagram using Instagram Graph API
 export async function getInstagramProfile(accessToken) {
   try {
-    // First, get the user's Instagram Business Account ID
-    // The access token from Instagram Login gives us access to the user's business accounts
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/accounts?fields=instagram_business_account&access_token=${accessToken}`);
+    // Use Instagram Graph API /me endpoint as per documentation
+    const response = await fetch(`https://graph.instagram.com/v23.0/me?fields=user_id,username,name,account_type,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Failed to fetch Instagram accounts: ${errorData.error?.message || response.statusText}`);
+      throw new Error(`Failed to fetch Instagram profile: ${errorData.error?.message || response.statusText}`);
     }
     
-    const accountsData = await response.json();
-    console.log('Instagram accounts data:', accountsData);
+    const profileData = await response.json();
+    console.log('Instagram profile data:', profileData);
     
-    // Find the Instagram Business Account
-    const instagramAccount = accountsData.data?.find(account => account.instagram_business_account);
-    
-    if (!instagramAccount?.instagram_business_account) {
-      throw new Error('No Instagram Business Account found');
-    }
-    
-    const businessAccountId = instagramAccount.instagram_business_account.id;
-    
-    // Now get the business account details
-    const businessResponse = await fetch(`${INSTAGRAM_GRAPH_BASE}/${businessAccountId}?fields=id,username,account_type,media_count&access_token=${accessToken}`);
-    
-    if (!businessResponse.ok) {
-      const errorData = await businessResponse.json().catch(() => ({}));
-      throw new Error(`Failed to fetch Instagram business profile: ${errorData.error?.message || businessResponse.statusText}`);
-    }
-    
-    const businessData = await businessResponse.json();
-    console.log('Instagram business profile:', businessData);
-    
-    return businessData;
+    // Return the profile data with Instagram user ID
+    return {
+      id: profileData.user_id,
+      user_id: profileData.user_id,
+      username: profileData.username,
+      name: profileData.name,
+      account_type: profileData.account_type,
+      profile_picture_url: profileData.profile_picture_url,
+      followers_count: profileData.followers_count,
+      follows_count: profileData.follows_count,
+      media_count: profileData.media_count
+    };
   } catch (error) {
     console.warn('Instagram profile fetch failed, using mock data:', error);
     return {
       id: 'mock_instagram_id',
+      user_id: 'mock_instagram_id',
       username: 'mock_user',
+      name: 'Mock User',
       account_type: 'BUSINESS',
+      profile_picture_url: null,
+      followers_count: 0,
+      follows_count: 0,
       media_count: 25
     };
   }
 }
 
-// Get user media from Instagram
+// Get user media from Instagram using Instagram Graph API
 export async function getInstagramMedia(accessToken, limit = 25) {
   try {
-    // First, get the user's Instagram Business Account ID
-    const accountsResponse = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/accounts?fields=instagram_business_account&access_token=${accessToken}`);
+    // First, get the user's Instagram user ID using /me endpoint
+    const profileResponse = await fetch(`https://graph.instagram.com/v23.0/me?fields=user_id&access_token=${accessToken}`);
     
-    if (!accountsResponse.ok) {
-      throw new Error('Failed to fetch Instagram accounts');
+    if (!profileResponse.ok) {
+      const errorData = await profileResponse.json().catch(() => ({}));
+      throw new Error(`Failed to fetch Instagram user ID: ${errorData.error?.message || profileResponse.statusText}`);
     }
     
-    const accountsData = await accountsResponse.json();
-    const instagramAccount = accountsData.data?.find(account => account.instagram_business_account);
+    const profileData = await profileResponse.json();
+    const instagramUserId = profileData.user_id;
     
-    if (!instagramAccount?.instagram_business_account) {
-      throw new Error('No Instagram Business Account found');
+    if (!instagramUserId) {
+      throw new Error('No Instagram user ID found');
     }
     
-    const businessAccountId = instagramAccount.instagram_business_account.id;
-    
-    // Now get the media from the business account
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/${businessAccountId}/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
+    // Now get the media using Instagram Graph API /<IG_ID>/media endpoint
+    const response = await fetch(`https://graph.instagram.com/v23.0/${instagramUserId}/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -184,25 +178,24 @@ export async function getInstagramMedia(accessToken, limit = 25) {
 // Get basic insights from Instagram Graph API
 export async function getBasicInsights(accessToken) {
   try {
-    // First, get the user's Instagram Business Account ID
-    const accountsResponse = await fetch(`${INSTAGRAM_GRAPH_BASE}/me/accounts?fields=instagram_business_account&access_token=${accessToken}`);
+    // First, get the user's Instagram user ID using /me endpoint
+    const profileResponse = await fetch(`https://graph.instagram.com/v23.0/me?fields=user_id&access_token=${accessToken}`);
     
-    if (!accountsResponse.ok) {
-      throw new Error('Failed to fetch Instagram accounts');
+    if (!profileResponse.ok) {
+      const errorData = await profileResponse.json().catch(() => ({}));
+      throw new Error(`Failed to fetch Instagram user ID: ${errorData.error?.message || profileResponse.statusText}`);
     }
     
-    const accountsData = await accountsResponse.json();
-    const instagramAccount = accountsData.data?.find(account => account.instagram_business_account);
+    const profileData = await profileResponse.json();
+    const instagramUserId = profileData.user_id;
     
-    if (!instagramAccount?.instagram_business_account) {
-      throw new Error('No Instagram Business Account found');
+    if (!instagramUserId) {
+      throw new Error('No Instagram user ID found');
     }
     
-    const businessAccountId = instagramAccount.instagram_business_account.id;
-    
-    // Now get the insights from the business account
+    // Get insights using Instagram Graph API
     // Note: Insights may require additional permissions and app review
-    const response = await fetch(`${INSTAGRAM_GRAPH_BASE}/${businessAccountId}/insights?metric=impressions,reach,profile_views&period=day&access_token=${accessToken}`);
+    const response = await fetch(`https://graph.instagram.com/v23.0/${instagramUserId}/insights?metric=impressions,reach,profile_views&period=day&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
