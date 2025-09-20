@@ -85,22 +85,25 @@ export async function exchangeCodeForToken(code) {
 export async function getInstagramProfile(accessToken) {
   try {
     // Use Instagram Graph API /me endpoint as per documentation
-    const response = await fetch(`https://graph.instagram.com/v23.0/me?fields=user_id,username,name,account_type,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`);
+    const response = await fetch(`https://graph.instagram.com/v23.0/me?fields=id,user_id,username,name,account_type,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(`Failed to fetch Instagram profile: ${errorData.error?.message || response.statusText}`);
     }
     
-    const profileData = await response.json();
-    console.log('Instagram profile data:', profileData);
+    const responseData = await response.json();
+    console.log('Instagram profile response:', responseData);
     
-    // Return the profile data with Instagram user ID
+    // The API returns data in a 'data' array format as per documentation
+    const profileData = responseData.data && responseData.data[0] ? responseData.data[0] : responseData;
+    
+    // Return the profile data with both ID types
     return {
-      id: profileData.user_id,
-      user_id: profileData.user_id,
+      id: profileData.id, // App-scoped ID
+      user_id: profileData.user_id, // Instagram professional account ID
       username: profileData.username,
-      name: profileData.name,
+      name: profileData.name || profileData.username, // Fallback to username if name not available
       account_type: profileData.account_type,
       profile_picture_url: profileData.profile_picture_url,
       followers_count: profileData.followers_count,
@@ -127,14 +130,16 @@ export async function getInstagramProfile(accessToken) {
 export async function getInstagramMedia(accessToken, limit = 25) {
   try {
     // First, get the user's Instagram user ID using /me endpoint
-    const profileResponse = await fetch(`https://graph.instagram.com/v23.0/me?fields=user_id&access_token=${accessToken}`);
+    const profileResponse = await fetch(`https://graph.instagram.com/v23.0/me?fields=id,user_id&access_token=${accessToken}`);
     
     if (!profileResponse.ok) {
       const errorData = await profileResponse.json().catch(() => ({}));
       throw new Error(`Failed to fetch Instagram user ID: ${errorData.error?.message || profileResponse.statusText}`);
     }
     
-    const profileData = await profileResponse.json();
+    const responseData = await profileResponse.json();
+    // Handle both data array format and direct object format
+    const profileData = responseData.data && responseData.data[0] ? responseData.data[0] : responseData;
     const instagramUserId = profileData.user_id;
     
     if (!instagramUserId) {
@@ -179,14 +184,16 @@ export async function getInstagramMedia(accessToken, limit = 25) {
 export async function getBasicInsights(accessToken) {
   try {
     // First, get the user's Instagram user ID using /me endpoint
-    const profileResponse = await fetch(`https://graph.instagram.com/v23.0/me?fields=user_id&access_token=${accessToken}`);
+    const profileResponse = await fetch(`https://graph.instagram.com/v23.0/me?fields=id,user_id&access_token=${accessToken}`);
     
     if (!profileResponse.ok) {
       const errorData = await profileResponse.json().catch(() => ({}));
       throw new Error(`Failed to fetch Instagram user ID: ${errorData.error?.message || profileResponse.statusText}`);
     }
     
-    const profileData = await profileResponse.json();
+    const responseData = await profileResponse.json();
+    // Handle both data array format and direct object format
+    const profileData = responseData.data && responseData.data[0] ? responseData.data[0] : responseData;
     const instagramUserId = profileData.user_id;
     
     if (!instagramUserId) {
