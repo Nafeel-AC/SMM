@@ -53,7 +53,7 @@ const FeatureSection = () => {
     {
       icon: featureImages.insightfulAnalytics.path,
       iconAlt: featureImages.insightfulAnalytics.alt,
-      title: "INSIGHTFUL ANALYTICS ",
+      title: "INSIGHT ANALYTICS ",
       description: "Know what works and refine your strategy. Our comprehensive analytics help you track performance, measure growth, and optimize engagement for maximum results.",
       active: false
     }
