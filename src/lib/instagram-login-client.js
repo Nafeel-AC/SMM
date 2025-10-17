@@ -46,11 +46,15 @@ export function parseInstagramCallback() {
   };
 }
 
-// Exchange authorization code for access token using Netlify Function
+// Exchange authorization code for access token using serverless endpoint
 export async function exchangeCodeForToken(code) {
   try {
-    // Use Netlify function endpoint
-    const response = await fetch('https://dainty-hummingbird-842c50.netlify.app/.netlify/functions/instagram-token-exchange', {
+    // Prefer same-origin Vercel Serverless Function
+    const endpoint = (typeof window !== 'undefined' && window.location && window.location.origin)
+      ? `${window.location.origin}/api/instagram-token-exchange`
+      : '/api/instagram-token-exchange';
+
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -66,7 +70,11 @@ export async function exchangeCodeForToken(code) {
 
     const tokenData = await response.json();
     console.log('✅ Successfully exchanged authorization code for access token');
-    return tokenData;
+    // Prefer long-lived token if provided
+    const access_token = tokenData?.long_lived?.access_token || tokenData?.short_lived?.access_token || tokenData?.access_token;
+    const user_id = tokenData?.short_lived?.user_id || tokenData?.user_id;
+    const expires_in = tokenData?.long_lived?.expires_in || tokenData?.expires_in;
+    return { access_token, user_id, expires_in, raw: tokenData };
   } catch (error) {
     console.error('❌ Token exchange failed:', error);
     
@@ -81,11 +89,11 @@ export async function exchangeCodeForToken(code) {
   }
 }
 
-// Get user profile from Instagram using Instagram Graph API
+// Get user profile using Instagram Graph API (Business Login with Instagram Login)
 export async function getInstagramProfile(accessToken) {
   try {
-    // Use Instagram Graph API /me endpoint as per documentation
-    const response = await fetch(`https://graph.instagram.com/v23.0/me?fields=id,user_id,username,name,account_type,profile_picture_url,followers_count,follows_count,media_count&access_token=${accessToken}`);
+    // The Instagram Login Get Started flow uses graph.instagram.com for /me
+    const response = await fetch(`https://graph.instagram.com/v19.0/me?fields=id,username,account_type,media_count&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -94,27 +102,17 @@ export async function getInstagramProfile(accessToken) {
     
     const responseData = await response.json();
     console.log('Instagram profile response:', responseData);
-    
-    // The API returns data in a 'data' array format as per documentation
-    const profileData = responseData.data && responseData.data[0] ? responseData.data[0] : responseData;
-    
-    // Return the profile data with both ID types
+    const profileData = responseData;
     return {
-      id: profileData.id, // App-scoped ID
-      user_id: profileData.user_id, // Instagram professional account ID
+      id: profileData.id,
       username: profileData.username,
-      name: profileData.name || profileData.username, // Fallback to username if name not available
       account_type: profileData.account_type,
-      profile_picture_url: profileData.profile_picture_url,
-      followers_count: profileData.followers_count,
-      follows_count: profileData.follows_count,
       media_count: profileData.media_count
     };
   } catch (error) {
     console.warn('Instagram profile fetch failed, using mock data:', error);
     return {
       id: 'mock_instagram_id',
-      user_id: 'mock_instagram_id',
       username: 'mock_user',
       name: 'Mock User',
       account_type: 'BUSINESS',
@@ -129,25 +127,8 @@ export async function getInstagramProfile(accessToken) {
 // Get user media from Instagram using Instagram Graph API
 export async function getInstagramMedia(accessToken, limit = 25) {
   try {
-    // First, get the user's Instagram user ID using /me endpoint
-    const profileResponse = await fetch(`https://graph.instagram.com/v23.0/me?fields=id,user_id&access_token=${accessToken}`);
-    
-    if (!profileResponse.ok) {
-      const errorData = await profileResponse.json().catch(() => ({}));
-      throw new Error(`Failed to fetch Instagram user ID: ${errorData.error?.message || profileResponse.statusText}`);
-    }
-    
-    const responseData = await profileResponse.json();
-    // Handle both data array format and direct object format
-    const profileData = responseData.data && responseData.data[0] ? responseData.data[0] : responseData;
-    const instagramUserId = profileData.user_id;
-    
-    if (!instagramUserId) {
-      throw new Error('No Instagram user ID found');
-    }
-    
-    // Now get the media using Instagram Graph API /<IG_ID>/media endpoint
-    const response = await fetch(`https://graph.instagram.com/v23.0/${instagramUserId}/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
+    // With Instagram Login, use graph.instagram.com /me/media
+    const response = await fetch(`https://graph.instagram.com/v19.0/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -183,26 +164,9 @@ export async function getInstagramMedia(accessToken, limit = 25) {
 // Get basic insights from Instagram Graph API
 export async function getBasicInsights(accessToken) {
   try {
-    // First, get the user's Instagram user ID using /me endpoint
-    const profileResponse = await fetch(`https://graph.instagram.com/v23.0/me?fields=id,user_id&access_token=${accessToken}`);
-    
-    if (!profileResponse.ok) {
-      const errorData = await profileResponse.json().catch(() => ({}));
-      throw new Error(`Failed to fetch Instagram user ID: ${errorData.error?.message || profileResponse.statusText}`);
-    }
-    
-    const responseData = await profileResponse.json();
-    // Handle both data array format and direct object format
-    const profileData = responseData.data && responseData.data[0] ? responseData.data[0] : responseData;
-    const instagramUserId = profileData.user_id;
-    
-    if (!instagramUserId) {
-      throw new Error('No Instagram user ID found');
-    }
-    
-    // Get insights using Instagram Graph API
-    // Note: Insights may require additional permissions and app review
-    const response = await fetch(`https://graph.instagram.com/v23.0/${instagramUserId}/insights?metric=impressions,reach,profile_views&period=day&access_token=${accessToken}`);
+    // Insights for Instagram Login require business account; endpoint is on graph.facebook.com with IG user id.
+    // Since we don't have IG user id here in this client, we keep a minimal placeholder and return mock.
+    const response = await fetch(`https://graph.instagram.com/v19.0/me?fields=id&access_token=${accessToken}`);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -210,7 +174,8 @@ export async function getBasicInsights(accessToken) {
       throw new Error(`Instagram insights not available: ${errorData.error?.message || response.statusText}`);
     }
     
-    return response.json();
+    // Not enough context to fetch insights here without a Page/IG Business mapping; return empty to trigger mock
+    return { data: [] };
   } catch (error) {
     console.warn('Instagram insights not available, using mock data:', error);
     return {

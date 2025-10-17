@@ -26,6 +26,7 @@ import PaymentSuccessPage from './pages/PaymentSuccessPage/PaymentSuccessPage';
 import PaymentCancelPage from './pages/PaymentCancelPage/PaymentCancelPage';
 import InstagramCallbackPage from './pages/InstagramCallbackPage'; // Enable real callback
 import RequirementsFormPage from './pages/RequirementsFormPage';
+import FacebookCallbackPage from './pages/FacebookCallbackPage';
 import DashboardPage from './pages/DashboardPage';
 import StaffPanel from './pages/StaffPanel';
 import AdminPanel from './pages/AdminPanel';
@@ -116,6 +117,7 @@ function App() {
           <Route path="/payment-cancel" element={<ProtectedRoute><PaymentCancelPage /></ProtectedRoute>} />
           <Route path="/instagram-connect" element={<ProtectedRoute><InstagramConnectPage /></ProtectedRoute>} />
           <Route path="/instagram/callback" element={<ProtectedRoute><InstagramCallbackPage /></ProtectedRoute>} />
+          <Route path="/facebook/callback" element={<ProtectedRoute><FacebookCallbackPage /></ProtectedRoute>} />
           <Route path="/requirements-form" element={<ProtectedRoute><RequirementsFormPage /></ProtectedRoute>} />
           
           {/* Dashboard */}

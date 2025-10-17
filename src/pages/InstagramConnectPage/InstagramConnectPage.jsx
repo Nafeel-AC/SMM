@@ -8,6 +8,7 @@ import { buildInstagramBasicLoginUrl, getInstagramBasicEnv } from '../../lib/ins
 import { buildInstagramMinimalLoginUrl, getInstagramMinimalEnv } from '../../lib/instagram-minimal-login';
 import { buildInstagramBasicDisplayUrl, getInstagramBasicDisplayEnv } from '../../lib/instagram-basic-display-client';
 import { testInstagramConfig } from '../../utils/test-instagram-config';
+import { buildFacebookLoginUrl } from '../../lib/facebook-login-instagram';
 
 const InstagramConnectPage = () => {
   const [loading, setLoading] = useState(false);
@@ -61,6 +62,20 @@ const InstagramConnectPage = () => {
     } catch (e) {
       console.error('Unable to start Instagram Business Login:', e);
       alert('Instagram login is not fully configured. Please set VITE_IG_CLIENT_ID and VITE_IG_REDIRECT_URI.');
+      setLoading(false);
+    }
+  };
+
+  const handleConnectViaFacebookLogin = async () => {
+    try {
+      setLoading(true);
+      const state = JSON.stringify({ uid: user.uid, ts: Date.now(), flow: 'fb' });
+      const url = buildFacebookLoginUrl({ state, scopes: ['instagram_basic', 'pages_show_list'] });
+      console.log('🔗 Facebook Login for Business URL:', url);
+      window.location.href = url;
+    } catch (e) {
+      console.error('Unable to start Facebook Login:', e);
+      alert('Facebook Login is not fully configured. Please set VITE_FB_APP_ID and VITE_FB_REDIRECT_URI.');
       setLoading(false);
     }
   };
@@ -170,6 +185,26 @@ const InstagramConnectPage = () => {
         </div>
 
         <div className="connect-actions">
+          <button 
+            className="connect-btn"
+            onClick={handleConnectViaFacebookLogin}
+            disabled={loading}
+            style={{ marginBottom: '12px', background: '#1877F2', border: '1px solid #1877F2' }}
+          >
+            {loading ? (
+              <>
+                <div className="spinner"></div>
+                Connecting...
+              </>
+            ) : (
+              <>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M22.675 0h-21.35C.595 0 0 .593 0 1.326v21.348C0 23.406.595 24 1.325 24h11.495V14.708H9.691v-3.62h3.129V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.765v2.316h3.587l-.467 3.62h-3.12V24h6.116C23.406 24 24 23.406 24 22.674V1.326C24 .593 23.406 0 22.675 0z" fill="#fff"/>
+                </svg>
+                Connect via Facebook Login (Insights)
+              </>
+            )}
+          </button>
           <button 
             className="connect-btn"
             onClick={handleConnectInstagram}
